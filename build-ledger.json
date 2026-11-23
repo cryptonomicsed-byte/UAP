@@ -184,9 +184,9 @@
   {
    "id": "C-19",
    "desc": "C-19 dedupe/conflict + policy-override guard",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-a",
+   "claimed_at": "2026-11-23T15:40:16Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
