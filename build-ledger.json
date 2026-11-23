@@ -154,12 +154,12 @@
   {
    "id": "D-16",
    "desc": "D-16 deletion/privacy propagation",
-   "status": "done",
+   "status": "verified",
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T14:35:27Z",
    "done_sha": "e7e8ef8",
-   "evidence": "tests/memory-index.test.mjs 5/5, tests/privacy-deletion.test.mjs 7/7, tests/privacy-api.test.mjs 3/3 against a real server+owner session; npm test 125 passed/0 failed; npm run typecheck clean; cargo test --workspace --locked 69 passed (stale portability target rebuilt \u2014 baked relative CARGO_MANIFEST_DIR, no source change). Test-first: the three suites were watched fail with ERR_MODULE_NOT_FOUND / 404s before the modules and routes existed.",
-   "verified": null
+   "evidence": "tests/memory-index.test.mjs 5/5, tests/privacy-deletion.test.mjs 7/7, tests/privacy-api.test.mjs 3/3 against a real server+owner session; npm test 125 passed/0 failed; npm run typecheck clean; cargo test --workspace --locked 69 passed (stale portability target rebuilt \u2014 baked relative CARGO_MANIFEST_DIR, no source change). Test-first: the three suites were watched fail with ERR_MODULE_NOT_FOUND / 404s before the modules and routes existed. || CHECKER 2026-11-23T16:10Z VERIFIED at done_sha e7e8ef8 (clean git worktree; live tree untouched). Measured this session: node --import tsx --test tests/memory-index.test.mjs tests/privacy-deletion.test.mjs tests/privacy-api.test.mjs -> 15 tests / 15 pass / 0 fail (5 + 7 + 3, matching the cited split); npm test -> 125 passed / 0 failed; npm run typecheck clean (server + web; workspace node_modules linked into the worktree \u2014 the first worktree run failed only with TS2688 'Cannot find type definition file for vite/client', an artifact of the isolated worktree, and went clean once server/web node_modules were linked; the live tree typechecks clean too); cargo test --workspace --locked -> 69 passed (suite sum 2+30+12+12+8+5). Read, not just ran: the receipt is HMAC-SHA256 over canonical {request, targets[holder,ref,contentHash,action,state,rule], prev} keyed by env.sessionSecret, chained per agent, and has no FK to the subject; the tombstone is (bot_id, content_hash) and blocks re-indexing of erased bytes; a tampered target breaks receipt verification (asserted by test). Secrets: test-fixture strings only (e.g. SESSION_SECRET='memory-index-test-secret', a 'privacy-api-secret' HMAC key); no real credential in the diff. CI at its ledger commit b74be31 (run 45207800467): postgres=success, checks/rust/portable/rights/staging=success, elixir-worker=failure (the repo-wide missing-'mix deps.get' defect, not D-16 code).",
+   "verified": true
   },
   {
    "id": "C-17",
@@ -174,22 +174,22 @@
   {
    "id": "C-18",
    "desc": "C-18 launch roster (7 languages + creative/research)",
-   "status": "done",
+   "status": "verified",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T15:22:03Z",
    "done_sha": "c3b43d2",
-   "evidence": "tests/roles-roster.test.mjs 12/12 (RED first: ERR_MODULE_NOT_FOUND, then missing docs/roles exports); root npm test 137/137; server+web typecheck clean; cargo test --workspace --locked 69 passed; mix check 61 tests, 0 failures, 12 excluded; 16 roles / 14 families, catalog digest 5144510203df8af7\u2026",
-   "verified": null
+   "evidence": "tests/roles-roster.test.mjs 12/12 (RED first: ERR_MODULE_NOT_FOUND, then missing docs/roles exports); root npm test 137/137; server+web typecheck clean; cargo test --workspace --locked 69 passed; mix check 61 tests, 0 failures, 12 excluded; 16 roles / 14 families, catalog digest 5144510203df8af7\u2026 || CHECKER 2026-11-23T16:10Z VERIFIED at done_sha c3b43d2 (clean git worktree). Measured: node --import tsx --test tests/roles-roster.test.mjs -> 12 tests / 12 pass; npm test -> 137 passed / 0 failed; npm run typecheck clean (server + web); mix check (elixir/agentos_worker, unchanged by this diff) -> 61 tests, 0 failures, 12 excluded; cargo test --workspace --locked -> 69 passed. Independently recomputed builtinRosterSummary(): count 16, 14 families (architecture, backend, frontend, qa, security, rust, elixir, julia, move, go, python, clojure, creative, research), catalogDigest 5144510203df8af72ea17b3482cabfff67223c9769a3506883b0998701524ce9 \u2014 matches the evidence's 16 roles / 14 families / 5144510203df8af7\u2026 exactly. The suite verifies each template's digest by fresh recomputation, rejects a reused pinned digest, deep-freezes shipped roles, pins persona provenance to the sha256 of the shipped bytes, and proves the exported persona files byte-identical to the roster instructions. Diff is docs + one TS module + tests + a package.json script; no secret, no route added. CI at c3b43d2 (run 45207938362): checks/rights/portable/staging/rust=success, elixir-worker=failure (pre-existing workflow defect), postgres=failure on the known outbox flake \u2014 the SAME code passed postgres in the next run at 2e97d34 (45208158871), so the red is flake, not C-18.",
+   "verified": true
   },
   {
    "id": "C-19",
    "desc": "C-19 dedupe/conflict + policy-override guard",
-   "status": "done",
+   "status": "verified",
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T15:40:16Z",
    "done_sha": "f8e80c53853a79d33806e8ac4941d7c90eddbfd4",
-   "evidence": "149 tests 149 pass; role-review 12/12; typecheck clean; cargo 69",
-   "verified": null
+   "evidence": "149 tests 149 pass; role-review 12/12; typecheck clean; cargo 69 || CHECKER 2026-11-23T16:10Z VERIFIED at done_sha f8e80c5 (clean git worktree). Measured: node --import tsx --test tests/role-review.test.mjs -> 12 tests / 12 pass; npm test -> 149 passed / 0 failed (matches the evidence's '149 tests 149 pass'); npm run typecheck clean (server + web); cargo test --workspace --locked -> 69 passed. Counted in source: 7 rule ids in server/src/roles/role-review.ts (ignore_instructions, prompt_extraction, safety_disable, identity_hijack, secret_read, privilege_escalation, covert_action) = the 'seven documented override classes'; the suite proves detection per rule, NFKC/zero-width/case/space normalisation, six ordinary engineering strings not flagged, deterministic review under input shuffling, and a poisoned role removed before dedupe. POST /api/roles/review is exercised against a real server (PORT 0) in the suite. CAVEAT: no CI run exists for f8e80c5 \u2014 the workflow is unparseable from e21c9f8 onward (S-63), so every run after 15:52Z died in 0s with jobs: []. This verdict is local execution only (worktree at f8e80c5), plus the repo-wide cargo 69 / mix 61 figures.",
+   "verified": true
   },
   {
    "id": "B-20",
@@ -624,11 +624,11 @@
   {
    "id": "S-63",
    "desc": "claim.py never claims from a stale ledger + elixir-worker CI gets mix deps.get",
-   "status": "done",
+   "status": "rework",
    "claimed_by": "hermes-orchestrator",
    "claimed_at": "2026-11-23T16:30:00Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "e21c9f8",
+   "evidence": "CHECKER 2026-11-23T16:10Z REWORK at e21c9f8. (1) BLOCKER \u2014 .github/workflows/foundation.yml:141 is invalid YAML: the new 'Fetch dependencies' step (' - name:' sequence item) was inserted INSIDE the 'Mix check' step's mapping, above its 'run:'. yaml.parse -> 'A block sequence may not be used as an implicit map key at line 141', so GitHub Actions cannot load the workflow at all: runs 45210066911 (e21c9f8), 45210213299, 45211108320 and 45211640681 all completed 'failure' in 0s with jobs: [] (gh run view --json jobs). Worse than the defect S-63 set out to fix \u2014 it kills every job (npm, rust, portable, elixir, staging), not just elixir-worker. Fix: make 'Fetch dependencies' (run: mix deps.get) a sibling step BEFORE '- name: Mix check \u2026' (run: mix check), each with working-directory: elixir/agentos_worker, and validate the file parses (node -e \"require('yaml').parse(fs\u2026)\") before pushing. (2) claim.py prints CLAIM and exits 0 when the push fails \u2014 sh() return codes are ignored. Demonstrated in an isolated bare origin with a pre-push hook that exits 1: it printed 'CLAIM B-22 B-22 trust statuses\u2026', origin did not move, and the clone sat 'ahead 1' \u2014 a claim only that machine can see, i.e. the double-claim this item exists to prevent. Fix: capture the push rc and print 'NOTHING push-failed' (exit non-zero or retry) when it is not 0. VERIFIED GOOD: the pull guard works \u2014 negative control with a behind + locally dirty build-ledger.json printed 'NOTHING pull-failed (tree dirty or diverged)', exit 0, and pushed nothing; on a clean tree the same script claimed and reached origin (4383dc4 -> 15423fe).",
    "verified": null
   }
  ]
