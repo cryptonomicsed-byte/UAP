@@ -114,9 +114,9 @@
   {
    "id": "M2-12",
    "desc": "M2-12 1/10/100 concurrency staging test",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-b",
+   "claimed_at": "2026-11-23T13:43:17Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
