@@ -34,11 +34,11 @@
   {
    "id": "M1-04",
    "desc": "M1-04 ActionIntent/ResourceScope contracts",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "81422aa",
+   "evidence": "crates/agentos-policy/src/{intent,resource,effect,budget,canonical}.rs; cargo test -p agentos-policy 19/19 (intent 12, scaffold 5, unit 2); clippy -D warnings clean; negative: scope '*' unrepresentable, acme/* != acmex/*, external effect w/o idempotency key refused, truncated/inverted window refused, advisory confidence >10000 bp refused, spend overflow -> None",
    "verified": null
   },
   {
