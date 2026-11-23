@@ -47,7 +47,8 @@ with open(LOCK, "w") as lf:
     base = sh(f"cd {U} && git rev-parse HEAD").stdout.strip()
     psh = sh(f"cd {U} && git add build-ledger.json && "
              f"git -c user.name=build-agent -c user.email=build@uap.local "
-             f"commit -q -m 'claim {pick['id']} by {worker}' && git push -q origin HEAD")
+             f"commit -q -m 'claim {pick['id']} by {worker}' -- build-ledger.json && "
+             f"git push -q origin HEAD")
     if psh.returncode != 0:
         # The push may have landed even though the command reported failure
         # (hook noise, transport hiccup). Trust the remote, not the exit code.
