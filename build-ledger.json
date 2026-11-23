@@ -74,9 +74,9 @@
   {
    "id": "M2-08",
    "desc": "M2-08 Elixir OTP worker scaffold",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-b",
+   "claimed_at": "2026-11-23T13:13:07Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
