@@ -4,11 +4,11 @@
   {
    "id": "M0-01",
    "desc": "M0-01 own-tree license/SBOM audit",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "cron-uap-m0",
    "claimed_at": "2026-11-23T08:10:42Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "f6ce1447744ed96775076d2650dd40f34e447b5a",
+   "evidence": "scripts/audit-rights.mjs + docs/rights/{LICENSE-POLICY,ASSET-RIGHTS}.json; tests/rights-audit.test.mjs 9/9 pass (GPL dep => exit 1, bad lock => exit 2); npm test 70/70; npm run audit:rights PASS 246 components/1 asset; CI job rights uploads rights-sbom-evidence",
    "verified": null
   },
   {
