@@ -104,9 +104,9 @@
   {
    "id": "M2-11",
    "desc": "M2-11 restart/cancel/UNCERTAIN reconciliation",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-a",
+   "claimed_at": "2026-11-23T13:41:50Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
