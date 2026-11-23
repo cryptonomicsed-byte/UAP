@@ -154,11 +154,11 @@
   {
    "id": "D-16",
    "desc": "D-16 deletion/privacy propagation",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T14:35:27Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "e7e8ef8",
+   "evidence": "tests/memory-index.test.mjs 5/5, tests/privacy-deletion.test.mjs 7/7, tests/privacy-api.test.mjs 3/3 against a real server+owner session; npm test 125 passed/0 failed; npm run typecheck clean; cargo test --workspace --locked 69 passed (stale portability target rebuilt \u2014 baked relative CARGO_MANIFEST_DIR, no source change). Test-first: the three suites were watched fail with ERR_MODULE_NOT_FOUND / 404s before the modules and routes existed.",
    "verified": null
   },
   {
