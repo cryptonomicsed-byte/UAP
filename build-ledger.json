@@ -134,9 +134,9 @@
   {
    "id": "D-14",
    "desc": "D-14 signature/revocation/issuer/transfer",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-c",
+   "claimed_at": "2026-11-23T14:14:14Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
