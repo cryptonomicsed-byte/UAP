@@ -1,0 +1,615 @@
+{
+ "_protocol": "atomic claim via scripts/claim.py (flock); one item per claim; never touch claimed-by-others",
+ "items": [
+  {
+   "id": "M0-01",
+   "desc": "M0-01 own-tree license/SBOM audit",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M0-02",
+   "desc": "M0-02 reproducible build + full test baseline",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M1-03",
+   "desc": "M1-03 agentos-policy crate scaffold",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M1-04",
+   "desc": "M1-04 ActionIntent/ResourceScope contracts",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M1-05",
+   "desc": "M1-05 Grant/Budget/Lease contracts",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M1-06",
+   "desc": "M1-06 dispatch validation + revocation/negative tests",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M1-07",
+   "desc": "M1-07 portable lease verification fixtures",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M2-08",
+   "desc": "M2-08 Elixir OTP worker scaffold",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M2-09",
+   "desc": "M2-09 per-task GenServer + SID/lease binding",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M2-10",
+   "desc": "M2-10 queue claim/fencing/outbox",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M2-11",
+   "desc": "M2-11 restart/cancel/UNCERTAIN reconciliation",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M2-12",
+   "desc": "M2-12 1/10/100 concurrency staging test",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "D-13",
+   "desc": "D-13 SID schema + per-instance issuance",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "D-14",
+   "desc": "D-14 signature/revocation/issuer/transfer",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "D-15",
+   "desc": "D-15 pause/resume/archive",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "D-16",
+   "desc": "D-16 deletion/privacy propagation",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "C-17",
+   "desc": "C-17 RoleTemplate schema + Markdown parser",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "C-18",
+   "desc": "C-18 launch roster (7 languages + creative/research)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "C-19",
+   "desc": "C-19 dedupe/conflict + policy-override guard",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "B-20",
+   "desc": "B-20 source registry + ingestion pipeline",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "B-21",
+   "desc": "B-21 quarantine/secret-scan/injection scan",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "B-22",
+   "desc": "B-22 trust statuses + scheduled re-audit",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "G-23",
+   "desc": "G-23 Hermes adapter mapping + lifecycle",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "G-24",
+   "desc": "G-24 policy-authorized tool intents",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "G-25",
+   "desc": "G-25 progressive per-role skill context + token budgets",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "G-26",
+   "desc": "G-26 degraded-provider tests + honest UI",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "H-27",
+   "desc": "H-27 shared protobuf/JSON contracts + fixtures",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "H-28",
+   "desc": "H-28 per-language conformance suites",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "H-29",
+   "desc": "H-29 idle-service proof (Rust+Elixir+Hermes only)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "I-30",
+   "desc": "I-30 SkillForge integration",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "I-31",
+   "desc": "I-31 signed capability packs + review queue",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "I-32",
+   "desc": "I-32 skill-drain + end-to-end invocation",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "J-33",
+   "desc": "J-33 design personas + DESIGN.md gates",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "J-34",
+   "desc": "J-34 UI QA screenshot harness + accessibility",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "J-35",
+   "desc": "J-35 NO-GO enforcement + critique rubric",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "K-36",
+   "desc": "K-36 seven language gate packs",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "K-37",
+   "desc": "K-37 role-routing isolation + version rollback",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "L-38",
+   "desc": "L-38 Sui/EVM separation + approval gates",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "L-39",
+   "desc": "L-39 audit gates + deployment evidence chain",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M-40",
+   "desc": "M-40 research/medical roles + citation tests",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "M-41",
+   "desc": "M-41 patient-data privacy/consent controls",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "N-42",
+   "desc": "N-42 NPC/SID/world-entity separation + scene sims",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "N-43",
+   "desc": "N-43 world policy + scene-unload teardown",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "O-44",
+   "desc": "O-44 music/media roles + rights review",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "O-45",
+   "desc": "O-45 provenance + game-audio sync tests",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "P-46",
+   "desc": "P-46 factory integration (Smithers/SkillForge/REA)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "P-47",
+   "desc": "P-47 reference app deployment + unrelated-SID test",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "Q-48",
+   "desc": "Q-48 marketplace + one-click install",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "Q-49",
+   "desc": "Q-49 five tiers + real metering",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "Q-50",
+   "desc": "Q-50 tenant isolation + downgrade/expiry tests",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "R-51",
+   "desc": "R-51 SBOM signing + prompt-injection CI",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "R-52",
+   "desc": "R-52 backup/restore/replay",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "R-53",
+   "desc": "R-53 load + partition fail-closed tests",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "R-54",
+   "desc": "R-54 SLO/playbooks/release record",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "E2E-55",
+   "desc": "E2E-55 SID/lifecycle suite (9)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "E2E-56",
+   "desc": "E2E-56 persona/skills suite (8)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "E2E-57",
+   "desc": "E2E-57 design quality suite (8)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "E2E-58",
+   "desc": "E2E-58 languages/contracts suite (7)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "E2E-59",
+   "desc": "E2E-59 domain outputs suite (8)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "E2E-60",
+   "desc": "E2E-60 factory/SaaS suite (10)",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  },
+  {
+   "id": "FINAL-61",
+   "desc": "FINAL-61 M0-M7 gate signoff + signed release record",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
+  }
+ ]
+}
