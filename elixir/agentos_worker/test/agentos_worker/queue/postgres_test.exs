@@ -20,8 +20,14 @@ defmodule AgentosWorker.QueuePostgresTest do
   @moduletag :postgres
 
   setup_all do
-    url = System.fetch_env!("TEST_DATABASE_URL")
-    {:ok, conn} = Postgres.start_link(url: url, name: :queue_pg_test, pool_size: 1)
+    # `conn` is the isolated worker login: it holds EXECUTE on the granted
+    # transition functions and no table privileges. `admin` seeds fixtures,
+    # because uap.users has FORCE ROW LEVEL SECURITY and no INSERT policy.
+    {:ok, conn} =
+      Postgres.start_link(url: System.fetch_env!("TEST_WORKER_DATABASE_URL"), name: :queue_pg_test, pool_size: 1)
+
+    {:ok, admin} =
+      Postgres.start_link(url: System.fetch_env!("TEST_DATABASE_URL"), name: :queue_pg_admin, pool_size: 1)
 
     suffix = Base.encode16(:crypto.strong_rand_bytes(6), case: :lower)
     org = "org_#{suffix}"
@@ -30,31 +36,39 @@ defmodule AgentosWorker.QueuePostgresTest do
     now = System.system_time(:millisecond)
 
     Postgrex.query!(
-      conn,
+      admin,
       "INSERT INTO uap.users(id,email,name,created_at) VALUES ($1,$2,$1,$3)",
       [owner, "#{owner}@example.test", now]
     )
 
     Postgrex.query!(
-      conn,
+      admin,
       "INSERT INTO uap.organizations(id,slug,name,created_at) VALUES ($1,$1,$1,$2)",
       [org, now]
     )
 
     Postgrex.query!(
-      conn,
+      admin,
       "INSERT INTO uap.memberships(organization_id,user_id,role,state,created_at) VALUES ($1,$2,'owner','active',$3)",
       [org, owner, now]
     )
 
     Postgrex.query!(
-      conn,
+      admin,
       "INSERT INTO uap.workspaces(id,organization_id,name,created_at) VALUES ($1,$2,$1,$3)",
       [space, org, now]
     )
 
     on_exit(fn -> :ok end)
-    %{conn: conn, org: org, owner: owner, space: space}
+    %{conn: conn, admin: admin, org: org, owner: owner, space: space}
+  end
+
+  # Each test owns the outbox: an outbox claim is exclusive, so rows left behind
+  # by an earlier test would be leased to this test's relay id and look
+  # unclaimable. The relay under test is the only consumer in the harness.
+  setup %{admin: admin} do
+    Postgrex.query!(admin, "TRUNCATE uap.job_outbox", [])
+    :ok
   end
 
   defp map_row(%Postgrex.Result{columns: columns, rows: [row]}),
@@ -69,14 +83,14 @@ defmodule AgentosWorker.QueuePostgresTest do
     now = System.system_time(:millisecond)
 
     Postgrex.query!(
-      ctx.conn,
+      ctx.admin,
       "INSERT INTO uap.agents(id,organization_id,workspace_id,owner_user_id,name,created_at,updated_at)
        VALUES ($1,$2,$3,$4,$1,$5,$5)",
       [agent, ctx.org, ctx.space, ctx.owner, now]
     )
 
     Postgrex.query!(
-      ctx.conn,
+      ctx.admin,
       "SELECT set_config('uap.actor_id',$1,false), set_config('uap.organization_id',$2,false)",
       [ctx.owner, ctx.org]
     )
@@ -84,7 +98,7 @@ defmodule AgentosWorker.QueuePostgresTest do
     digest = Base.encode16(:crypto.hash(:sha256, "#{kind}/#{unique}"), case: :lower)
 
     Postgrex.query!(
-      ctx.conn,
+      ctx.admin,
       "SELECT * FROM uap.enqueue_task_job($1,$2,$3,$4,$5,$6,'', $7, $8::jsonb, $9, $10,
         'idempotent', 3, 100, $11, $12, NULL, 'v1', 'decision-1', 'unmetered_local', NULL)",
       [
@@ -95,7 +109,7 @@ defmodule AgentosWorker.QueuePostgresTest do
         agent,
         name,
         kind,
-        Jason.encode!(%{"input" => name}),
+        %{"input" => name},
         "key_#{unique}",
         digest,
         now,
@@ -109,7 +123,7 @@ defmodule AgentosWorker.QueuePostgresTest do
   defp job_state(ctx, job) do
     map_row(
       Postgrex.query!(
-        ctx.conn,
+        ctx.admin,
         "SELECT state, lease_generation, lease_owner FROM uap.task_jobs WHERE organization_id=$1 AND id=$2",
         [ctx.org, job]
       )
@@ -203,7 +217,9 @@ defmodule AgentosWorker.QueuePostgresTest do
     assert {:ok, true} = Postgres.mark_published(ctx.conn, relay, event["event_id"])
     assert {:ok, false} = Postgres.mark_published(ctx.conn, relay, event["event_id"])
 
-    assert {:ok, "settled"} =
+    # Publishing clears the delivery lease, so a later release from the same
+    # relay is stale: it holds nothing any more and cannot resurrect the row.
+    assert {:ok, "stale"} =
              Postgres.release(ctx.conn, relay, event["event_id"],
                retry_in_ms: 0,
                error: "late",
@@ -222,8 +238,17 @@ defmodule AgentosWorker.QueuePostgresTest do
     event = Enum.find(events, &(&1["job_id"] == queued.job))
     assert event
 
+    # The first failure settles the lease acquired above; each later attempt
+    # re-claims the row after the previous release handed it back.
+    {:ok, "retry"} =
+      Postgres.release(ctx.conn, relay, event["event_id"],
+        retry_in_ms: 0,
+        error: "publisher failure 1",
+        max_attempts: 3
+      )
+
     states =
-      for attempt <- 1..3 do
+      for attempt <- 2..3 do
         {:ok, claimed} = Postgres.claim_outbox(ctx.conn, relay, limit: 500)
         current = Enum.find(claimed, &(&1["event_id"] == event["event_id"]))
         assert current, "row was not claimable on attempt #{attempt}"
@@ -238,7 +263,7 @@ defmodule AgentosWorker.QueuePostgresTest do
         state
       end
 
-    assert states == ["retry", "retry", "dead"]
+    assert states == ["retry", "dead"]
 
     {:ok, claimed} = Postgres.claim_outbox(ctx.conn, relay, limit: 500)
 
