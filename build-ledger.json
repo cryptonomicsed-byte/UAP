@@ -264,11 +264,11 @@
   {
    "id": "H-27",
    "desc": "H-27 shared protobuf/JSON contracts + fixtures",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T18:36:55Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "ae8d3d4",
+   "evidence": "cargo test -p agentos-policy --test contracts: 13/13 (8 negative cases); cargo test --workspace --locked: 106 passed, 0 failed; cargo clippy -p agentos-policy --all-targets -- -D warnings: clean; cargo fmt --all --check: clean; cargo run -p agentos-policy --bin contract-check -- .: {contracts:6,fixtures:13,languages:8,ok:true}; npm test: 254/254; npm run typecheck/build/audit:branding/audit:rights: pass; mix test: 61 tests, 0 failures (12 excluded)",
    "verified": null
   },
   {
