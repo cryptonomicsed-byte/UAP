@@ -234,11 +234,11 @@
   {
    "id": "G-24",
    "desc": "G-24 policy-authorized tool intents",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T17:45:55Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "dd75a44bd37b60c64df237a6ec2d8ad060f9fe7b",
+   "evidence": "authorize_bundle 22/22 rust; policy-tool-authority 8/8; typecheck clean",
    "verified": null
   },
   {
