@@ -225,8 +225,8 @@
    "id": "G-23",
    "desc": "G-23 Hermes adapter mapping + lifecycle",
    "status": "done",
-   "done_sha": "e323e0c",
-   "evidence": "node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs -> 4/4 (mapping evidence matches code; SID vs legacy thread derivation + refusals; two-process restart + model swap isolation: requests hq-sid_alpha-g1, hq-sid_beta-g1, hq-sid_alpha-g1 under own engine keys, no cross-agent rows; bind refusals sid_in_use/sid_rebind_requires_new_generation). npm test 223/223. sqlite-migrations 12/12. typecheck/build/audit:branding/audit:rights pass. cargo test --workspace --locked ok. mix test 61 tests 0 failures (12 excluded).",
+   "done_sha": "2752d79",
+   "evidence": "node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs -> 4/4 (mapping evidence matches code; SID vs legacy thread derivation + refusals; two-process restart + model swap isolation: requests hq-sid_alpha-g1, hq-sid_beta-g1, hq-sid_alpha-g1 under their own engine keys, no cross-agent rows; bind refusals + dry-run + npm run agents:bind-sid apply). npm test 230/230. sqlite-migrations 12/12. typecheck/build/audit:branding/audit:rights pass. cargo test --workspace --locked ok. mix test 61 tests 0 failures (12 excluded).",
    "verified": null,
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T16:52:05Z"
