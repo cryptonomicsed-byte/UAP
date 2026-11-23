@@ -24,11 +24,11 @@
   {
    "id": "M1-03",
    "desc": "M1-03 agentos-policy crate scaffold",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "cron-uap-m1",
    "claimed_at": "2026-11-23T12:02:25Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "4d88b47",
+   "evidence": "Cargo workspace + crates/agentos-policy scaffold + src/ids.rs canonical identifiers; cargo test -p agentos-policy 5/5 (tests/scaffold.rs); fmt + clippy -D warnings clean; CI job 'rust' added (fmt/clippy/debug+release); negative: empty/uppercase/wildcard tenant ids, path-like tool names and uppercase/odd-length digests all refused",
    "verified": null
   },
   {
