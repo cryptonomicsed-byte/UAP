@@ -24,9 +24,9 @@
   {
    "id": "M1-03",
    "desc": "M1-03 agentos-policy crate scaffold",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "cron-uap-m1",
+   "claimed_at": "2026-11-23T12:02:25Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
