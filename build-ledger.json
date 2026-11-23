@@ -274,9 +274,9 @@
   {
    "id": "H-28",
    "desc": "H-28 per-language conformance suites",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-b",
+   "claimed_at": "2026-11-23T18:45:52Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
