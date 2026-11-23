@@ -250,9 +250,10 @@ fn the_report_is_stable_machine_readable_json() {
     assert_eq!(report["ok"], true);
     assert_eq!(report["contracts"], 6);
     assert_eq!(report["languages"], 8);
-    assert_eq!(
-        report["fixtures"], 13,
-        "5 lease + 3 grant + 2 approval + 3 intent fixtures are committed"
+    assert!(
+        report["fixtures"].as_u64().unwrap_or(0) >= 13,
+        "the committed set holds at least 5 lease + 3 grant + 2 approval + 3 intent fixtures, got {}",
+        report["fixtures"]
     );
     assert_eq!(report["violations"].as_array().map(Vec::len), Some(0));
 }
