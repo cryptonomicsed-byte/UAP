@@ -614,11 +614,11 @@
   {
    "id": "S-62",
    "desc": "deploy-status endpoint + in-app build/board badge (always reflects deployed work)",
-   "status": "pending",
+   "status": "done",
    "claimed_by": "hermes-orchestrator",
    "claimed_at": "2026-11-23T15:00:00Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "a587ec139e6d97f3034125b8a82e06c3ef415e6e",
+   "evidence": "curl /api/deploy-status on live instance; badge visible in page",
    "verified": null
   }
  ]
