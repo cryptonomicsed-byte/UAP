@@ -17,6 +17,8 @@ import { assignEngine, provisionEngine, removeEngine, syncPersona } from './engi
 import { deleteMemory, listMemories, memoryBot } from './engine-memory.js';
 import { removeMemoryFromIndex, searchMemory, syncMemoryIndex } from './search/memory-index.js';
 import { getDeletionRequest, listDeletionRequests, PrivacyDeletionError, requestDeletion, runDeletion, verifyDeletionReceipt } from './privacy/deletion.js';
+import { buildRoleTemplate, RoleTemplateError } from './roles/role-template.js';
+import { reviewRoleTemplates, RoleReviewError } from './roles/role-review.js';
 import { orgo } from './orgo.js';
 import { catalog, connectedToolkits, deleteConnection, disconnect, googleProfile, startConnect, startGoogleLogin, toolkitInfo } from './composio.js';
 import { runRoutine, scheduleRoutine, unscheduleRoutine } from './routines.js';
@@ -481,6 +483,25 @@ api.post('/privacy/deletions/:id/retry', async (c) => {
   try {
     return c.json({ request: await runDeletion(request.id) });
   } catch (error) { return deletionFailure(c, error); }
+});
+
+// ---------- role review (V6-03-05 / V6-03-09) ----------
+// Build submitted role templates, refuse policy-override instructions, then dedupe/conflict.
+// Nothing is persisted: this is the preview step, and a rejected role never reaches a store.
+
+api.post('/roles/review', async (c) => {
+  const body = await c.req.json().catch(() => null) as { roles?: unknown } | null;
+  const roles = body?.roles;
+  if (!Array.isArray(roles) || roles.length === 0) return c.json({ error: 'roles required' }, 400);
+  if (roles.length > 200) return c.json({ error: 'at most 200 roles per review' }, 400);
+  try {
+    const built = roles.map((role) => buildRoleTemplate(role as Parameters<typeof buildRoleTemplate>[0]));
+    return c.json(reviewRoleTemplates(built));
+  } catch (error) {
+    if (error instanceof RoleTemplateError) return c.json({ error: error.code, message: error.message }, 400);
+    if (error instanceof RoleReviewError) return c.json({ error: error.code, message: error.message }, 400);
+    throw error;
+  }
 });
 
 // ---------- computer ----------

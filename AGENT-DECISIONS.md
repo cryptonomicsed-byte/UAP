@@ -4,6 +4,59 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+### 2026-11-23 — C-19 (track C): role dedupe/conflict + policy-override guard
+
+Board: claimed `C-19`; implemented V6-03-05 and V6-03-09. No checklist box is ticked and
+nothing is self-approved.
+
+Built
+  * `server/src/roles/role-review.ts` — one review step over C-17's built templates:
+    `reviewRoleTemplates()` returns `accepted / rejected / duplicates / conflicts / superseded`
+    and is deterministic (shuffled input gives a byte-identical result, every bucket sorted).
+  * Dedupe: exact copies at the same id+version+digest collapse to one and the dropped copy is
+    named; a newer version supersedes older ones and the upgrade is recorded
+    (`{id, version, superseded_by}`); two different bodies at the same id+version is a
+    `digest_mismatch` conflict and the id is **not installable** — the platform does not choose
+    by input order; identical instruction bodies under two ids install but are flagged
+    `content_overlap` (role explosion is a human decision).
+  * Policy guard: seven documented override classes (`ignore_instructions`,
+    `prompt_extraction`, `safety_disable`, `identity_hijack`, `secret_read`,
+    `privilege_escalation`, `covert_action`) matched over normalised text — NFKC (fullwidth),
+    zero-width stripped **and** zero-width-as-space (so `Ig<zw>nore` and `Ignore<zw>all` both
+    fail), lowercased, whitespace collapsed. `scanInstructions()` returns findings with rule,
+    label, match and offset; `assertPolicySafe()` throws `PolicyOverrideError`.
+  * A rejected role is removed before dedupe, so one poisoned persona cannot block a clean
+    collection; its findings are returned, not logged away.
+  * `POST /api/roles/review` (session required) builds via C-17's `buildRoleTemplate`, then
+    guards and dedupes. 400 with `{error, message}` on an empty/oversized collection, a failed
+    schema build, or an invalid collection; nothing is persisted (preview only).
+  * Docs: `docs/architecture/ROLE-REVIEW.md` (buckets, rule table, false-positive policy, and
+    the explicit statement that the guard is a review gate, not the defence).
+
+Tests (test-first: `tests/role-review.test.mjs` was written and watched fail with
+`ERR_MODULE_NOT_FOUND`, then the normalisation case failed on the zero-width variant, then the
+HTTP case failed until the route existed)
+  * `node --import tsx --test tests/role-review.test.mjs` — 12 passed (seven override classes,
+    four evasion variants, six benign strings that must not be flagged, typed refusal,
+    duplicate collapse, digest_mismatch non-installability, supersede record, content overlap,
+    determinism under reversal, typed invalid-input errors, HTTP 200/400/401).
+  * `npm test` — 137 tests, 137 pass, 0 fail. `npm run typecheck` clean.
+  * `cargo test --workspace --locked` — 69 passed, 0 failed (no Rust change in this item).
+
+Not claimed
+  * Markdown repository ingestion and source pinning remain C-17 / V6-03-02.
+  * Paraphrased duplicates are not detected; only exact instruction bodies. That limitation is
+    stated in the doc rather than papered over with a fuzzy score.
+  * No catalog persistence, preview UI or owner-authored roles (V6-03-06/07).
+
+Coordination note (not an item)
+  * `scripts/claim.py` handed C-18 to worker-a although worker-b had claimed it eight minutes
+    earlier. The C-18 work was not pushed to `main`: it is preserved on branch
+    `wa/c18-roster-proposal` for comparison, and the ledger still shows C-18 claimed by
+    worker-b. `claim.py` does not yet refuse an item claimed by another worker.
+
+Next unclaimed item: whatever `scripts/claim.py` hands out next (C-19 was the last pending C
+item at claim time).
 
 ### 2026-11-23 — C-18 (V6-03-06): built-in launch roster
 
