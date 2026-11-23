@@ -586,3 +586,67 @@ Not claimed
 
 Next unclaimed item: whatever `scripts/claim.py` hands out next (M2-12 was
 claimed by worker-b).
+## 2026-11-23 — B-20 source registry + ingestion pipeline (worker-c)
+
+Decision
+  A source is metadata until an independent audit says otherwise. The catalog
+  (`uap.source_repositories`, migration 12) stores what was observed — supplied
+  URL, canonical owner/repo, access answer, pinned commit, SHA-256 manifest,
+  declared licence, kind — and nothing role-shaped. Trust defaults to
+  `USER_SUPPLIED_UNVERIFIED`; a database CHECK refuses every other value without
+  a `reviewer_signature`, so B-22's promotion cannot be written as an accident.
+  Ingestion runs are append-only evidence in `uap.source_ingest_runs`.
+
+Why this shape
+  * GitHub returns 404 for both a missing and a private repository without
+    credentials, so the record says `not_found_or_private_without_credentials`
+    instead of inventing one answer. Moved/archived/rate-limited/auth states are
+    stored as observed; nothing is retried into a cleaner story.
+  * A branch is a moving reference: the pipeline resolves the default branch to a
+    full commit and `assertPublishablePin` refuses branch-only publication.
+  * The manifest is SHA-256 of sorted `path\0sha256\0size` rows; listing order
+    cannot move the digest and unsafe/duplicate paths are refused, not repaired.
+  * The licence reader records the declared SPDX, notices and derived obligations
+    with `approval: 'not-reviewed'`. Recognising MIT is not approving it.
+  * `requireAuditableSource()` throws for any unpromoted or signature-less source;
+    `catalogView()` returns `installable: false` with the first blocker. This is
+    V6-02-11: no fake role implementation is synthesized for an unaudited source.
+  * The catalog is global public metadata (RLS read for every application
+    session); the application login has SELECT only. Ingestion writes run through
+    the operator connection, and re-ingestion refreshes observations without
+    overwriting trust or reviewer proof.
+  * Tenant filtering is closed by default: no domain match, no tool match, risk
+    above policy or still `unclassified` hides an entry with an explicit reason.
+
+Tests (test-first: `tests/source-registry.test.mjs` was watched fail with
+`ERR_MODULE_NOT_FOUND` before `server/src/sources/` existed; two expectations
+were corrected in GREEN — Apache-2.0 carries a patent-grant obligation, and a
+`classification.kind` read is the single source of truth on the record)
+  * `tests/source-registry.test.mjs` → 21/21: 103-row CSV import with original
+    names/URLs, casing/redirect normalization, 404/private/auth/rate-limit/moved
+    honesty, branch-pin refusal, order-independent manifest, licence detection,
+    tenant filtering, dedupe without a second fetch, unavailable reasons,
+    no synthesized role fields, RLS/signature migration invariants.
+  * `npm run test:postgres -- source-registry.test.mjs` → passed on disposable
+    PostgreSQL 16: app login can read the catalog but cannot write it or runs;
+    promotion without a signature violates the CHECK; re-ingest preserves
+    `STATIC_AUDITED` + reviewer signature and `last_audited_at`; ingest runs
+    refuse UPDATE/DELETE/TRUNCATE.
+  * Full `npm run test:postgres` → every file exit 0 (16 files incl. migrations).
+  * Live smoke on `octocat/Hello-World`: pinned
+    `7fd1a60b01f91b314f59955a4e4d4e80d8edf11d`, manifest digest
+    `65edeac6…b92b`, independently recomputed from the raw tree (identical).
+  * `npm test` → 169/170; the one failure is the known `oauth-cleanup`
+    child-process 15 s spawn timeout under load and passes 6/6 in isolation.
+  * `npm run typecheck` clean; `npm run build` + `audit:branding` +
+    `audit:rights` pass; `cargo test --workspace --locked` 5 passed;
+    `mix test` 61 tests, 0 failures (12 excluded).
+
+Not claimed
+  * No trust promotion, reviewer workflow or scheduled re-audit (B-22).
+  * No quarantine, prompt-injection/secret scan or executable-script analysis
+    (B-21).
+  * No install UI, role derivation, source execution or checklist box self-tick.
+
+Next unclaimed item: **B-21 quarantine/secret-scan/injection scan** (B-22
+follows it).

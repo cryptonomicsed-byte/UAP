@@ -59,6 +59,8 @@ export async function assertApplicationRole(client: PoolClient): Promise<void> {
             OR has_table_privilege(candidate.oid,'uap.sid_credentials','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
             OR has_table_privilege(candidate.oid,'uap.sid_revocations','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
             OR has_table_privilege(candidate.oid,'uap.sid_transfers','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+            OR has_table_privilege(candidate.oid,'uap.source_repositories','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+            OR has_table_privilege(candidate.oid,'uap.source_ingest_runs','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
             OR EXISTS (
               SELECT 1 FROM pg_proc function
               JOIN pg_namespace namespace ON namespace.oid=function.pronamespace

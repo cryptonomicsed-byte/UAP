@@ -20,7 +20,7 @@ after(async () => { await application.end(); await admin.end(); });
 
 const migrationIds = POSTGRES_MIGRATIONS.map(migration => migration.id);
 const currentVersion = migrationIds.at(-1);
-const coreTables = ['users', 'organizations', 'memberships', 'workspaces', 'agents', 'import_receipts', 'conversations', 'message_rows', 'llm_items', 'auth_sessions', 'history_import_receipts', 'tasks', 'task_jobs', 'agent_runs', 'approvals', 'job_events'];
+const coreTables = ['users', 'organizations', 'memberships', 'workspaces', 'agents', 'import_receipts', 'conversations', 'message_rows', 'llm_items', 'auth_sessions', 'history_import_receipts', 'tasks', 'task_jobs', 'agent_runs', 'approvals', 'job_events', 'source_repositories', 'source_ingest_runs'];
 
 test('fresh migration creates a forced-RLS schema and repeat application preserves its ledger', async () => {
   assert.deepEqual(await migrationStatus(admin), []);

@@ -146,6 +146,7 @@ export async function grantApplicationRole(pool: Pool, role: string): Promise<vo
     await client.query(`GRANT SELECT,INSERT ON uap.llm_items TO ${quoted}`);
     await client.query(`GRANT SELECT ON uap.tasks,uap.task_jobs,uap.agent_runs,uap.approvals,uap.job_events TO ${quoted}`);
     await client.query(`GRANT SELECT ON uap.sid_identities,uap.agent_installations,uap.hermes_model_selections,uap.role_template_versions,uap.sid_issuers,uap.sid_credentials,uap.sid_revocations,uap.sid_transfers,uap.sid_lifecycle_events TO ${quoted}`);
+    await client.query(`GRANT SELECT ON uap.source_repositories,uap.source_ingest_runs TO ${quoted}`);
     await client.query(`GRANT EXECUTE ON FUNCTION uap.has_org_role(text,text[]),uap.authenticate_session(text),uap.revoke_session(text) TO ${quoted}`);
     for (const fn of applicationFunctions.rows) await client.query(`GRANT EXECUTE ON FUNCTION ${fn.identity} TO ${quoted}`);
     // Direct revocation does not remove privileges inherited from another role.
@@ -174,6 +175,8 @@ export async function grantApplicationRole(pool: Pool, role: string): Promise<vo
       has_table_privilege(candidate.oid,'uap.hermes_model_selections','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') OR
       has_table_privilege(candidate.oid,'uap.role_template_versions','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') OR
       has_table_privilege(candidate.oid,'uap.sid_lifecycle_events','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') OR
+      has_table_privilege(candidate.oid,'uap.source_repositories','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') OR
+      has_table_privilege(candidate.oid,'uap.source_ingest_runs','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') OR
       EXISTS (
         SELECT 1 FROM pg_proc function JOIN pg_namespace namespace ON namespace.oid=function.pronamespace
         WHERE namespace.nspname='uap'
