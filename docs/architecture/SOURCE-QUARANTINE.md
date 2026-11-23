@@ -70,6 +70,20 @@ Skips `.git`, `node_modules`, `dist`, `build`, `target`, `.next`, `coverage`. Pr
 `{roots, truncated, assessment}` and exits `0` clean, `2` needs-review (or truncated),
 `3` quarantined, `1` usage/IO error — a pipeline can gate on the exit code alone.
 
+## Where the gate runs
+
+B-20's `ingestCandidates` records metadata only (canonical URL, pinned commit, SHA-256
+manifest rows) — it never downloads file bodies, so there is nothing to scan inside it.
+The scan therefore runs at the two places content actually appears:
+
+1. **A fetched checkout, before it becomes a role or a tool**: `npm run scan:source -- <dir>`
+   exits non-zero on anything but clean.
+2. **Bodies passed by a caller** (a fetcher that does read files): `assessSourceBundle(files)`
+   then `assertImportAllowed(assessment)`; persist the assessment as the evidence.
+
+Promotion to an audited trust status still requires B-22's independent reviewer, and the
+registry must not record a promotion without the assessment attached.
+
 ## Non-claims
 
 This is a review gate, not a sandbox, an antivirus, or a proof of safety. It does not

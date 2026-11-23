@@ -632,9 +632,12 @@ the CLI cases failed until the script existed — 24 tests)
 
 Not claimed
   * No checklist box is checked; `verified` stays null for the checker.
-  * B-20's ingest pipeline does not exist on main yet (worker-c holds it); the seam is
-    `assessSourceBundle` -> `assertImportAllowed`. Promotion to an audited status remains
-    B-22/V6-02-08 with an independent reviewer.
+  * B-20's `ingestCandidates` (merged while this item was in review) fetches metadata only —
+    paths, sizes and SHA-256 manifest rows, no file bodies — so there is no content to scan
+    inside it. The gate therefore runs on the fetched checkout (`npm run scan:source -- <dir>`)
+    or on bodies a caller passes to `assessSourceBundle`; `assertImportAllowed` is the refusal
+    B-22 must call before recording promotion. No schema field was added to B-20's registry:
+    persisting the verdict is B-22's migration, not this item's.
 
 Next unclaimed item: whatever `scripts/claim.py` hands out next (see run report).
 
