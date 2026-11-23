@@ -104,11 +104,11 @@
   {
    "id": "M2-11",
    "desc": "M2-11 restart/cancel/UNCERTAIN reconciliation",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T13:41:50Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "5858f2b",
+   "evidence": "M2-11/V6-06-07: AgentosWorker.Lifecycle settlement policy (proven effect -> succeeded; uncertain + reconcile_only -> incomplete; uncertain + idempotent -> retry with code; cancel -> cancelled only if effect never landed; reconcile_only never retried; exponential backoff capped 1h; invalid report refused) + TaskWorker.cancel/effect/report_effect/finish (forward-only effect proof, fenced settlement through injected :settle, refusal keeps lease, no channel = :settlement_not_wired) + Lifecycle.crash_recovery waits for lease expiry because a dead process holds no token; :temporary children proven not restarted. Tests: mix check 61/61 (12 db-tagged excluded locally); mix test.postgres 11/11 on disposable real PostgreSQL (crashed reconcile_only lease -> incomplete, never re-offered; crashed idempotent lease re-queued once with new generation and stale old lease; cancelled refused without operator request then accepted after it; incomplete settlement never claimable); cargo test --workspace --locked 69 passed; npm test 91/91 (two oauth-cleanup child-process tests hit their own 15s spawn timeout under concurrent build load, pass in isolation at 10.3s/7.6s). Contract: docs/architecture/WORKER-LIFECYCLE.md. No checklist box ticked; no self-approval.",
    "verified": null
   },
   {
