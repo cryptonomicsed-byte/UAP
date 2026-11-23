@@ -12,6 +12,7 @@ import { setCheckins } from '../proactive.js';
 import { createRoom, postToRoom } from './rooms.js';
 import type { ActivityKind } from '../types.js';
 import { Cron } from 'croner';
+import { toolFailure, toolUnreachable } from '../lib/failure.js';
 
 export interface ToolCtx {
   userId: string;
@@ -58,7 +59,7 @@ async function xSearch(a: any): Promise<string> {
   const day = /^\d{4}-\d{2}-\d{2}$/;
   if (day.test(String(a.from_date ?? ''))) tool.from_date = a.from_date;
   if (day.test(String(a.to_date ?? ''))) tool.to_date = a.to_date;
-  const res = await fetch('https://api.x.ai/v1/responses', {
+  const pending = fetch('https://api.x.ai/v1/responses', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.xaiKey}`, 'Content-Type': 'application/json' },
     signal: AbortSignal.timeout(240_000),
@@ -72,8 +73,14 @@ async function xSearch(a: any): Promise<string> {
       ],
     }),
   });
-  if (!res.ok) throw new Error(`X search failed (${res.status}): ${(await res.text()).slice(0, 300)}`);
-  const data: any = await res.json();
+  const res = await pending.catch(() => null);
+  if (!res) throw toolUnreachable('xAI', 'X search');
+  if (!res.ok) {
+    await res.text().catch(() => '');
+    throw toolFailure('xAI', 'X search', res.status);
+  }
+  let data: any;
+  try { data = await res.json(); } catch { throw toolFailure('xAI', 'X search'); }
   const parts: string[] = [];
   const links = new Set<string>();
   for (const item of data.output ?? []) {

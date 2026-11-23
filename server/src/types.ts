@@ -143,7 +143,15 @@ export interface VoiceCallRecord {
 
 export interface VoiceOption { id: string; name: string; gender?: string }
 
-export interface NoticeBody { type: 'notice'; text: string; tone?: 'info' | 'warn' | 'error' }
+export interface NoticeBody {
+  type: 'notice';
+  text: string;
+  tone?: 'info' | 'warn' | 'error';
+  /** Stable failure code for an error notice (see server/src/lib/failure.ts). */
+  code?: string;
+  /** Whether running the same action again can plausibly succeed. */
+  retryable?: boolean;
+}
 
 export type ActivityKind =
   | 'thinking' | 'working' | 'searching_web' | 'reading_web' | 'browsing_web' | 'on_its_computer'

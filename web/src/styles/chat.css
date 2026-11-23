@@ -112,6 +112,7 @@
 }
 .notice.is-warn { background: var(--color-warn-bg); color: var(--color-warn-text); }
 .notice.is-error { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.notice__hint { display: block; margin-top: 4px; font-size: 12px; line-height: 16px; opacity: 0.8; }
 
 /* ---------- tool-call steps: one chip per run, expands to the list ---------- */
 .steps { display: flex; flex-direction: column; align-items: flex-start; max-width: 100%; }

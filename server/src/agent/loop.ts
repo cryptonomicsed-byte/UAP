@@ -9,6 +9,7 @@ import { engineFor } from '../engine.js';
 import { instructionsFor } from './prompt.js';
 import { conversationThread } from './hermes-adapter.js';
 import { activityFor, appToolName, humanizeSlug, policyFor } from './tools.js';
+import { classifyFailure, sanitizeDetail } from '../lib/failure.js';
 
 /**
  * A turn: one message handed to the bot's Hermes engine and streamed back into the conversation.
@@ -258,15 +259,26 @@ async function* sseEvents(body: ReadableStream<Uint8Array>): AsyncGenerator<Stre
   }
 }
 
-async function failureText(res: Response): Promise<string> {
+interface EngineFailure extends Error { status?: number; engineCode?: string }
+
+/** Turn an engine HTTP error into an error carrying what it said, not a raw body. */
+async function engineFailure(res: Response): Promise<EngineFailure> {
   const raw = await res.text().catch(() => '');
+  let message: string | undefined;
+  let engineCode: string | undefined;
   try {
     const j = JSON.parse(raw);
+    engineCode = typeof j?.error?.code === 'string' ? j.error.code : typeof j?.code === 'string' ? j.code : undefined;
     const m = j?.error?.message ?? j?.message ?? j?.error;
-    if (typeof m === 'string' && m) return m;
-  } catch { /* plain text */ }
-  if (res.status === 401 || res.status === 403) return 'the engine did not accept our key';
-  return raw.slice(0, 300) || `the engine answered ${res.status}`;
+    if (typeof m === 'string' && m.trim()) message = m.trim();
+  } catch { /* a non-JSON body tells us nothing beyond its status */ }
+  if (!message) message = res.status === 401 || res.status === 403
+    ? 'the engine did not accept our key'
+    : `the engine answered ${res.status}`;
+  const error: EngineFailure = new Error(message);
+  error.status = res.status;
+  if (engineCode) error.engineCode = engineCode;
+  return error;
 }
 
 /** What a tool's raw result says about how it went. */
@@ -379,7 +391,7 @@ async function runTurn(botId: string, trigger: Trigger) {
         model_options: { reasoning_effort: bot.effort ?? 'medium' },
       }),
     });
-    if (!res.ok || !res.body) throw new Error(await failureText(res));
+    if (!res.ok || !res.body) throw await engineFailure(res);
 
     for await (const ev of sseEvents(res.body)) {
       const d = ev.data;
@@ -462,8 +474,14 @@ async function runTurn(botId: string, trigger: Trigger) {
         }
 
         case 'response.failed':
-        case 'error':
-          throw new Error(d?.response?.error?.message ?? d?.error?.message ?? d?.message ?? 'the agent run failed');
+        case 'error': {
+          const failure: EngineFailure = new Error(d?.response?.error?.message ?? d?.error?.message ?? d?.message ?? 'the agent run failed');
+          const engineCode = d?.response?.error?.code ?? d?.error?.code ?? d?.code;
+          if (typeof engineCode === 'string' && engineCode) failure.engineCode = engineCode;
+          const status = d?.response?.error?.status ?? d?.error?.status;
+          if (typeof status === 'number') failure.status = status;
+          throw failure;
+        }
       }
 
       // A tool result arrives as an item of its own (announced twice: added and done).
@@ -484,8 +502,15 @@ async function runTurn(botId: string, trigger: Trigger) {
     failed = true;
     const stopped = ctrl.signal.aborted;
     closeMessage();
-    appendRow(botId, 'notice', { type: 'notice', text: stopped ? 'Stopped.' : `Something went wrong: ${e?.message ?? e}`, tone: stopped ? 'info' : 'error' });
-    if (!stopped) console.error('[agent]', botId, e);
+    if (stopped) {
+      appendRow(botId, 'notice', { type: 'notice', text: 'Stopped.', tone: 'info' });
+    } else {
+      // A named failure, not "something went wrong": the provider is degraded, the gateway is
+      // down or a setting is wrong, and the transcript says which and whether retrying helps.
+      const view = classifyFailure(e);
+      appendRow(botId, 'notice', { type: 'notice', text: view.text, tone: 'error', code: view.code, retryable: view.retryable });
+      console.error('[agent]', botId, view.code, sanitizeDetail(e?.message) ?? '');
+    }
   } finally {
     closeMessage();
     for (const ref of turn.tools) {

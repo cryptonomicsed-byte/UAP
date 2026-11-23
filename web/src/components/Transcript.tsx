@@ -2,6 +2,7 @@ import { Fragment, memo, useLayoutEffect, useMemo, useRef, useState } from 'reac
 import type { Bot, LiveState, MessageBody, Row, ToolCallBody } from '@shared/types';
 import { BotAvatar, BotAvatarFor } from '../avatar/BotAvatar';
 import { isWaitingForYou } from '../lib/phrases';
+import { noticeView } from '../lib/notices';
 import { clock, dividerLabel, duration } from '../lib/time';
 import { useStore } from '../store';
 import { ThinkingBlock } from './ActivityLine';
@@ -181,7 +182,15 @@ function Steps({ item, active, open: unfinished, extra }: {
 function SystemRow({ row }: { row: Row }) {
   const b = row.body;
   if (b.type === 'event') return <div className="system-event">{b.text}</div>;
-  if (b.type === 'notice') return <div className={`notice is-${b.tone ?? 'info'}`}>{b.text}</div>;
+  if (b.type === 'notice') {
+    const view = noticeView(b);
+    return (
+      <div className={`notice is-${view.tone}`} data-code={view.code ?? undefined}>
+        {view.text}
+        {view.hint && <span className="notice__hint">{view.hint}</span>}
+      </div>
+    );
+  }
   if (b.type === 'card') return <CardRow row={row} />;
   return null;
 }
