@@ -19,6 +19,8 @@ import { removeMemoryFromIndex, searchMemory, syncMemoryIndex } from './search/m
 import { getDeletionRequest, listDeletionRequests, PrivacyDeletionError, requestDeletion, runDeletion, verifyDeletionReceipt } from './privacy/deletion.js';
 import { buildRoleTemplate, RoleTemplateError } from './roles/role-template.js';
 import { reviewRoleTemplates, RoleReviewError } from './roles/role-review.js';
+import { evaluatePromotion, type PromotionSignature, type ReviewerKey, type TrustEvidence, type TrustStatus, type TrustSubject } from './sources/trust.js';
+import { dueReaudits, matchAdvisories, type Advisory, type ReauditSource } from './sources/reaudit.js';
 import { orgo } from './orgo.js';
 import { catalog, connectedToolkits, deleteConnection, disconnect, googleProfile, startConnect, startGoogleLogin, toolkitInfo } from './composio.js';
 import { runRoutine, scheduleRoutine, unscheduleRoutine } from './routines.js';
@@ -502,6 +504,43 @@ api.post('/roles/review', async (c) => {
     if (error instanceof RoleReviewError) return c.json({ error: error.code, message: error.message }, 400);
     throw error;
   }
+});
+
+// ---------- source trust + re-audit (V6-02-08 / V6-02-09) ----------
+// Both endpoints are computations over posted records: the registry (B-20) owns persistence,
+// so this surface answers "would this promotion be accepted" and "what is due now" without
+// pretending a source was stored or promoted. The decision is the same code the writer uses.
+
+api.post('/sources/trust/evaluate', async (c) => {
+  const body = await c.req.json().catch(() => null) as {
+    source?: unknown; target?: unknown; reviewers?: unknown; signature?: unknown; evidence?: unknown; now?: unknown;
+  } | null;
+  if (!body || typeof body.source !== 'object' || body.source === null) return c.json({ error: 'source required' }, 400);
+  if (typeof body.target !== 'string') return c.json({ error: 'target required' }, 400);
+  if (!Array.isArray(body.reviewers)) return c.json({ error: 'reviewers required' }, 400);
+  const decision = evaluatePromotion({
+    source: body.source as TrustSubject,
+    target: body.target as TrustStatus,
+    reviewers: body.reviewers as ReviewerKey[],
+    signature: (body.signature ?? null) as PromotionSignature | null,
+    evidence: body.evidence as TrustEvidence | undefined,
+    now: typeof body.now === 'number' ? body.now : Date.now(),
+  });
+  return c.json({ decision });
+});
+
+api.post('/sources/reaudit/plan', async (c) => {
+  const body = await c.req.json().catch(() => null) as { sources?: unknown; advisories?: unknown; now?: unknown } | null;
+  if (!body || !Array.isArray(body.sources)) return c.json({ error: 'sources required' }, 400);
+  if (body.sources.length > 500) return c.json({ error: 'at most 500 sources per plan' }, 400);
+  const advisories = body.advisories ?? [];
+  if (!Array.isArray(advisories)) return c.json({ error: 'advisories must be an array' }, 400);
+  const now = typeof body.now === 'number' ? body.now : Date.now();
+  const sources = body.sources as ReauditSource[];
+  return c.json({
+    plan: dueReaudits(sources, { now }),
+    alerts: matchAdvisories(sources, advisories as Advisory[], { now }).alerts,
+  });
 });
 
 // ---------- computer ----------
