@@ -261,8 +261,8 @@ defmodule AgentosWorker.QueuePostgresTest do
 
     assert {:ok, %{lease: lease}} = Postgres.claim(ctx.conn, worker, [queued.kind], 60_000)
 
-    assert {:ok, settled} =
-             Postgres.settle(ctx.conn, lease, "incomplete", error: %{"code" => "uncertain_effect"})
+    error = %{"code" => "uncertain_effect"}
+    assert {:ok, settled} = Postgres.settle(ctx.conn, lease, "incomplete", error: error)
 
     assert settled["state"] == "incomplete"
 

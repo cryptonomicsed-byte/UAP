@@ -48,7 +48,11 @@ defmodule AgentosWorker.Queue.Postgres do
         {username, password} = credentials(uri.userinfo)
 
         Keyword.merge(
-          [hostname: uri.host, port: uri.port || 5432, database: String.trim_leading(uri.path, "/")],
+          [
+            hostname: uri.host,
+            port: uri.port || 5432,
+            database: String.trim_leading(uri.path, "/")
+          ],
           opts
         )
         |> maybe_put(:username, username)
