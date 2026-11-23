@@ -123,3 +123,19 @@ jobs:
           name: portable-lease-evidence
           path: artifacts/portable-lease/
           if-no-files-found: warn
+  elixir-worker:
+    # Track F / M2-08: the Elixir worker owns ephemeral task lifecycle (architecture
+    # freeze authority #2). Gate: formatted, warnings-as-errors compile, ExUnit
+    # including the negative paths (duplicate key refused, dead pid not "success",
+    # status reports :down instead of a fake zero).
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.17'
+      - name: Mix check (format + warnings-as-errors + tests)
+        working-directory: elixir/agentos_worker
+        run: mix check

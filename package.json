@@ -14,6 +14,7 @@
     "test": "node --import tsx --test tests/*.test.mjs",
     "test:rust": "cargo test --workspace --locked",
     "test:portable": "bash scripts/portable-lease-check.sh",
+    "test:elixir": "bash scripts/test-elixir.sh",
     "audit:branding": "node scripts/audit-branding.mjs",
     "check": "npm run typecheck && npm test && npm run build && npm run audit:branding && npm run audit:rights",
     "test:browser": "node tests/browser-smoke.mjs",

@@ -1,0 +1,8 @@
+# Build artifacts
+/_build/
+/deps/
+/cover/
+/doc/
+erl_crash.dump
+*.ez
+agentos_worker-*.tar

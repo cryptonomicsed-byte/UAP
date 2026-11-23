@@ -195,3 +195,41 @@ Consequences
 Next
   Execute the checklist against this repo, M0 first (own-tree rights audit + SID
   fixtures), then M1 (Rust policy/lease contracts), recording evidence in this file.
+
+## 2026-11-23 — M2-08 agentos_worker OTP scaffold (worker-b)
+
+Decision
+  The Elixir worker lives at `elixir/agentos_worker` (mix app `:agentos_worker`,
+  target `~> 1.14`, CI on OTP 27 / Elixir 1.17). Scaffold only: one root supervisor
+  owning a unique `Registry` and a `:one_for_one` `DynamicSupervisor`, plus a
+  `status/0` read-out taken from the live supervisors.
+
+Why this shape
+  * Architecture freeze authority #2 gives task lifecycle to this app; keeping the
+    tree to two long-lived children leaves queue claiming/fencing (M2-10), the
+    per-task GenServer + SID/lease binding (M2-09) and reconciliation (M2-11) to
+    the items that own them — the scaffold does not pre-empt their semantics.
+  * Ephemeral tasks are `:temporary` children: a crashed task is not silently
+    restarted by the supervisor; `UNCERTAIN` reconciliation must be explicit.
+  * `status/0` reports `tasks: nil` when the task supervisor is down. An idle
+    worker (0) and a dead worker (`nil`) must not look alike.
+
+Tests (test-first: scaffold/status/teardown suites were written and watched fail
+to compile with `AgentosWorker.Registry.via/1 is undefined` before lib/ existed)
+  * `mix test` → 8/8 pass. Negative paths: duplicate registry key →
+    `{:error, {:already_started, pid}}`; terminating a dead pid →
+    `{:error, :not_found}` (never a silent ok); status with the task supervisor
+    stopped → `task_supervisor: nil, tasks: nil`.
+  * Teardown: terminated task → `:shutdown` DOWN, registry key reclaimed,
+    `active: 0`.
+  * `bash scripts/test-elixir.sh` → `mix check` (format --check-formatted,
+    warnings-as-errors compile, tests) passes; CI job `elixir-worker` added.
+  * Root suites after the change: `npm test` 76/76 pass; `cargo test
+    --workspace --locked` all pass.
+
+Not claimed
+  * No checklist box is checked; M2 gate still needs M2-09..M2-12 and an
+    independent grader.
+
+Next unclaimed item: **M2-11 restart/cancel/UNCERTAIN reconciliation** (M2-09 and
+M2-10 were claimed by other workers).
