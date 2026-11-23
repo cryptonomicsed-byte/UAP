@@ -17,6 +17,7 @@ import { assignEngine, provisionEngine, removeEngine, syncPersona } from './engi
 import { deleteMemory, listMemories, memoryBot } from './engine-memory.js';
 import { removeMemoryFromIndex, searchMemory, syncMemoryIndex } from './search/memory-index.js';
 import { getDeletionRequest, listDeletionRequests, PrivacyDeletionError, requestDeletion, runDeletion, verifyDeletionReceipt } from './privacy/deletion.js';
+import { getLaunchRole, LAUNCH_ROSTER, ROSTER_SCHEMA, rosterDigest } from './roles/launch-roster.js';
 import { orgo } from './orgo.js';
 import { catalog, connectedToolkits, deleteConnection, disconnect, googleProfile, startConnect, startGoogleLogin, toolkitInfo } from './composio.js';
 import { runRoutine, scheduleRoutine, unscheduleRoutine } from './routines.js';
@@ -481,6 +482,20 @@ api.post('/privacy/deletions/:id/retry', async (c) => {
   try {
     return c.json({ request: await runDeletion(request.id) });
   } catch (error) { return deletionFailure(c, error); }
+});
+
+// ---------- role catalog (V6-03-06) ----------
+// The built-in launch roster, served from the same module the platform executes from, so a
+// preview cannot describe a role different from the one that runs.
+
+api.get('/roles/roster', (c) => {
+  return c.json({ schema: ROSTER_SCHEMA, digest: rosterDigest(), roles: LAUNCH_ROSTER });
+});
+
+api.get('/roles/roster/:roleId', (c) => {
+  const role = getLaunchRole(c.req.param('roleId'));
+  if (!role) return c.json({ error: 'role not found' }, 404);
+  return c.json({ role });
 });
 
 // ---------- computer ----------

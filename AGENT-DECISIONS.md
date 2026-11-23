@@ -4,6 +4,57 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+### 2026-11-23 — C-18 (track C): launch roster proposal (V6-03-06) — parked, not claimed
+
+**Proposal, not a claim.** `scripts/claim.py` handed C-18 to worker-a, but the ledger shows
+worker-b claimed it eight minutes earlier (4812ece) — the claim script does not refuse an item
+already claimed by someone else. Rather than overwrite another worker's item, this work is
+preserved on branch `wa/c18-roster-proposal` for comparison/adoption. Nothing here is marked
+done and no checklist box is ticked.
+
+Built
+  * `server/src/roles/launch-roster.ts` — 15 frozen `platform.roles/v1` templates covering the
+    families V6-03-06 names: solution architect; frontend and backend engineers; QA reality
+    checker; authorized security analyst; Rust, Elixir, Julia, Sui Move, Go, Python and Clojure
+    engineers; brand director and editorial UI designer; evidence researcher.
+  * Manifests follow the published RoleTemplate contract (blueprint §23.3) and reuse the Rust
+    kernel's vocabularies: `requested_capabilities` ⊆ `EffectClass` (nine strings from
+    `crates/agentos-policy/src/effect.rs`) and `risk_class` ∈ `RiskTier`.
+  * Role templates **request** capabilities and cannot carry a grant: no `grants`/`tools`/
+    `allowed_tools` field exists, and a test fails if one appears. No launch role requests
+    `money`, `publish`, `production_change` or `clinical_data`; only the security role requests
+    `security_testing`, with `approval_required: true` and the authorized-engagement precondition
+    in its instructions.
+  * Each role states ≥2 expected artifacts, an evaluation suite, ≥1 quality gate and an
+    independent reviewer that is never itself; every `sample_task_plan` step may only produce one
+    of the role's own expected artifacts.
+  * `content_digest` is derived (sha256 over the manifest without the digest field) and
+    `rosterDigest()` over the ordered digests, so an edited role without a version bump is
+    detectable. Roster and every nested list are frozen.
+  * Served from the same module the platform reads: `GET /api/roles/roster` and
+    `GET /api/roles/roster/:roleId` (session required, 404 on unknown id), so a preview cannot
+    describe a role different from the shipped one.
+  * Docs: `docs/architecture/ROLE-CATALOG.md` (shape, invariants, how to add a role, non-claims).
+
+Tests (test-first: `tests/launch-roster.test.mjs` was written and watched fail with
+`ERR_MODULE_NOT_FOUND` for the roster module before it existed, then the HTTP case failed
+until the routes were added)
+  * `node --import tsx --test tests/launch-roster.test.mjs` — 9 passed (family coverage,
+    contract fields, request-not-grant, elevated-effect refusal + security gating, artifacts/
+    gates/independent reviewers, digest drift, immutability, lookup, HTTP list/single/404/401).
+  * `npm test` — 120 tests, 120 pass, 0 fail.
+  * `npm run typecheck` — clean.
+  * `cargo test --workspace --locked` — 69 passed (unchanged; a stale `target/` had baked a
+    relative `CARGO_MANIFEST_DIR` into the portability binary and failed 8 tests until the test
+    target was rebuilt; no source change).
+
+Not claimed
+  * RoleTemplate JSON-Schema validation and Markdown/repo ingestion are C-17; dedupe/conflict
+    and the policy-override guard are C-19; role preview UI and owner-authored roles are V6-03-07.
+  * No grant, tool binding or execution path is created by this catalog.
+
+Next unclaimed item: whatever `scripts/claim.py` hands out next.
+
 ### 2026-11-23 — C-17 (track C): RoleTemplate schema + Markdown persona parser
 
 Board: claimed `C-17`. Checklist boxes are not self-ticked.
@@ -110,6 +161,9 @@ before the modules/routes existed)
   * `tests/privacy-api.test.mjs` — 3 passed against a real server + owner session (search→delete
     propagation, POST run + verified GET, repeated key, 400/404/409).
   * `npm run typecheck` clean.
+
+Committed as `83a96e0` (engine, holders, index, store, migration 7, routes, three test files,
+`docs/architecture/PRIVACY-DELETION.md`).
 
 Not claimed
   * Account-wide erasure across object storage/artifacts, Postgres SID tenant rows, external
