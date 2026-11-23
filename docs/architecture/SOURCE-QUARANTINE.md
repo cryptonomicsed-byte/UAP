@@ -67,8 +67,13 @@ npm run scan:source -- <path...>       # or: node --import tsx scripts/source-qu
 ```
 
 Skips `.git`, `node_modules`, `dist`, `build`, `target`, `.next`, `coverage`. Prints
-`{roots, truncated, assessment}` and exits `0` clean, `2` needs-review (or truncated),
-`3` quarantined, `1` usage/IO error — a pipeline can gate on the exit code alone.
+`{roots, truncated, digest, assessment}` and exits `0` clean, `2` needs-review (or
+truncated), `3` quarantined, `1` usage/IO error — a pipeline can gate on the exit code
+alone. `digest` is `assessmentDigest(assessment)` (SHA-256 over decision, blockers,
+counts and findings): cite it as the reviewer's `evidenceDigest` in B-22's promotion
+record. Note that B-22's `QuarantineRecord` (advisory id + severity) is an *external
+advisory* quarantine; this import verdict is separate evidence and does not masquerade
+as one.
 
 ## Where the gate runs
 

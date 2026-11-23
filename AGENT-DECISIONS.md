@@ -619,13 +619,18 @@ Built
   * `scripts/source-quarantine.mjs` + `npm run scan:source` — scans a checkout, skips
     `.git`/`node_modules`/`dist`/`target`, prints `{roots, truncated, assessment}` and exits
     0/2/3/1. A capped walk can never exit 0 (`truncated` forces 2).
+  * `assessmentDigest()` — SHA-256 over decision/blockers/counts/findings, printed by the CLI
+    so a reviewer can cite one hash as the promotion evidence. B-22's `QuarantineRecord`
+    (advisory id + severity) is an external-advisory quarantine; this verdict is separate and
+    is not dressed up as one.
   * `docs/architecture/SOURCE-QUARANTINE.md` — rule inventory, decision ladder, honesty rules
     and explicit non-claims (review gate, not a sandbox or antivirus).
 
 Tests (test-first: `tests/source-quarantine.test.mjs` was written and watched fail with
 `ERR_MODULE_NOT_FOUND`, then the "api keys" phrase failed on the singular-only pattern, then
-the CLI cases failed until the script existed — 24 tests)
-  * `node --import tsx --test tests/source-quarantine.test.mjs` -> 24 passed.
+the CLI cases failed until the script existed; the digest tests failed until the helper and
+CLI field existed — 26 tests)
+  * `node --import tsx --test tests/source-quarantine.test.mjs` -> 26 passed.
   * Root `npm test` -> 173 passed, 0 failed. `npm run typecheck` clean (no TS5097).
   * `cargo test --workspace --locked` -> all crates ok, 0 failed. `mix check` -> 61 tests,
     0 failures, 12 excluded.

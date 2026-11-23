@@ -401,6 +401,24 @@ function looksBinary(bytes: Uint8Array): boolean {
   return probe.includes(0);
 }
 
+import { createHash } from 'node:crypto';
+
+/**
+ * SHA-256 over the canonical assessment (decision, blockers, counts, findings). A reviewer
+ * cites this digest as the evidence for an import decision; two scans of one bundle produce
+ * the same digest, and any changed finding produces a different one.
+ */
+export function assessmentDigest(assessment: QuarantineAssessment): string {
+  const canonical = JSON.stringify({
+    decision: assessment.decision,
+    importAllowed: assessment.importAllowed,
+    blockers: assessment.blockers,
+    counts: assessment.counts,
+    findings: assessment.findings,
+  });
+  return createHash('sha256').update(canonical).digest('hex');
+}
+
 function decisionFor(findings: readonly ScanFinding[]): QuarantineDecision {
   if (findings.some((finding) => finding.severity === 'block')) return 'quarantined';
   if (findings.some((finding) => finding.severity === 'warn')) return 'needs-review';

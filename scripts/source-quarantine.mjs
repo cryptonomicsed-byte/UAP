@@ -21,7 +21,7 @@ if (roots.length === 0) {
   process.exit(1);
 }
 
-const { assessSourceBundle } = await import('../server/src/sources/quarantine.ts');
+const { assessSourceBundle, assessmentDigest } = await import('../server/src/sources/quarantine.ts');
 
 const files = [];
 let truncated = false;
@@ -55,7 +55,8 @@ try {
 }
 
 const assessment = assessSourceBundle(files);
-process.stdout.write(`${JSON.stringify({ roots: roots.map((root) => path.resolve(root)), truncated, assessment }, null, 2)}\n`);
+const digest = assessmentDigest(assessment);
+process.stdout.write(`${JSON.stringify({ roots: roots.map((root) => path.resolve(root)), truncated, digest, assessment }, null, 2)}\n`);
 const outcome = assessment.decision === 'clean' ? 0 : assessment.decision === 'needs-review' ? 2 : 3;
 // A capped walk did not see the whole source: it can never report "clean".
 process.exit(truncated ? Math.max(outcome, 2) : outcome);
