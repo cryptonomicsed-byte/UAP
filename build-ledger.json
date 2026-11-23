@@ -88,7 +88,7 @@
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T13:13:12Z",
    "done_sha": "bf65033",
-   "evidence": "cd elixir/agentos_worker && mix check -> 26 tests, 0 failures (17 TaskWorker + 9 scaffold), format clean, compile warnings-as-errors; cargo test --workspace --locked PASS (69); npm test on origin/main tree 76/76 PASS. New: AgentosWorker.TaskWorker (named {:task, task_id}, DynamicSupervisor child, lease expiry timer) + AgentosWorker.Lease (uap-lease/1 canonical+Ed25519, reproduces all 5 golden fixture sha256). Negative paths: sid/tenant/task/role_mismatch, bad signature, unknown field, expired, not-yet-valid, epoch 0, invalid SID/digest, incomplete task, duplicate task refused, rebind immutable. Doc: docs/architecture/WORKER-BINDING.md. No checklist box ticked.",
+   "evidence": "cd elixir/agentos_worker && mix check -> 26 tests, 0 failures (17 TaskWorker + 9 scaffold), format clean, compile warnings-as-errors; cargo test --workspace --locked PASS (69); npm test on origin/main tree 76/76 PASS. New: AgentosWorker.TaskWorker (named {:task, task_id}, DynamicSupervisor child, lease expiry timer) + AgentosWorker.Lease (uap-lease/1 canonical+Ed25519, reproduces all 5 golden fixture sha256). Negative paths: sid/tenant/task/role_mismatch, bad signature, unknown field, expired, not-yet-valid, epoch 0, invalid SID/digest, incomplete task, duplicate task refused, rebind immutable. Doc: docs/architecture/WORKER-BINDING.md. No checklist box ticked. | CI main run 45185319664 (576b4ce): all 6 jobs success (elixir-worker incl.); two follow-up fixes: formatter-stable typespec (Elixir 1.17), tests start via supervisor (OTP 27 init-failure exit signal).",
    "verified": null
   },
   {
