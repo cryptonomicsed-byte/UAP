@@ -1,0 +1,22 @@
+{
+ "generatedAt": "2026-11-23T08:17:52.412Z",
+ "source": {
+  "mode": "git-archive",
+  "rev": "HEAD",
+  "sha": "10c2013a71997952460be9bca1e39309a230909e"
+ },
+ "buildCmd": "npm run build",
+ "installCmd": "npm ci --no-audit --no-fund",
+ "outputDir": "server/dist",
+ "runs": 2,
+ "manifests": [
+  "manifest-run1.json",
+  "manifest-run2.json"
+ ],
+ "files": 112,
+ "identical": true,
+ "changed": [],
+ "onlyInFirst": [],
+ "onlyInSecond": [],
+ "compared": 112
+}

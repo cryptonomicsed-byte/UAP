@@ -4,6 +4,44 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+### 2026-11-23 — M0: reproducible build + test baseline (M0-02)
+
+Board: claimed `M0-02` via `scripts/claim.py` before completion (claim 5332437).
+
+Built
+  * `scripts/lib/reproducible.mjs` — `hashTree()` (sorted, content-hash manifest of a
+    build output tree) and `compareTrees()` (names every changed/added/removed file;
+    a boolean would hide the drift).
+  * `scripts/reproducible-build.mjs` — materializes the tracked tree with
+    `git archive <rev>` into N isolated dirs, runs optional install + build commands,
+    hashes the output dir and compares runs file by file. Exit 0 identical, 1 divergence
+    (paths listed), 2 the check could not run (build failed / output missing / empty
+    output dir) — an empty or missing output tree is never counted as reproducible.
+    Receipts: `manifest-runN.json` + `reproducibility-report.json`
+    (`source.sha` binds the run to the built revision).
+  * `npm run repro:build` — the full check for `web/dist` and `server/dist`.
+
+Tests (test-first, watched fail with ERR_MODULE_NOT_FOUND)
+  * `node --import tsx --test tests/reproducible-build.test.mjs` → 6/6 pass.
+    Negative paths proven: a build that writes `Date.now()+Math.random()` → exit 1 with
+    `changed: ["dist/app.js"]`; a build command that exits 3 → exit 2 naming the build;
+    a build that produces no output dir → exit 2 naming the output.
+
+Real runs (two clean `npm ci` + `npm run build` per artifact, isolated git-archive copies)
+  * web/dist → PASS, 2 builds byte-identical, 5 files.
+  * server/dist → PASS, 2 builds byte-identical, 112 files.
+  * Reports committed: `docs/rights/evidence/2026-11-23/reproducible-{web,server}-report.json`.
+  * Test baseline: `npm test` → 76/76 pass (36.1 s) at node v24.22.1,
+    `docs/rights/evidence/2026-11-23/test-baseline.txt`.
+
+Not claimed
+  * Reproducibility is proven for this host/toolchain (node v24.22.1, npm 11.19.1). A
+    cross-host/cross-OS proof and a locked toolchain digest are still track R work.
+
+Next: **M1-03 — `agentos-policy` Rust crate scaffold** (workspace member with a real
+test target; then M1-04 ActionIntent/ResourceScope, M1-05 Grant/Budget/Lease, M1-06
+dispatch validation with negative tests, M1-07 portable lease fixtures).
+
 ### 2026-11-23 — M0: rights/supply-chain gate + architecture freeze
 
 Track: **A (V6-01-06, V6-01-07)** — the first two M0 items.
