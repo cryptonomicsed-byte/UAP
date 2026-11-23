@@ -45,7 +45,7 @@ function deployStatus() {
   return out;
 }
 
-api.get('/api/deploy-status', (c) => c.json(deployStatus()));
+api.get('/deploy-status', (c) => c.json(deployStatus()));
 
 const SHAPES: AvatarShape[] = ['blob', 'pebble', 'bean', 'egg', 'squircle', 'tablet', 'capsule', 'cylinder', 'hex', 'gem', 'crystal', 'wedge', 'shield', 'dome', 'arch', 'cloud', 'teardrop', 'leaf', 'square', 'sparkle', 'clover', 'flower', 'heart', 'house', 'star'];
 const COLORS: AvatarColor[] = ['black', 'brown', 'red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'violet', 'magenta', 'gray'];
