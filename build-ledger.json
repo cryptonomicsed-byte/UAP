@@ -14,11 +14,11 @@
   {
    "id": "M0-02",
    "desc": "M0-02 reproducible build + full test baseline",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "cron-uap-m0",
    "claimed_at": "2026-11-23T08:18:04Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "4b09c3e",
+   "evidence": "scripts/reproducible-build.mjs + lib/reproducible.mjs; tests/reproducible-build.test.mjs 6/6 (nondeterministic=>exit1, failing build=>exit2, empty output=>exit2); web/dist & server/dist 2 clean builds byte-identical; npm test 76/76; reports+baseline docs/rights/evidence/2026-11-23/",
    "verified": null
   },
   {
