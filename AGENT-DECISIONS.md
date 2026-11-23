@@ -4,6 +4,50 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+### 2026-11-23 — D-15 (track D): SID pause / resume / archive
+
+Board: claimed `D-15` (pause/resume/archive). Implemented and tested in one commit;
+the checklist box is not self-ticked.
+
+Built (`server/src/storage/postgres/lifecycle-schema.ts`, migration 11; service
+`server/src/identity/lifecycle.ts`; doc `docs/architecture/SID-LIFECYCLE.md`)
+  * State machine lives in the database (`uap.apply_sid_lifecycle` behind
+    `pause_sid_instance` / `resume_sid_instance` / `archive_sid_instance`), so the
+    API, the worker and an operator on psql cannot disagree about what a transition
+    means. Pause keeps the SID, its identity hash and its installations; resume only
+    accepts `paused`; archive retires live installations (`removed`) and is terminal.
+  * A revoked SID is final: lifecycle refuses it rather than resurrecting it, so
+    revocation authority (D-14) stays the last word.
+  * `uap.sid_lifecycle_events` is an append-only log (one row per transition, `seq`
+    per SID, reason 3–500 chars, actor, epoch ms). `UPDATE`/`DELETE`/`TRUNCATE` raise
+    `42501` for every role including the owner; the app login holds `SELECT` only.
+  * Roles: pause/resume owner|admin|member; archive owner|admin only.
+  * Migration renumbered to **11** during the rebase onto D-14's migration 10.
+    `grantApplicationRole` and `assertApplicationRole` allowlists now carry the
+    three new function names (count 14); `SELECT` added on the log table.
+
+Reasoning (design choices)
+  * Pause is not deletion and not cancellation: an in-flight lease may still settle,
+    because the installation row is untouched. Archive is the destructive act and is
+    the one that removes installations.
+  * A foreign SID returns `sid_missing`, not "forbidden": confirming existence across
+    tenants is itself a leak.
+
+Tests (test-first: the 10 lifecycle tests were written and watched fail —
+`ERR_MODULE_NOT_FOUND` for `server/src/identity/lifecycle.ts` — before the service and
+migration existed)
+  * `node scripts/test-postgres.mjs sid-lifecycle.test.mjs` → **10/10 pass** on real
+    PostgreSQL 16 (disposable harness).
+  * Full `node scripts/test-postgres.mjs` → **15 files, all exit 0**.
+  * `npm test` 96/96; `npm run typecheck` clean (server + web); `cargo test
+    --workspace --locked` 69 passed; `mix check` 61 tests, 0 failures (12 excluded).
+
+Not claimed
+  * Work admission is **not yet wired** to SID status in the queue, worker or tool
+    dispatch (track F/G); until then pause is a state change with audit evidence, not
+    an enforced quota. Stated the same way in the doc.
+  * No UI/route surface (`agents.pause`), no delete/privacy propagation (D-16).
+
 ### 2026-11-23 — M1 (track E): Rust policy kernel, M1-03..M1-07
 
 Board: claimed and closed `M1-03`, `M1-04`, `M1-05`, `M1-06`, `M1-07` in order, each with
