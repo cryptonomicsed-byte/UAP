@@ -256,6 +256,15 @@ CREATE TABLE IF NOT EXISTS memory_index (
 );
 CREATE INDEX IF NOT EXISTS memory_index_lookup ON memory_index(bot_id, term);
 ` },
+  // Hermes adapter lifecycle (V6-07-07): a conversation thread belongs to the issued SID
+  // that owns the agent. Nullable: an agent bound before SID issuance keeps its legacy
+  // bot-id thread until an operator binds it (server/src/agent/hermes-adapter.ts).
+  { id: 8, name: 'hermes-adapter-sid-binding', sql: '', columns: [
+    { table: 'bots', name: 'sid', definition: 'TEXT' },
+  ] },
+  // One SID is one agent instance: two live agents may not claim the same identity.
+  { id: 9, name: 'hermes-adapter-sid-unique', sql: `
+CREATE UNIQUE INDEX IF NOT EXISTS bots_sid_unique ON bots(sid) WHERE sid IS NOT NULL;` },
 ];
 
 export class SqliteMigrationError extends Error {

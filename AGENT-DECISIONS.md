@@ -710,3 +710,52 @@ Not claimed
 
 Next unclaimed item: **B-21 quarantine/secret-scan/injection scan** (B-22
 follows it).
+
+## G-23 — Hermes adapter mapping + conversation lifecycle (worker-c)
+
+Claimed after B-20; G-23 had been claimed and released once by worker-b without code.
+Scope read from CHECKLIST-v6.md track G and BUILD-MAP.md §G: V6-07-01 (map the
+OpenMausBot ACP Hermes adapter onto the real gateway/tool semantics) and V6-07-07
+(model swap and runtime restart must not leak another SID's conversation).
+
+What changed
+  * `server/src/agent/hermes-adapter.ts` — the adapter surface as data
+    (`HERMES_GATEWAY_SURFACE`): one row per ACP/adapter concept, each with the Hermes
+    endpoint/field, a verdict (`mapped` / `partial` / `unsupported`) and the file +
+    literal that prove the call. The test re-reads those files, so a row cannot
+    outlive its code, and `unsupported` rows carry a limitation instead of parity.
+    Notably: session creation is `partial` (we name the conversation; the gateway
+    mints no id), cancellation is `partial` (client abort only; the gateway may still
+    finish the run because `store: true`), gateway-side MCP discovery is `unsupported`.
+  * Conversation threads are now owned by the issued SID:
+    `hq-<sid>-g<generation>` when bound, `hq-<botId>-g<generation>` for agents not yet
+    bound. No model, clock or process state enters the name, so a model swap and a
+    restart both resume the thread, and two SIDs cannot collide on one thread.
+  * `bindConversationSid` records the operator binding and refuses `sid_in_use` and
+    `sid_rebind_requires_new_generation` (rows already exist in this generation).
+  * SQLite migrations 8/9: `bots.sid` (nullable) + unique partial index. Agents bound
+    before issuance keep the legacy thread; no SID is invented for them.
+  * `docs/v6-blueprint/HERMES-ADAPTER-MAPPING.md`: the human table and the
+    not-claimed list (no live-gateway proof of resume/cancel; V6-07-02 needs real
+    provider credentials).
+
+Tests (test-first: `tests/hermes-adapter-lifecycle.test.mjs` was watched fail with
+`ERR_MODULE_NOT_FOUND` before `server/src/agent/hermes-adapter.ts` existed; the
+restart case then ran the same SQLite file in two separate node processes)
+  * 4/4 — mapping evidence re-check; SID/legacy thread derivation and refusals;
+    two-process model-swap + restart isolation against a fixture gateway (request log
+    exactly `hq-sid_alpha-g1`, `hq-sid_beta-g1`, `hq-sid_alpha-g1`, each under its own
+    engine key, no transcript row crossing agents); binding refusals.
+  * `npm test` → 223/223 (includes the new file).
+  * `node --import tsx --test tests/sqlite-migrations.test.mjs` → 12/12.
+  * `npm run typecheck` clean; `npm run build` + `audit:branding` + `audit:rights` pass;
+    `cargo test --workspace --locked` all suites ok; `mix test` 61 tests, 0 failures
+    (12 excluded).
+
+Not claimed
+  * No live-Hermes-gateway run: resume and cancellation stay `partial` until one is
+    recorded; V6-07-02 (tool/delegation/MCP discovery against permitted providers) is
+    untouched.
+  * No checklist box self-ticked; checker verifies.
+
+Next unclaimed item: **G-24 policy-authorized tool intents**.

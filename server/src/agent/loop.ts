@@ -7,6 +7,7 @@ import { toolkitInfo } from '../composio.js';
 import { screenForWork } from '../computer.js';
 import { engineFor } from '../engine.js';
 import { instructionsFor } from './prompt.js';
+import { conversationThread } from './hermes-adapter.js';
 import { activityFor, appToolName, humanizeSlug, policyFor } from './tools.js';
 
 /**
@@ -370,8 +371,9 @@ async function runTurn(botId: string, trigger: Trigger) {
         model: 'hermes-agent',
         input,
         instructions: await instructionsFor(userId, botId),
-        // One engine-side thread per conversation; "New chat" bumps the generation and starts another.
-        conversation: `hq-${botId}-g${bot.generation}`,
+        // One engine-side thread per conversation, owned by the SID when the agent has one;
+        // a model swap and a restart both resume it, another SID can never share it.
+        conversation: conversationThread({ botId, sid: bot.sid ?? null, generation: bot.generation }).thread,
         stream: true,
         store: true,
         model_options: { reasoning_effort: bot.effort ?? 'medium' },
