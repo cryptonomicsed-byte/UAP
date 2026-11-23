@@ -6,6 +6,7 @@ import { RUNTIME_BOUNDARY_MIGRATION } from './runtime-boundary-schema.js';
 import { OUTBOX_MIGRATION } from './outbox-schema.js';
 import { IDENTITY_MIGRATION } from './identity-schema.js';
 import { SID_AUTHORITY_MIGRATION } from './sid-authority-schema.js';
+import { LIFECYCLE_MIGRATION } from './lifecycle-schema.js';
 /** Embedded migrations ship unchanged with the compiled service. Never edit an applied entry. */
 export interface PostgresMigration {
   id: number;
@@ -222,4 +223,4 @@ CREATE POLICY llm_items_writer ON uap.llm_items FOR ALL USING (
 );
 REVOKE ALL ON uap.conversations,uap.message_rows,uap.llm_items FROM PUBLIC;
 `,
-}, SESSION_MIGRATION, HISTORY_IMPORT_MIGRATION, RUNTIME_MIGRATION, RUNTIME_TRANSITIONS_MIGRATION, RUNTIME_BOUNDARY_MIGRATION, OUTBOX_MIGRATION, IDENTITY_MIGRATION, SID_AUTHORITY_MIGRATION];
+}, SESSION_MIGRATION, HISTORY_IMPORT_MIGRATION, RUNTIME_MIGRATION, RUNTIME_TRANSITIONS_MIGRATION, RUNTIME_BOUNDARY_MIGRATION, OUTBOX_MIGRATION, IDENTITY_MIGRATION, SID_AUTHORITY_MIGRATION, LIFECYCLE_MIGRATION];

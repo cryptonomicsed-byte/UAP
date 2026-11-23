@@ -63,7 +63,7 @@ export async function assertApplicationRole(client: PoolClient): Promise<void> {
               SELECT 1 FROM pg_proc function
               JOIN pg_namespace namespace ON namespace.oid=function.pronamespace
               WHERE namespace.nspname='uap'
-                AND function.proname<>ALL(ARRAY['has_org_role','authenticate_session','revoke_session','enqueue_task_job','request_task_job_cancellation','resolve_task_approval','issue_sid_instance','record_sid_model_selection','register_sid_issuer','set_sid_issuer_status','record_sid_credential','revoke_sid_identity','request_sid_transfer','accept_sid_transfer'])
+                AND function.proname<>ALL(ARRAY['has_org_role','authenticate_session','revoke_session','enqueue_task_job','request_task_job_cancellation','resolve_task_approval','issue_sid_instance','record_sid_model_selection','register_sid_issuer','set_sid_issuer_status','record_sid_credential','revoke_sid_identity','request_sid_transfer','accept_sid_transfer','pause_sid_instance','resume_sid_instance','archive_sid_instance'])
                 AND has_function_privilege(candidate.oid,function.oid,'EXECUTE')
             ))
       )
