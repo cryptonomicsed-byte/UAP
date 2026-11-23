@@ -45,10 +45,12 @@ function isolatedEnv(dir, extra = {}) {
 }
 
 function runScript(env, script, timeout = 30000) {
+  return spawnNode(env, ['--import', 'tsx', '--input-type=module', '-e', script], timeout);
+}
+
+function spawnNode(env, args, timeout = 30000) {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', script], {
-      cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], timeout,
-    });
+    const child = spawn(process.execPath, args, { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], timeout });
     let output = '';
     child.stdout.on('data', (chunk) => { output += chunk; });
     child.stderr.on('data', (chunk) => { output += chunk; });
@@ -308,7 +310,7 @@ test('binding a SID is refused when it would re-label a conversation that alread
       db.prepare('INSERT INTO bots(id,user_id,name,created_at,updated_at) VALUES (?,?,?,?,?)').run('bot_other', 'owner', 'Other', 1, 1);
 
       const bound = bindConversationSid('bot_alpha', 'sid_alpha');
-      assert.deepEqual(bound, { botId: 'bot_alpha', sid: 'sid_alpha', thread: 'hq-sid_alpha-g1' });
+      assert.deepEqual(bound, { botId: 'bot_alpha', sid: 'sid_alpha', thread: 'hq-sid_alpha-g1', applied: true });
       assert.equal(db.prepare('SELECT sid FROM bots WHERE id=?').get('bot_alpha').sid, 'sid_alpha');
 
       // The same SID cannot own two live agents.
@@ -324,10 +326,29 @@ test('binding a SID is refused when it would re-label a conversation that alread
       assert.throws(() => bindConversationSid('bot_missing', 'sid_missing'), (error) => error.code === 'bot_missing');
       assert.throws(() => bindConversationSid('bot_alpha', 'not-a-sid'), (error) => error.code === 'sid_invalid');
 
+      // A dry run reports the same refusals and writes nothing.
+      assert.throws(() => bindConversationSid('bot_other', 'sid_alpha', { apply: false }), (error) => error.code === 'sid_in_use');
+      assert.deepEqual(bindConversationSid('bot_other', 'sid_other', { apply: false }),
+        { botId: 'bot_other', sid: 'sid_other', thread: 'hq-sid_other-g1', applied: false });
+      assert.equal(db.prepare('SELECT sid FROM bots WHERE id=?').get('bot_other').sid, null, 'dry run leaves the binding unset');
+
       db.prepare('UPDATE bots SET generation=2 WHERE id=?').run('bot_alpha');
       assert.deepEqual(conversationThread({ botId: 'bot_alpha', sid: 'sid_alpha', generation: 2 }).thread, 'hq-sid_alpha-g2');
       console.log('binding ok');
     `;
-    await runScript(isolatedEnv(dir), script);
+    const env = isolatedEnv(dir);
+    await runScript(env, script);
+
+    // The operator command runs the same checks: dry run first, then --apply.
+    const dry = await spawnNode(env, ['--import', 'tsx', 'scripts/bind-agent-sid.mjs', '--bot', 'bot_other', '--sid', 'sid_other']);
+    assert.match(dry, /"applied":false/);
+    const applied = await spawnNode(env, ['--import', 'tsx', 'scripts/bind-agent-sid.mjs', '--bot', 'bot_other', '--sid', 'sid_other', '--apply']);
+    assert.match(applied, /"applied":true/);
+    const db = new Database(env.DB_PATH, { readonly: true });
+    try {
+      assert.equal(db.prepare('SELECT sid FROM bots WHERE id=?').get('bot_other').sid, 'sid_other');
+    } finally {
+      db.close();
+    }
   });
 });

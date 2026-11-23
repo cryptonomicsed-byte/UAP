@@ -42,7 +42,9 @@ pure function of the SID and the chat generation:
 - **Rebinding** — `bindConversationSid` refuses to put a second agent on a SID already
   in use (`sid_in_use`) and refuses to re-label a generation that already has rows
   (`sid_rebind_requires_new_generation`); open a new chat first. Agents bound before
-  SID issuance keep the legacy bot-id thread; no SID is invented for them.
+  SID issuance keep the legacy bot-id thread; no SID is invented for them. The operator
+  command is `npm run agents:bind-sid -- --bot <botId> --sid <sid_slug>` (dry run by
+  default; `--apply` writes `bots.sid`).
 
 The restart case is tested with one SQLite database opened by two separate node
 processes and a fixture gateway that echoes the conversation name it was given: the

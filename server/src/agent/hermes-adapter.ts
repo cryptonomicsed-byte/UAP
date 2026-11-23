@@ -237,7 +237,12 @@ export function conversationThread(input: { botId: string; sid?: string | null; 
  *    (`sid_rebind_requires_new_generation`); open a new chat first, so old rows keep
  *    the thread they were written under.
  */
-export function bindConversationSid(botId: string, sid: string): { botId: string; sid: string; thread: string } {
+export function bindConversationSid(
+  botId: string,
+  sid: string,
+  options: { apply?: boolean } = {},
+): { botId: string; sid: string; thread: string; applied: boolean } {
+  const apply = options.apply ?? true;
   const requested = conversationThread({ botId, sid, generation: 1 }); // grammar first: no DB writes on a bad id
   if (requested.scopedBy !== 'sid') throw new AdapterIdentityError('sid_invalid', 'sid must match sid_<slug>.');
   const bot = db.prepare('SELECT id, sid, generation FROM bots WHERE id=?').get(botId) as
@@ -246,7 +251,7 @@ export function bindConversationSid(botId: string, sid: string): { botId: string
   if (!bot) throw new AdapterIdentityError('bot_missing', `No agent ${botId}.`);
 
   if (bot.sid === sid) {
-    return { botId, sid, thread: conversationThread({ botId, sid, generation: bot.generation }).thread };
+    return { botId, sid, thread: conversationThread({ botId, sid, generation: bot.generation }).thread, applied: false };
   }
 
   const rows = (db.prepare('SELECT COUNT(*) AS n FROM rows WHERE bot_id=? AND generation=?').get(botId, bot.generation) as { n: number }).n;
@@ -259,6 +264,6 @@ export function bindConversationSid(botId: string, sid: string): { botId: string
   const other = db.prepare('SELECT id FROM bots WHERE sid=? AND id<>?').get(sid, botId) as { id: string } | undefined;
   if (other) throw new AdapterIdentityError('sid_in_use', `${sid} is already bound to ${other.id}.`);
 
-  db.prepare('UPDATE bots SET sid=?, updated_at=? WHERE id=?').run(sid, now(), botId);
-  return { botId, sid, thread: conversationThread({ botId, sid, generation: bot.generation }).thread };
+  if (apply) db.prepare('UPDATE bots SET sid=?, updated_at=? WHERE id=?').run(sid, now(), botId);
+  return { botId, sid, thread: conversationThread({ botId, sid, generation: bot.generation }).thread, applied: apply };
 }

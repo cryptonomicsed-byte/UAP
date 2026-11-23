@@ -759,3 +759,9 @@ Not claimed
   * No checklist box self-ticked; checker verifies.
 
 Next unclaimed item: **G-24 policy-authorized tool intents**.
+
+Follow-up in the same item (worker-c): `bindConversationSid` gained a dry-run mode and an
+operator command `npm run agents:bind-sid -- --bot <id> --sid <sid_slug> [--apply]`
+(`scripts/bind-agent-sid.mjs`), so the binding has a real caller instead of an exported
+function only tests reach. Dry run runs every check and writes nothing; refusals exit 1
+with their code. Test extended: dry run leaves `bots.sid` unset, `--apply` writes it.
