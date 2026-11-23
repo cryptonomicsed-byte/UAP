@@ -4,6 +4,74 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+### 2026-11-23 — C-17 (track C): RoleTemplate schema + Markdown persona parser
+
+Board: claimed `C-17`. Checklist boxes are not self-ticked.
+
+Built
+  * `server/src/roles/role-template.ts` — the V6-03-01 schema: `id` derived from
+    publisher + slug (stable across versions, another source gets another id),
+    `version`, `sourceSha` (40/64 lower-case hex git commit), `sourcePath`
+    (relative `.md`), `title`, `riskClass` (low|medium|high|critical), `rights`
+    (SPDX licence or NOASSERTION, http(s) source URL, attribution; derived
+    `status: declared|unverified`, never silently "cleared"), `instructions`,
+    `requestedTools` (sorted, deduplicated, names only) and a sha256 `digest`
+    over canonical JSON of every bound field. `verifyRoleTemplate` recomputes
+    the digest from the stored object, so a template is never trusted on the
+    strength of the store. `assertVersionImmutable` refuses a changed digest at
+    an existing version (`version_immutable`), an older version
+    (`version_regression`) and a cross-id write (`id_mismatch`).
+  * `server/src/roles/persona-parser.ts` — the V6-03-02 parser: YAML
+    frontmatter + H1 fallback title, byte-exact `body` and `canonicalMarkdown`
+    for provenance, tool declarations split/unwrapped/normalised into
+    `requestedTools`, non-name declarations kept in
+    `unparsedToolDeclarations` instead of dropped, and `permissions` / `grants`
+    / `capabilities` / `authorization` / `allow` recorded in
+    `ignoredAuthorityFields` — visible, never applied. Repository digest is
+    sha256 over `path\0content\0` in path order; duplicate paths, traversal,
+    absolute/non-`.md` paths, NUL bytes, invalid YAML and >1 MiB files are
+    refused with named codes.
+  * `roleTemplateRef` projects a template to the `SidRoleTemplate` shape that
+    D-13/D-14 already persist — id, version, digest only; instructions and
+    requested tools never travel into the identity record.
+  * `docs/architecture/ROLE-TEMPLATES.md` — schema table, digest rules, parser
+    guarantees and the explicit non-claims (no registry write, no dedupe, no
+    policy-override guard, no grants).
+
+Decisions taken without asking
+  * A slug that looks like a path (`../etc/passwd`) is refused, not normalised
+    into a different role id: the id is the handle grantees cite.
+  * Reviewed text is trimmed before binding, so surrounding whitespace cannot
+    mint a second digest for the same reviewed value; a real edit still does.
+  * Template input drops unknown properties and always recomputes the digest,
+    so an over-posted `grants` cannot ride along, and a caller cannot supply a
+    digest that does not match the fields.
+
+Tests (test-first, negative paths first: both files were watched failing with
+`ERR_MODULE_NOT_FOUND` before `server/src/roles/` existed; two expectations
+were corrected in GREEN — a title-with-trailing-space variant is a
+normalisation, not a new binding, and a higher version is an upgrade, not a
+regression)
+  * `tests/role-template.test.mjs` 8/8 — id stability/fork isolation, digest
+    key-order independence and coverage of every field, tamper refusal,
+    14 invalid-input codes, no authority fields, honest rights status, version
+    immutability, SID reference projection.
+  * `tests/persona-parser.test.mjs` 6/6 — byte-exact body, H1/title refusal,
+    tool requests vs ignored authority fields, path/digest determinism,
+    traversal/NUL/size/YAML refusals, parser → template round-trip.
+  * Full: `npm test` 109 passed (0 failed); `npm run typecheck` clean;
+    `npm run build`, `audit:branding`, `audit:rights` pass;
+    `cargo test --workspace --locked` 69 passed; `mix test` 61 tests, 0
+    failures (12 excluded).
+
+Not claimed
+  * No persistence: a registry writer into `uap.role_template_versions` that
+    calls `assertVersionImmutable` first belongs to C-18/C-19.
+  * Dedupe/conflict resolution, policy-override guard and Hermes role
+    translation (V6-03-05/09/10) remain open (C-19).
+
+Next unclaimed item: C-18 (launch roster) per the board.
+
 ### 2026-11-23 — D-15 (track D): SID pause / resume / archive
 
 Board: claimed `D-15` (pause/resume/archive). Implemented and tested in one commit;
