@@ -244,9 +244,9 @@
   {
    "id": "G-25",
    "desc": "G-25 progressive per-role skill context + token budgets",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-a",
+   "claimed_at": "2026-11-23T17:52:53Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
