@@ -194,11 +194,11 @@
   {
    "id": "B-20",
    "desc": "B-20 source registry + ingestion pipeline",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T15:57:56Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "ccae5d7",
+   "evidence": "server/src/sources/ (candidates, normalize, access, pin, manifest, license, classify, tenant-policy, ingest) + migration 12 source_repositories/source_ingest_runs + operator CLI scripts/sources-ingest.mjs; tests/source-registry.test.mjs 21/21 (RED: ERR_MODULE_NOT_FOUND first); npm run test:postgres -- source-registry.test.mjs PASS on disposable PG16 (catalog read-only for app role, promotion without reviewer signature blocked by CHECK, re-ingest preserves trust, runs append-only); full test:postgres all 16 files exit 0; live smoke octocat/Hello-World pinned 7fd1a60 + manifest 65edea\u2026b92b independently recomputed identical; npm test 169/170 (known oauth-cleanup 15s spawn flake, 6/6 in isolation); typecheck/build/audit:branding/audit:rights pass; cargo 5 passed; mix 61 tests 0 failures",
    "verified": null
   },
   {
