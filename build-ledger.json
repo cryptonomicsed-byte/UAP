@@ -164,11 +164,11 @@
   {
    "id": "C-17",
    "desc": "C-17 RoleTemplate schema + Markdown parser",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T15:10:34Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "f1a1ef1",
+   "evidence": "tests/role-template.test.mjs 8/8 + tests/persona-parser.test.mjs 6/6 (test-first: both watched RED with ERR_MODULE_NOT_FOUND before server/src/roles/ existed); npm test 110 passed/0 failed (x2); npm run typecheck clean; npm run build + audit:branding + audit:rights pass; cargo test --workspace --locked 69 passed; mix test 61 tests 0 failures (12 excluded); docs/architecture/ROLE-TEMPLATES.md",
    "verified": null
   },
   {
