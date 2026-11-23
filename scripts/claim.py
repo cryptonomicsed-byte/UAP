@@ -4,6 +4,8 @@ Usage: python3 scripts/claim.py <worker-id>
 Actions: claims the first pending item (or first 'rework' item if none pending),
          writes build-ledger.json under flock, commits + pushes the claim.
 Prints: CLAIM <id> <desc> | NOTHING <reason>
+Exit:   0 = claimed, or nothing to claim (incl. stale tree); 3 = claim lost
+        (push failed; the ledger was rolled back locally)
 """
 import json, subprocess, sys, fcntl, time, os
 U = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,12 +44,26 @@ with open(LOCK, "w") as lf:
     pick["status"] = "claimed"; pick["claimed_by"] = worker
     pick["claimed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     json.dump(d, open(f"{U}/build-ledger.json", "w"), indent=1)
+    base = sh(f"cd {U} && git rev-parse HEAD").stdout.strip()
     psh = sh(f"cd {U} && git add build-ledger.json && "
              f"git -c user.name=build-agent -c user.email=build@uap.local "
              f"commit -q -m 'claim {pick['id']} by {worker}' && git push -q origin HEAD")
     if psh.returncode != 0:
-        sh(f"cd {U} && git reset -q --hard HEAD~1 2>/dev/null || git checkout -q -- build-ledger.json")
-        print(f"NOTHING push-failed ({psh.stderr.strip()[:120]})")
-        sys.exit(0)
+        # The push may have landed even though the command reported failure
+        # (hook noise, transport hiccup). Trust the remote, not the exit code.
+        head = sh(f"cd {U} && git rev-parse HEAD").stdout.strip()
+        remote = sh(f"cd {U} && git ls-remote origin refs/heads/main").stdout.split()
+        if head and head != base and remote and remote[0] == head:
+            print(f"CLAIM {pick['id']} {pick['desc']}")
+            sys.exit(0)
+        # Roll back OUR claim only. This script runs in the shared clone, where
+        # every worker keeps tracked edits: a hard reset would erase work that is
+        # not ours, so undo the commit softly and restore that one file.
+        if head and head != base:
+            sh(f"cd {U} && git reset -q --soft {base}")
+        sh(f"cd {U} && git checkout -q HEAD -- build-ledger.json")
+        detail = " ".join(psh.stderr.split())[:120]
+        print(f"NOTHING push-failed ({detail})")
+        sys.exit(3)
     print(f"CLAIM {pick['id']} {pick['desc']}")
 
