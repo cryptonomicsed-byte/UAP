@@ -22,6 +22,7 @@ pub mod approval;
 pub mod budget;
 pub mod canonical;
 pub mod effect;
+pub mod fixtures;
 pub mod grant;
 pub mod ids;
 pub mod intent;

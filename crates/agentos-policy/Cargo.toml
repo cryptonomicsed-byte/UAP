@@ -7,6 +7,15 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 
+[[bin]]
+name = "verify-lease"
+path = "src/bin/verify_lease.rs"
+
+[[bin]]
+name = "mint-fixtures"
+path = "src/bin/mint_fixtures.rs"
+required-features = []
+
 [dependencies]
 ed25519-dalek = "2.2"
 serde = { version = "1", features = ["derive"] }

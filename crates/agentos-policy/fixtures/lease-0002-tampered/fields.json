@@ -1,0 +1,17 @@
+{
+  "v": "uap-lease/1",
+  "lease_id": "lease-0001",
+  "task_id": "task-0001",
+  "tenant": "acme",
+  "sid": "sid_0a1b2c3d",
+  "role_digest": "ff03005343c8a1b22827eae5f5d4088e2a5808a6ef0e0ed8baae52de8457e713",
+  "grant_id": "grant-0001",
+  "epoch": 3,
+  "issued_at_ms": 1700000000000,
+  "expires_at_ms": 1700000060001,
+  "revocation": {
+    "list": "tenant-acme-revocations",
+    "version": 12
+  },
+  "nonce": "467eb25e5a77d6021dd49cf17ad2a7759a8fec421dea31644d3472344d353f61"
+}

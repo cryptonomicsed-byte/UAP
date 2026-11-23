@@ -1,0 +1,32 @@
+# portable lease verification receipt — 2026-11-23
+# host: Linux 6.8.0-147-generic
+# rustc: rustc 1.99.1 (58cf8f9c3 2026-10-13)
+# go: go version go1.22.2 linux/amd64
+# elixir: Elixir 1.14.0 (compiled with Erlang/OTP 24)
+# python: cryptography 50.0.2
+
+verify-lease lease-0001: expect=valid got=valid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=ok
+verify-lease lease-0001: expect=valid got=valid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=ok
+verify-lease lease-0001: expect=valid got=valid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=ok
+verify-lease lease-0001: expect=valid got=valid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=ok
+lease-0001 expect=valid langs=4 sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972
+verify-lease lease-0002-tampered: expect=invalid got=invalid sha256=a63ba24093f562c437465c69e4b0ee82f4a6f782d9f9cbf287572f24bc05663d reason=signature: signature does not verify
+verify-lease lease-0002-tampered: expect=invalid got=invalid sha256=a63ba24093f562c437465c69e4b0ee82f4a6f782d9f9cbf287572f24bc05663d reason=signature does not verify
+verify-lease lease-0002-tampered: expect=invalid got=invalid sha256=a63ba24093f562c437465c69e4b0ee82f4a6f782d9f9cbf287572f24bc05663d reason=signature does not verify
+verify-lease lease-0002-tampered: expect=invalid got=invalid sha256=a63ba24093f562c437465c69e4b0ee82f4a6f782d9f9cbf287572f24bc05663d reason=signature does not verify
+lease-0002-tampered expect=invalid langs=4 sha256=a63ba24093f562c437465c69e4b0ee82f4a6f782d9f9cbf287572f24bc05663d
+verify-lease lease-0003-foreign: expect=valid got=valid sha256=705f481d78f18437feb1d22b135321ea6c677a656e6eb372c12c66ee125d4fa9 reason=ok
+verify-lease lease-0003-foreign: expect=valid got=valid sha256=705f481d78f18437feb1d22b135321ea6c677a656e6eb372c12c66ee125d4fa9 reason=ok
+verify-lease lease-0003-foreign: expect=valid got=valid sha256=705f481d78f18437feb1d22b135321ea6c677a656e6eb372c12c66ee125d4fa9 reason=ok
+verify-lease lease-0003-foreign: expect=valid got=valid sha256=705f481d78f18437feb1d22b135321ea6c677a656e6eb372c12c66ee125d4fa9 reason=ok
+lease-0003-foreign expect=valid langs=4 sha256=705f481d78f18437feb1d22b135321ea6c677a656e6eb372c12c66ee125d4fa9
+verify-lease lease-0004-badsig: expect=invalid got=invalid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=signature: signature does not verify
+verify-lease lease-0004-badsig: expect=invalid got=invalid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=signature does not verify
+verify-lease lease-0004-badsig: expect=invalid got=invalid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=signature does not verify
+verify-lease lease-0004-badsig: expect=invalid got=invalid sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972 reason=signature does not verify
+lease-0004-badsig expect=invalid langs=4 sha256=5b0671207bd6a46c08106a484e80241b10a10990bd81f02cd6e0d8c20a218972
+verify-lease lease-0005-unknown-field: expect=invalid got=invalid sha256=- reason=schema: json: unknown field `admin`, expected one of `v`, `lease_id`, `task_id`, `tenant`, `sid`, `role_digest`, `grant_id`, `epoch`, `issued_at_ms`, `expires_at_ms`, `revocation`, `nonce` at line 17 column 9
+verify-lease lease-0005-unknown-field: expect=invalid got=invalid sha256=- reason=schema: keys are ['admin', 'epoch', 'expires_at_ms', 'grant_id', 'issued_at_ms', 'lease_id', 'nonce', 'revocation', 'role_digest', 'sid', 'task_id', 'tenant', 'v']
+verify-lease lease-0005-unknown-field: expect=invalid got=invalid sha256=- reason=schema: json: unknown field "admin"
+verify-lease lease-0005-unknown-field: expect=invalid got=invalid sha256=- reason=schema: booleans are not part of the lease schema
+lease-0005-unknown-field expect=invalid langs=4 sha256=

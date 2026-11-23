@@ -97,3 +97,29 @@ jobs:
       - run: cargo clippy --workspace --all-targets -- -D warnings
       - run: cargo test --workspace --locked
       - run: cargo test --workspace --release --locked
+  policy-portability:
+    # V6-05-09: the lease contract must verify identically in Rust, Elixir, Go and
+    # Python. A missing toolchain fails here (REQUIRE_ALL=1) instead of being skipped:
+    # a portability claim tested in one language is not a portability claim.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.17'
+      - run: python3 -m pip install --quiet 'cryptography>=42'
+      - name: Verify every golden fixture in four languages
+        run: REQUIRE_ALL=1 bash scripts/portable-lease-check.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portable-lease-evidence
+          path: artifacts/portable-lease/
+          if-no-files-found: warn
