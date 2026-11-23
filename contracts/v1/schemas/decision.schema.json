@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uap.local/contracts/v1/decision.schema.json",
+  "title": "UAP authorization decision (uap-authorize/1)",
+  "description": "The kernel's answer for one bundle. `allowed` plus a stable `code` is always present; a refusal carries the audit sequence and the intent's identifying fields, an allow carries the advisory record and a one-use permit. A client must treat anything that is not `allowed: true` as a refusal — there is no third state.",
+  "x-uap-domain": "uap-authorize/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["v", "allowed", "code"],
+  "properties": {
+    "v": { "const": "uap-authorize/1" },
+    "allowed": { "type": "boolean" },
+    "code": {
+      "description": "`allow`, `invalid-request`, or one of the kernel's 32 stable denial codes.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,63}$"
+    },
+    "detail": {
+      "description": "Present only with `invalid-request`: what failed to parse. Never free text on a policy refusal.",
+      "type": "string"
+    },
+    "intent_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "params_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "tenant": { "type": "string" },
+    "sid": { "type": "string" },
+    "task_id": { "type": "string" },
+    "tool": { "type": "string" },
+    "effect": { "type": "string" },
+    "risk": { "type": "string" },
+    "target": { "type": "string" },
+    "audit_seq": { "type": "integer", "minimum": 0 },
+    "advisory": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["model", "verdict", "confidence_bp"],
+      "properties": {
+        "model": { "type": "string" },
+        "verdict": { "enum": ["allow", "deny", "uncertain"] },
+        "confidence_bp": { "type": "integer", "minimum": 0, "maximum": 10000 }
+      }
+    },
+    "permit": { "$ref": "#/$defs/permit" }
+  },
+  "$defs": {
+    "permit": {
+      "title": "ActionPermit (embedded, no wire version of its own)",
+      "description": "A one-use permission to execute exactly one intent. Not a bearer token: an executor re-computes `intent_digest` from the arguments it is about to run and refuses a permit presented with different ones.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["permit_id", "intent_id", "intent_digest", "effect", "expires_at_ms"],
+      "properties": {
+        "permit_id": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "intent_id": { "type": "string" },
+        "intent_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "effect": { "type": "string" },
+        "expires_at_ms": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

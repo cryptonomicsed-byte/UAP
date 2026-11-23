@@ -24,6 +24,14 @@ name = "mint-fixtures"
 path = "src/bin/mint_fixtures.rs"
 required-features = []
 
+[[bin]]
+name = "contract-check"
+path = "src/bin/contract_check.rs"
+
+[[bin]]
+name = "mint-contract-fixtures"
+path = "src/bin/mint_contract_fixtures.rs"
+
 [dependencies]
 ed25519-dalek = "2.2"
 serde = { version = "1", features = ["derive"] }

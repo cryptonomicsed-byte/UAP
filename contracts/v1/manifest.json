@@ -1,0 +1,174 @@
+{
+  "v": "uap-contracts/1",
+  "revision": 1,
+  "languages": [
+    "rust",
+    "elixir",
+    "go",
+    "python",
+    "julia",
+    "clojure",
+    "move",
+    "typescript"
+  ],
+  "contracts": [
+    {
+      "id": "intent",
+      "domain": "uap-intent/1",
+      "kind": "unsigned",
+      "producer": "crates/agentos-policy/src/intent.rs",
+      "schema": "contracts/v1/schemas/intent.schema.json",
+      "fixtures": "contracts/v1/fixtures/intent",
+      "consumers": [
+        {
+          "lang": "rust",
+          "status": "implemented",
+          "path": "crates/agentos-policy/src/contracts.rs",
+          "note": "reference producer and fixture verifier"
+        },
+        {
+          "lang": "python",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/python/intent.py",
+          "note": "Hermes/tool SDK adapter builds intents; must reproduce the digest (V6-08-06)"
+        },
+        {
+          "lang": "clojure",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/clojure/intent.clj",
+          "note": "symbolic reasoning reads intents and may never mint a grant (V6-08-07)"
+        }
+      ]
+    },
+    {
+      "id": "grant",
+      "domain": "uap-grant/1",
+      "kind": "signed",
+      "producer": "crates/agentos-policy/src/grant.rs",
+      "schema": "contracts/v1/schemas/grant.schema.json",
+      "fixtures": "contracts/v1/fixtures/grant",
+      "consumers": [
+        {
+          "lang": "rust",
+          "status": "implemented",
+          "path": "crates/agentos-policy/src/contracts.rs",
+          "note": "reference producer and fixture verifier"
+        },
+        {
+          "lang": "clojure",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/clojure/grant.clj",
+          "note": "reasons over grants read-only; minting stays with the issuer service (V6-08-07)"
+        }
+      ]
+    },
+    {
+      "id": "lease",
+      "domain": "uap-lease/1",
+      "kind": "signed",
+      "producer": "crates/agentos-policy/src/lease.rs",
+      "schema": "contracts/v1/schemas/lease.schema.json",
+      "fixtures": "crates/agentos-policy/fixtures",
+      "consumers": [
+        {
+          "lang": "rust",
+          "status": "implemented",
+          "path": "crates/agentos-policy/src/bin/verify_lease.rs",
+          "note": "fixture set frozen in M1-07 and adopted here by reference, not copied"
+        },
+        {
+          "lang": "go",
+          "status": "implemented",
+          "path": "crates/agentos-policy/verifiers/go/verify_lease.go",
+          "note": "standard library only; run by scripts/portable-lease-check.sh"
+        },
+        {
+          "lang": "python",
+          "status": "implemented",
+          "path": "scripts/verify-lease.py",
+          "note": "run by scripts/portable-lease-check.sh"
+        },
+        {
+          "lang": "elixir",
+          "status": "implemented",
+          "path": "crates/agentos-policy/verifiers/verify_lease.exs",
+          "note": "run by scripts/portable-lease-check.sh"
+        }
+      ]
+    },
+    {
+      "id": "approval",
+      "domain": "uap-approval/1",
+      "kind": "signed",
+      "producer": "crates/agentos-policy/src/approval.rs",
+      "schema": "contracts/v1/schemas/approval.schema.json",
+      "fixtures": "contracts/v1/fixtures/approval",
+      "consumers": [
+        {
+          "lang": "rust",
+          "status": "implemented",
+          "path": "crates/agentos-policy/src/contracts.rs",
+          "note": "reference producer and fixture verifier"
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "domain": "uap-authorize/1",
+      "kind": "output",
+      "producer": "crates/agentos-policy/src/authorize.rs",
+      "schema": "contracts/v1/schemas/decision.schema.json",
+      "fixtures": "output-only",
+      "covered_by": "crates/agentos-policy/tests/authorize_bundle.rs",
+      "consumers": [
+        {
+          "lang": "rust",
+          "status": "implemented",
+          "path": "crates/agentos-policy/src/authorize.rs",
+          "note": "emitter; decision behaviour is tested end to end"
+        },
+        {
+          "lang": "typescript",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/typescript/decision.ts",
+          "note": "server/src/policy/tool-authority.ts reads the decision today without schema validation; H-28 adds the checked reader"
+        },
+        {
+          "lang": "python",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/python/decision.py",
+          "note": "tool SDK must treat any non-allow as a refusal (V6-08-06)"
+        },
+        {
+          "lang": "julia",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/julia/decision.jl",
+          "note": "numeric analytics over decision records; never re-authorizes (V6-08-04)"
+        },
+        {
+          "lang": "move",
+          "status": "planned",
+          "expected_path": "contracts/v1/verifiers/move/decision_receipt.move",
+          "note": "on-chain receipt of a decision; no Move contract exists yet (V6-08-08)"
+        }
+      ]
+    },
+    {
+      "id": "mint",
+      "domain": "uap-mint/1",
+      "kind": "request",
+      "producer": "crates/agentos-policy/src/authorize.rs",
+      "schema": "contracts/v1/schemas/mint.schema.json",
+      "fixtures": "output-only",
+      "covered_by": "crates/agentos-policy/tests/authorize_bundle.rs",
+      "consumers": [
+        {
+          "lang": "rust",
+          "status": "implemented",
+          "path": "crates/agentos-policy/src/bin/mint.rs",
+          "note": "the only path that creates signed authority; seed arrives on stdin"
+        }
+      ]
+    }
+  ]
+}

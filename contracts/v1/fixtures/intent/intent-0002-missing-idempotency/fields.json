@@ -1,0 +1,25 @@
+{
+  "advisory": null,
+  "effect": "external_message",
+  "expires_at_ms": 1700000060000,
+  "idempotency": null,
+  "intent_id": "intent-0002",
+  "issued_at_ms": 1700000000000,
+  "params": "1e6581b6108cf271b7d36d6791e3e4d6cc4a90edf2cfed1f7543489ad5fc9dae",
+  "risk": "medium",
+  "role_digest": "ff03005343c8a1b22827eae5f5d4088e2a5808a6ef0e0ed8baae52de8457e713",
+  "sid": "sid_0a1b2c3d",
+  "spend": {
+    "cloud_micros": 0,
+    "cpu_ms": 0,
+    "events": 0,
+    "gpu_ms": 0,
+    "ram_mib": 0
+  },
+  "target": "http_origin:https://api.example.com",
+  "task_id": "task-0001",
+  "tenant": "acme",
+  "tool": "mail.send",
+  "tool_schema": "270d794bef60e23b13f445b8b5a7af68bcc690e1d5a59be880ef8efc5bb00846",
+  "v": "uap-intent/1"
+}

@@ -1,0 +1,13 @@
+{
+  "approval_id": "approval-0001",
+  "approved_at_ms": 1700000000000,
+  "approved_by": "a human, allegedly",
+  "effect": "publish",
+  "expires_at_ms": 1700000600000,
+  "intent_id": "intent-0001",
+  "max_risk": "high",
+  "params": "114639644b187b88aac0ba37ac6a83a45f8b80c961c0ce85c748e78d1e287862",
+  "sid": "sid_0a1b2c3d",
+  "tenant": "acme",
+  "v": "uap-approval/1"
+}

@@ -61,8 +61,13 @@ Lease canonical form (all fields required):
 ```
 
 The signature is **not** inside the document (no strip-the-signature parsing).
-Fixtures in `crates/agentos-policy/fixtures/` carry `lease.json` (fields only),
-`lease.canonical.txt` (the exact bytes), `lease.sig.hex` and `issuer.pub.hex`.
+Fixtures in `crates/agentos-policy/fixtures/` carry `fields.json` (the document
+fields only, strict schema), `canonical.sha256` (SHA-256 of the canonical bytes
+*rebuilt from those fields*), `sig.hex`, `issuer.pub.hex` and `expect.txt`
+(`valid` / `invalid`). Committing the digest instead of the text avoids the
+trailing-newline ambiguity that makes JSON fixtures rot. The full registry of
+contracts, schemas, fixtures and per-language verifier status is
+[`CONTRACTS.md`](./CONTRACTS.md).
 
 ## 4. Dispatch check order
 

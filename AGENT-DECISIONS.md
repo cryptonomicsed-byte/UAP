@@ -4,6 +4,67 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+### 2026-11-23 — H-27 (track H): shared contract registry + canonical fixtures (worker-c)
+
+Board: claimed `H-27`; implements V6-08-01's contract/fixture half. H-28 (per-language
+conformance suites) consumes this registry and is untouched. No checklist box ticked.
+
+Built
+  * `contracts/v1/manifest.json` — six versioned wire contracts (`uap-intent/1`,
+    `uap-grant/1`, `uap-lease/1`, `uap-approval/1`, `uap-authorize/1`, `uap-mint/1`),
+    each with producer, ordered-field schema, fixture root, and a consumer matrix over the
+    eight V6-08-01 languages with `implemented` (file must exist) / `planned`
+    (`expected_path` must *not* exist yet).
+  * `contracts/v1/schemas/*.schema.json` — JSON Schema (2020-12) per contract,
+    `additionalProperties: false`, version pinned as a `const`, digests pinned to
+    `^[0-9a-f]{64}$`. `ActionPermit` is documented as `$defs.permit` inside the decision
+    schema rather than given a `uap-permit/1` tag no producer emits.
+  * `contracts/v1/fixtures/{grant,approval,intent}` — 8 generated cases (5 valid,
+    3 negative: re-canonicalised budget with replayed signature, two lenient-JSON cases,
+    one external effect without an idempotency key). Each case commits `fields.json`,
+    `canonical.txt` (exact bytes), `canonical.sha256`, `expect.txt` and — when signed —
+    `sig.hex` + `issuer.pub.hex`; invalid cases also carry the `reason.txt` token a
+    refusal must mention. The five M1-07 lease fixtures are adopted by reference, not
+    copied or rewritten.
+  * `crates/agentos-policy/src/contracts.rs` — `Registry::load(root)` + `check()` with
+    12 stable violation codes. It re-derives every fixture through the real typed
+    producer (strict parse → canonical rebuild → byte compare → SHA-256 → Ed25519), checks
+    schema `required` order against the producer's actual top-level key order, and refuses
+    any `*_DOMAIN` const in `src/` that no contract declares (and vice versa).
+  * Bins: `contract-check` (JSON report `uap-contracts/1`, exit 1 on drift) and
+    `mint-contract-fixtures` (deterministic generator; the committed set must be
+    byte-identical to a fresh run). `npm run audit:contracts` wired into `npm run check`.
+  * `docs/architecture/CONTRACTS.md` — contract table, why JSON not Protobuf (signature
+    over canonical bytes; no codegen in 8 languages), versioning rules, fixture format,
+    per-language status table including the honest gaps, and the drift codes.
+    `POLICY-KERNEL.md` §3 corrected: it documented `lease.json` / `lease.canonical.txt`
+    which never existed — the committed files are `fields.json` / `canonical.sha256`.
+
+Tests (test-first: `crates/agentos-policy/tests/contracts.rs` was watched fail on the
+missing `contracts` module, then on the missing manifest, before the checker existed)
+  * `cargo test -p agentos-policy --test contracts` — 13 passed: clean registry,
+    declared order and eight languages, report shape (6 contracts / 13 fixtures), minter
+    determinism, and 8 negative cases that each break one thing in a scratch copy and
+    require the matching code (`fixture-broken` with reason, `fixture-expectation`,
+    `consumer-missing`, `consumer-status-stale`, `domain-unregistered`,
+    `schema-fields-differ`, `schema-invalid`, `covered-by-missing`).
+  * `cargo run -p agentos-policy --bin contract-check -- .` →
+    `{"contracts":6,"fixtures":13,"languages":8,"ok":true,...}`.
+  * Full-suite results and commit sha are recorded in the ledger entry by `done.py`.
+
+Not claimed
+  * No JSON Schema *execution* in Rust: the schemas are checked structurally (version
+    const, `$id`, ordered `required`, id/hex patterns). Running them through a validator
+    is H-28's per-language work (`ajv` for TypeScript).
+  * Only the lease contract has four real non-Rust verifiers today; Clojure, Julia, Move
+    and TypeScript are `planned` with target paths, so the registry reports coverage
+    rather than implying it.
+  * The domain scan reads `*_DOMAIN` consts: a wire tag used inline without a const is
+    not caught by the checker (documented convention, not a silent gap).
+
+Next unclaimed item: H-28 per-language conformance suites.
+
+
 ### 2026-11-23 — C-19 (track C): role dedupe/conflict + policy-override guard
 
 Board: claimed `C-19`; implemented V6-03-05 and V6-03-09. No checklist box is ticked and

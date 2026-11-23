@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uap.local/contracts/v1/mint.schema.json",
+  "title": "UAP mint request (uap-mint/1)",
+  "description": "The administrative envelope that asks the kernel to sign one grant, lease or approval. Separate from `uap-authorize/1` on purpose: an authorization call can never mint the authority it is about to honour. The seed is supplied on stdin by the CLI, never as an argument.",
+  "x-uap-domain": "uap-mint/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["v", "kind", "issuer", "seed_hex", "fields"],
+  "properties": {
+    "v": { "const": "uap-mint/1" },
+    "kind": { "enum": ["grant", "lease", "approval"] },
+    "issuer": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$" },
+    "seed_hex": {
+      "description": "32-byte Ed25519 seed, hex. Test vectors only; a live issuer reads it from the operator's key material.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fields": { "type": "object" }
+  }
+}

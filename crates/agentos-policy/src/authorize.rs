@@ -437,6 +437,38 @@ fn spend_json(s: &Spend) -> Value {
     })
 }
 
+// ------------------------------------------------------- fixture-side parsing (H-27)
+
+/// Parse one grant fixture through the same strict schema the bundle bridge uses, so
+/// a committed golden fixture can never describe a document the kernel would reject.
+pub fn parse_grant_fields(fields: &Value) -> Result<Grant, String> {
+    let raw: RawGrantFields = parse_fields(fields, "grant.fields")?;
+    let grant = raw.typed()?;
+    grant
+        .validate()
+        .map_err(|e| format!("invalid-grant: {e}"))?;
+    Ok(grant)
+}
+
+/// Parse one approval fixture. Internally invalid records are refused, so `valid` in
+/// `expect.txt` means "the kernel would accept these bytes".
+pub fn parse_approval_fields(fields: &Value) -> Result<ApprovalRecord, String> {
+    let raw: RawApprovalFields = parse_fields(fields, "approval.fields")?;
+    let record = raw.typed()?;
+    record
+        .validate()
+        .map_err(|e| format!("invalid-approval: {e}"))?;
+    Ok(record)
+}
+
+/// Parse one intent fixture. Validation is deliberately *not* applied here: an intent
+/// that is well-formed but violates its own rules is a legitimate negative fixture,
+/// and the verdict belongs to `ActionIntent::validate`.
+pub fn parse_intent_fields(fields: &Value) -> Result<ActionIntent, String> {
+    let raw: RawIntent = parse_fields(fields, "intent.fields")?;
+    raw.typed()
+}
+
 // ---------------------------------------------------------------------- decision
 
 fn invalid(detail: &str) -> String {

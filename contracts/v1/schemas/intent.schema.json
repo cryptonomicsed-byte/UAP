@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uap.local/contracts/v1/intent.schema.json",
+  "title": "UAP action intent (uap-intent/1)",
+  "description": "A model's proposal for one action. Never authority: it is unsigned, carries no grant, and the kernel records but ignores `advisory`. The digest of the canonical bytes is what an approval binds to and what a permit re-checks. Field order in `required` is the canonical bytes order and is checked against the producer.",
+  "x-uap-domain": "uap-intent/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "v",
+    "intent_id",
+    "tenant",
+    "sid",
+    "task_id",
+    "role_digest",
+    "tool",
+    "tool_schema",
+    "effect",
+    "risk",
+    "target",
+    "params",
+    "idempotency",
+    "spend",
+    "issued_at_ms",
+    "expires_at_ms",
+    "advisory"
+  ],
+  "properties": {
+    "v": { "const": "uap-intent/1" },
+    "intent_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$" },
+    "tenant": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+    "sid": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{2,127}$" },
+    "task_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$" },
+    "role_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "tool": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$" },
+    "tool_schema": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "effect": {
+      "enum": [
+        "read",
+        "compute",
+        "write",
+        "external_message",
+        "money",
+        "publish",
+        "production_change",
+        "security_testing",
+        "clinical_data"
+      ]
+    },
+    "risk": { "enum": ["low", "medium", "high", "critical"] },
+    "target": { "type": "string", "pattern": "^(tool|file|http_origin|repo|database|cloud_account|model|vault_secret|queue|dataset):\\S+$" },
+    "params": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "idempotency": {
+      "description": "Required for external effects; `null` means none was supplied, which the kernel refuses for external_message/money/publish/production_change.",
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$"
+    },
+    "spend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cpu_ms", "ram_mib", "gpu_ms", "cloud_micros", "events"],
+      "properties": {
+        "cpu_ms": { "type": "integer", "minimum": 0 },
+        "ram_mib": { "type": "integer", "minimum": 0 },
+        "gpu_ms": { "type": "integer", "minimum": 0 },
+        "cloud_micros": { "type": "integer", "minimum": 0 },
+        "events": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "issued_at_ms": { "type": "integer", "minimum": 0 },
+    "expires_at_ms": { "type": "integer", "minimum": 0 },
+    "advisory": {
+      "description": "A model's own verdict. Recorded in the audit trail and never read by the decision.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["model", "verdict", "confidence_bp"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "verdict": { "enum": ["allow", "deny", "uncertain"] },
+        "confidence_bp": { "type": "integer", "minimum": 0, "maximum": 10000 }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"v":"uap-approval/1","approval_id":"approval-0001","tenant":"acme","sid":"sid_0a1b2c3d","intent_id":"intent-0001","params":"114639644b187b88aac0ba37ac6a83a45f8b80c961c0ce85c748e78d1e287862","effect":"publish","max_risk":"high","approved_at_ms":1700000000000,"expires_at_ms":1700000600000}

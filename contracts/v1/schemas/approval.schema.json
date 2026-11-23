@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uap.local/contracts/v1/approval.schema.json",
+  "title": "UAP human approval (uap-approval/1)",
+  "description": "A human's acceptance of one exact action. Bound to the argument digest (`params`), not to the intent id alone, so approving $12.50 cannot authorise $9,999.00. Signed by an approver over \"uap-approval/1\\n\" + canonical JSON. Field order in `required` is the canonical bytes order and is checked against the producer.",
+  "x-uap-domain": "uap-approval/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "v",
+    "approval_id",
+    "tenant",
+    "sid",
+    "intent_id",
+    "params",
+    "effect",
+    "max_risk",
+    "approved_at_ms",
+    "expires_at_ms"
+  ],
+  "properties": {
+    "v": { "const": "uap-approval/1" },
+    "approval_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$" },
+    "tenant": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+    "sid": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{2,127}$" },
+    "intent_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$" },
+    "params": {
+      "description": "Digest of the exact arguments shown to the approver.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "effect": {
+      "enum": [
+        "read",
+        "compute",
+        "write",
+        "external_message",
+        "money",
+        "publish",
+        "production_change",
+        "security_testing",
+        "clinical_data"
+      ]
+    },
+    "max_risk": { "enum": ["low", "medium", "high", "critical"] },
+    "approved_at_ms": { "type": "integer", "minimum": 0 },
+    "expires_at_ms": { "type": "integer", "minimum": 0 }
+  }
+}

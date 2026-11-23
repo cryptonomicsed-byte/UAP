@@ -1,0 +1,34 @@
+{
+  "budget": {
+    "concurrency": 2,
+    "spend": {
+      "cloud_micros": 250000,
+      "cpu_ms": 120000,
+      "events": 50,
+      "gpu_ms": 0,
+      "ram_mib": 512
+    },
+    "wall_ms": 600000
+  },
+  "effects": [
+    "read",
+    "compute"
+  ],
+  "epoch": 3,
+  "expires_at_ms": 1700086400000,
+  "grant_id": "grant-0001",
+  "issued_at_ms": 1700000000000,
+  "max_risk": "medium",
+  "resources": [
+    "repo:acme/*"
+  ],
+  "sid": "sid_0a1b2c3d",
+  "tenant": "acme",
+  "tools": [
+    {
+      "schema": "e0d46bae4370199151c8e4b2a36686fb66669239c2c998b361431e42c5fd3295",
+      "tool": "repo.read"
+    }
+  ],
+  "v": "uap-grant/1"
+}

@@ -1,0 +1,25 @@
+{
+  "advisory": null,
+  "effect": "read",
+  "expires_at_ms": 1700000060000,
+  "idempotency": null,
+  "intent_id": "intent-0003",
+  "issued_at_ms": 1700000000000,
+  "params": "114639644b187b88aac0ba37ac6a83a45f8b80c961c0ce85c748e78d1e287862",
+  "risk": "low",
+  "role_digest": "ff03005343c8a1b22827eae5f5d4088e2a5808a6ef0e0ed8baae52de8457e713",
+  "sid": "sid_0a1b2c3d",
+  "spend": {
+    "cloud_micros": 0,
+    "cpu_ms": 0,
+    "events": 0,
+    "gpu_ms": 0,
+    "ram_mib": 0
+  },
+  "target": "repo:acme/site",
+  "task_id": "task-0001",
+  "tenant": "acme",
+  "tool": "repo.read",
+  "tool_schema": "e0d46bae4370199151c8e4b2a36686fb66669239c2c998b361431e42c5fd3295",
+  "v": "uap-intent/1"
+}
