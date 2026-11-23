@@ -24,7 +24,8 @@
     "audit:rights": "node scripts/audit-rights.mjs",
     "roles:export": "node --import tsx scripts/export-role-personas.mjs",
     "repro:build": "node scripts/reproducible-build.mjs --install-cmd \"npm ci --no-audit --no-fund\" --build-cmd \"npm run build\" --output-dir web/dist --out artifacts/reproducible/web && node scripts/reproducible-build.mjs --install-cmd \"npm ci --no-audit --no-fund\" --build-cmd \"npm run build\" --output-dir server/dist --out artifacts/reproducible/server",
-    "sources:ingest": "node --import tsx scripts/sources-ingest.mjs"
+    "sources:ingest": "node --import tsx scripts/sources-ingest.mjs",
+    "scan:source": "node --import tsx scripts/source-quarantine.mjs"
   },
   "engines": {
     "node": ">=22"
