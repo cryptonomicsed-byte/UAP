@@ -184,11 +184,11 @@
   {
    "id": "C-19",
    "desc": "C-19 dedupe/conflict + policy-override guard",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T15:40:16Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "f8e80c53853a79d33806e8ac4941d7c90eddbfd4",
+   "evidence": "149 tests 149 pass; role-review 12/12; typecheck clean; cargo 69",
    "verified": null
   },
   {
