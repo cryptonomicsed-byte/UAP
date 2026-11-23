@@ -4,6 +4,43 @@ Log of decisions made by agents working this repo. Read top-down; newest first.
 
 ## Progress log (newest first; evidence only — no checklist box is ticked by the implementer)
 
+
+### 2026-11-23 — C-18 (V6-03-06): built-in launch roster
+
+Board: claimed `C-18`. Authored the 16-role launch roster in
+`server/src/roles/builtin-roster.ts`, exported personas under `docs/roles/`, and
+documented it in `docs/architecture/ROLE-ROSTER.md`; no checklist box is self-ticked.
+
+  * The roster **composes C-17's schema** rather than a parallel one: every entry is
+    built by `buildRoleTemplate` and cited as `rt_uap_<slug>`, so a SID uses the same
+    `(id, version, digest)` triple as an imported persona (`sidRoleRef`), and
+    `verifyRoleTemplate` re-checks each shipped digest.
+  * Families shipped: architecture, backend, frontend, QA (code reviewer + reality
+    checker), security, the seven launch languages (Rust, Elixir, Julia, Sui Move, Go,
+    Python, Clojure), creative (brand + motion) and research — 16 roles, 14 families.
+    `validateBuiltinRoster()` fails if any family loses its role.
+  * Personas are real reviewed prose, exported byte-identically to `docs/roles/<slug>.md`
+    (`npm run roles:export`; a test fails if an export drifts). For owned roles the
+    provenance fields are content pins: `sourceSha` is the sha256 of the persona bytes at
+    `sourcePath`, and validation refuses any other value. Nothing upstream is claimed.
+  * Roles are deep-frozen and ship `trial` on `LicenseRef-UAP-Internal` rights. No role
+    may request `payment.execute`, `deployment.publish` or `secret.read`; requests must
+    not intersect the role's denial list; each role needs ≥2 namespaced gates, ≥1
+    expected artifact and a required reviewer that exists in the roster and is not
+    itself.
+
+Tests (test-first: `tests/roles-roster.test.mjs` first failed with
+`ERR_MODULE_NOT_FOUND`, then with the missing `docs/roles/` exports, then 12/12 pass):
+family coverage, C-17 digest recomputation + tamper detection (title, instructions,
+risk class, tools), deep-freeze, hard-denial disjointness, content-pin provenance,
+export byte-equality, independent reviewer, SID triple, and negative cases
+(`duplicate_template`, `reviewer_not_independent`, `requested_work_denied`,
+`source_sha_mismatch`, `gates_missing`).
+
+Non-claims: gate/artifact ids are references — their registry and evaluation are
+V6-03-08; C-19 owns dedupe/policy-override/Hermes translation. The roster is `trial`,
+not active, because rights review and registry-backed gate evaluation are open.
+
 ### 2026-11-23 — C-17 (track C): RoleTemplate schema + Markdown persona parser
 
 Board: claimed `C-17`. Checklist boxes are not self-ticked.
