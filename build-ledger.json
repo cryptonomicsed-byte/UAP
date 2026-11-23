@@ -214,11 +214,11 @@
   {
    "id": "B-22",
    "desc": "B-22 trust statuses + scheduled re-audit",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-a",
    "claimed_at": "2026-11-23T16:17:16Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "fa6737d",
+   "evidence": "TDD: tests/source-trust.test.mjs (12), tests/source-reaudit.test.mjs (9), tests/source-trust-api.test.mjs (2) all watched RED (ERR_MODULE_NOT_FOUND) before implementation; signature retarget/replay/stale/future, reviewer independence, evidence-gate and revocation-blocks-repromotion cases written before the code. npm test: 193 pass / 0 fail. npm run typecheck: exit 0 (server+web). cargo test --workspace --locked: 69 passed / 0 failed. mix test: 61 tests, 0 failures. V6-02-08: 7 separated rungs with cumulative evidence + per-rung reviewer capability, Ed25519 statement binds source/url/pin/manifest/from/to/key-fingerprint/evidence digest, 15-min freshness, reviewer must differ from submitter/ingester/auditor, revokeSource clears approval and blocks re-promotion until re-audit. V6-02-09: cadence 30/90/180d x risk multiplier, never_audited + revoked_pending_reaudit, npm-range advisory matching with deterministic alert ids, idempotent revoke/quarantine/note. Endpoints: POST /api/sources/trust/evaluate and /api/sources/reaudit/plan (401 anonymous, 400 malformed). Docs: docs/architecture/SOURCE-TRUST.md. Persistence deliberately left to B-20 registry writer.",
    "verified": null
   },
   {
