@@ -9,17 +9,64 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <div id="deploy-badge" aria-live="polite" style="position:fixed;right:10px;bottom:10px;z-index:9999;font:11px/1.4 ui-monospace,monospace;background:rgba(15,18,25,.85);color:#9fb0c8;border:1px solid #2a3648;border-radius:6px;padding:4px 8px;pointer-events:none">deploy: …</div>
+    <button id="deploy-badge" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="build-panel" style="position:fixed;right:10px;bottom:10px;z-index:9999;font:11px/1.4 ui-monospace,monospace;background:var(--color-bg-pane,#fff);color:var(--color-text-secondary,#555);border:0.5px solid var(--color-border-secondary,#0002);border-radius:6px;padding:6px 10px;cursor:pointer">deploy: …</button>
+    <section id="build-panel" role="dialog" aria-labelledby="build-panel-title" hidden style="position:fixed;right:10px;bottom:48px;z-index:9998;width:min(360px,calc(100vw - 20px));max-height:70vh;overflow:auto;background:var(--color-bg-pane,#fff);color:var(--color-text-primary,#111);border:0.5px solid var(--color-border-secondary,#0002);border-radius:10px;box-shadow:0 10px 24px -6px rgb(0 0 0 / .25);padding:14px 16px;font:13px/1.5 system-ui,sans-serif">
+      <h2 id="build-panel-title" style="margin:0 0 6px;font-size:14px;font-weight:600">Build board</h2>
+      <p id="build-meta" style="margin:0 0 10px;font-size:11px;font-family:ui-monospace,monospace;color:var(--color-text-secondary,#555)">loading…</p>
+      <div id="build-tracks" role="table" aria-label="Build progress by track"></div>
+      <p id="build-note" style="margin:10px 0 0;font-size:11px;color:var(--color-text-tertiary,#777)"></p>
+      <button type="button" id="build-close" style="margin-top:10px;min-height:44px;padding:6px 12px;border-radius:8px;border:0.5px solid var(--color-border-secondary,#0002);background:var(--color-bg-subtle,#00000008);color:inherit">Close</button>
+    </section>
     <script type="module">
-      const b = document.getElementById('deploy-badge');
-      const fmt = (d) => d ? d.sha?.slice(0,7) + ' · board ' + (d.board
-        ? (d.board.verified + 'v ' + d.board.done + 'd ' + d.board.rework + 'x')
-        : (d.error ?? '—')) : 'no deploy data';
-      try {
-        const r = await fetch('/api/deploy-status', { cache: 'no-store' });
-        if (r.ok) b.textContent = fmt(await r.json());
-        else b.textContent = 'deploy: ' + r.status;
-      } catch { b.textContent = 'deploy: offline'; }
+      const badge = document.getElementById('deploy-badge');
+      const panel = document.getElementById('build-panel');
+      const tracksBox = document.getElementById('build-tracks');
+      const meta = document.getElementById('build-meta');
+      const note = document.getElementById('build-note');
+      let data = null;
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const fmtShort = (d) => d && d.sha ? d.sha.slice(0,7) + ' · ' + (d.board ? (d.board.verified + 'v ' + d.board.done + 'd ' + d.board.rework + 'x') : 'board?') : 'no deploy data';
+      function renderPanel() {
+        if (!data || data.error || !data.board) {
+          meta.textContent = 'board unavailable' + (data && data.error ? ': ' + esc(data.error) : '');
+          tracksBox.innerHTML = '';
+          note.textContent = 'The board is read from the deployed tree. If this is empty, the deploy pipeline has not run yet.';
+          return;
+        }
+        meta.textContent = 'deployed ' + esc(data.sha || '?') + ' at ' + esc((data.deployedAt || '').replace('T',' ').slice(0,16) + 'Z');
+        const tracks = data.tracks || [];
+        const rows = tracks.map((t) => {
+          const closed = t.closed, total = t.total;
+          const pct = total ? Math.round(100 * closed / total) : 0;
+          return '<div role="row" style="display:grid;grid-template-columns:56px 1fr 48px;gap:8px;padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary,#00000014)">' +
+            '<span role="cell" style="font-family:ui-monospace,monospace">' + esc(t.track) + '</span>' +
+            '<span role="cell"><span role="progressbar" aria-label="' + esc(t.track) + ' progress" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100" style="display:inline-block;width:100%;height:6px;border-radius:3px;background:var(--color-bg-subtle,#00000008)"><span style="display:block;height:100%;width:' + pct + '%;border-radius:3px;background:var(--color-primary,#176C78)"></span></span></span>' +
+            '<span role="cell" style="text-align:right;font-family:ui-monospace,monospace">' + closed + '/' + total + '</span></div>';
+        }).join('');
+        tracksBox.innerHTML = rows || '<p style="margin:0">no tracks yet</p>';
+        const re = data.board.rework || 0;
+        note.textContent = 'Snapshot at deploy time; refreshes every ~15 min when main is green. ' + (re ? re + ' item(s) in rework.' : 'No rework open.');
+      }
+      async function load() {
+        try {
+          const r = await fetch('/api/deploy-status', { cache: 'no-store' });
+          data = r.ok ? await r.json() : { error: 'HTTP ' + r.status };
+        } catch { data = { error: 'offline' }; }
+        badge.textContent = data && data.error ? 'deploy: error' : fmtShort(data);
+        renderPanel();
+      }
+      function setOpen(open) {
+        panel.hidden = !open;
+        badge.setAttribute('aria-expanded', String(open));
+        if (open) panel.querySelector('#build-close').focus();
+        else badge.focus();
+      }
+      badge.addEventListener('click', () => setOpen(panel.hidden));
+      panel.querySelector('#build-close').addEventListener('click', () => setOpen(false));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !panel.hidden) { setOpen(false); e.stopPropagation(); }
+      });
+      load();
     </script>
   </body>
 </html>

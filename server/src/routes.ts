@@ -33,7 +33,7 @@ export const api = new Hono<AuthVars>();
 
 function deployStatus() {
   const root = path.resolve(process.cwd(), '..');
-  const out = { sha: null as string | null, deployedAt: null as string | null, board: null as any, error: null as string | null };
+  const out = { sha: null as string | null, deployedAt: null as string | null, board: null as any, tracks: null as any, error: null as string | null };
   try {
     const sp = path.join(root, '.deploy-sha');
     const st = fs.statSync(sp);
@@ -45,7 +45,19 @@ function deployStatus() {
     const b = JSON.parse(fs.readFileSync(bp, 'utf8'));
     const items = b.items ?? [];
     const count = (s: string) => items.filter((i: any) => i.status === s).length;
-    out.board = { total: items.length, pending: count('pending'), claimed: count('claimed'),
+        const tracks = new Map<string, any>();
+    for (const i of items) {
+      const t = String(i.id ?? '').split('-')[0] || '?';
+      const tr = tracks.get(t) ?? { track: t, total: 0, closed: 0, rework: 0, pending: 0, claimed: 0 };
+      tr.total += 1;
+      if (i.status === 'verified' || i.status === 'done') tr.closed += 1;
+      else if (i.status === 'rework') tr.rework += 1;
+      else if (i.status === 'claimed') tr.claimed += 1;
+      else if (i.status === 'pending') tr.pending += 1;
+      tracks.set(t, tr);
+    }
+    out.tracks = [...tracks.values()];
+out.board = { total: items.length, pending: count('pending'), claimed: count('claimed'),
                   done: count('done'), verified: count('verified'), rework: count('rework') };
   } catch (e: any) { out.board = null; out.error = String(e?.message ?? e); }
   return out;
