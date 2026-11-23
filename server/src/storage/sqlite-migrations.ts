@@ -198,6 +198,64 @@ CREATE TABLE IF NOT EXISTS deployment_binding (
   owner_user_id TEXT UNIQUE REFERENCES users(id) ON DELETE RESTRICT,
   primary_bot_id TEXT UNIQUE
 );` },
+  // Privacy erasure propagates into the derived memory index and leaves content-free proof.
+  // Receipts carry no foreign keys: deleting an agent (or an account) must not destroy the
+  // evidence that a deletion was requested and carried out.
+  { id: 7, name: 'privacy-deletion-and-memory-index', sql: `
+CREATE TABLE IF NOT EXISTS privacy_deletion_requests (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  subject_bot_id TEXT NOT NULL,
+  basis TEXT NOT NULL CHECK (basis IN ('user_request','consent_withdrawal','retention_expiry')),
+  request_key TEXT,
+  state TEXT NOT NULL DEFAULT 'pending' CHECK (state IN ('pending','running','partial','completed')),
+  requested_by TEXT NOT NULL,
+  requested_at INTEGER NOT NULL,
+  completed_at INTEGER,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  last_error TEXT,
+  receipt_hash TEXT,
+  prev_receipt_hash TEXT,
+  UNIQUE (tenant_id, request_key)
+);
+CREATE INDEX IF NOT EXISTS privacy_requests_subject
+  ON privacy_deletion_requests(tenant_id, subject_bot_id, state);
+CREATE TABLE IF NOT EXISTS privacy_deletion_targets (
+  request_id TEXT NOT NULL REFERENCES privacy_deletion_requests(id) ON DELETE CASCADE,
+  holder TEXT NOT NULL,
+  target_ref TEXT NOT NULL,
+  content_hash TEXT,
+  action TEXT NOT NULL CHECK (action IN ('purge','retain_exception')),
+  state TEXT NOT NULL DEFAULT 'planned' CHECK (state IN ('planned','done','retained','failed','absent')),
+  exception_rule TEXT,
+  detail TEXT,
+  updated_at INTEGER NOT NULL,
+  PRIMARY KEY (request_id, holder, target_ref),
+  CHECK ((action = 'retain_exception') = (exception_rule IS NOT NULL)),
+  CHECK (state <> 'retained' OR action = 'retain_exception')
+);
+CREATE TABLE IF NOT EXISTS privacy_tombstones (
+  bot_id TEXT NOT NULL,
+  content_hash TEXT NOT NULL,
+  request_id TEXT NOT NULL,
+  source_ref TEXT,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (bot_id, content_hash)
+);
+CREATE TABLE IF NOT EXISTS memory_index_sources (
+  memory_id TEXT PRIMARY KEY,
+  bot_id TEXT NOT NULL,
+  content_hash TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS memory_index_sources_bot ON memory_index_sources(bot_id);
+CREATE TABLE IF NOT EXISTS memory_index (
+  memory_id TEXT NOT NULL,
+  bot_id TEXT NOT NULL,
+  term TEXT NOT NULL,
+  PRIMARY KEY (memory_id, term)
+);
+CREATE INDEX IF NOT EXISTS memory_index_lookup ON memory_index(bot_id, term);
+` },
 ];
 
 export class SqliteMigrationError extends Error {

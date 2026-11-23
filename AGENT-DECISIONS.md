@@ -71,6 +71,51 @@ Not claimed
     translation (V6-03-05/09/10) remain open (C-19).
 
 Next unclaimed item: C-18 (launch roster) per the board.
+### 2026-11-23 — D-16 (track D): deletion/privacy propagation with evidence retention
+
+Board: claimed `D-16`; implemented V6-04-10. No checklist box is ticked and nothing is
+self-approved.
+
+Built
+  * **Plan over holders, not one DELETE.** `server/src/privacy/holders.ts` names where agent
+    data lives: memory files (each entry), conversation history (every generation of `rows`,
+    `llm_items`, `pending_turns`), the cached live state, the derived memory index and audit
+    evidence. A holder that throws makes the request `partial`; the failed bytes stay and the
+    error is recorded. Completion requires every target `done`/`absent`/`retained`.
+  * **Evidence retention is explicit, not a skip.** Approval rows are content-free audit
+    evidence; they are retained under `audit:approval_history`, recorded on the target and
+    committed to in the receipt. An unknown or missing rule fails planning. Content holders
+    may not retain.
+  * **Index propagation is real.** Migration 7 adds the derived `memory_index` /
+    `memory_index_sources`; `GET /api/bots/:id/memories?q=` searches it, single-memory delete
+    drops it, and erasure writes a `(bot_id, content_hash)` tombstone that blocks a rebuild
+    from resurrecting the bytes.
+  * **Receipt chain.** Completion writes an HMAC-SHA256 receipt over the request, its targets
+    and the previous receipt for the agent; `verifyDeletionReceipt` recomputes it. Receipts and
+    tombstones have no FK to agents/accounts, so erasing a subject cannot erase the proof.
+  * **Idempotency.** Same `requestKey` → same request; reusing it for another agent/basis →
+    409; a completed request reruns as a no-op with unchanged receipt and completion time.
+  * API: `POST /api/privacy/deletions`, `GET /api/privacy/deletions[?botId=]`,
+    `GET /api/privacy/deletions/:id` (with `receiptVerified`),
+    `POST /api/privacy/deletions/:id/retry`, owner-scoped with 400/404/409 error states.
+  * Docs: `docs/architecture/PRIVACY-DELETION.md` (holders, states, receipt format, what is
+    deliberately not reached: object storage, Postgres SID rows, backups — E2E-156/V3-Z-07).
+
+Tests (test-first: all three files were written and watched fail — module missing, then 404s —
+before the modules/routes existed)
+  * `tests/memory-index.test.mjs` — 5 passed (scoping, AND-terms, removal, tombstone, empty query).
+  * `tests/privacy-deletion.test.mjs` — 6 passed (planning/ownership/basis, every holder planned,
+    real file+DB+cache+index erasure, evidence retained, idempotency, partial→retry, tamper
+    detection and receipt survival).
+  * `tests/privacy-api.test.mjs` — 3 passed against a real server + owner session (search→delete
+    propagation, POST run + verified GET, repeated key, 400/404/409).
+  * `npm run typecheck` clean.
+
+Not claimed
+  * Account-wide erasure across object storage/artifacts, Postgres SID tenant rows, external
+    providers and backups is E2E-156 / V3-Z-07, not this item.
+  * No scheduler releases retained evidence after a legal-hold period.
+  * Next unclaimed item: whatever `scripts/claim.py` hands out next.
 
 ### 2026-11-23 — D-15 (track D): SID pause / resume / archive
 

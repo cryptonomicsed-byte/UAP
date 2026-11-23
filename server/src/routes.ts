@@ -15,6 +15,8 @@ import { enqueue, interrupt, resolveApproval } from './agent/loop.js';
 import { computerState, ensureComputer, forgetBotFiles, readyScreen, refreshComputer, releaseScreen } from './computer.js';
 import { assignEngine, provisionEngine, removeEngine, syncPersona } from './engine.js';
 import { deleteMemory, listMemories, memoryBot } from './engine-memory.js';
+import { removeMemoryFromIndex, searchMemory, syncMemoryIndex } from './search/memory-index.js';
+import { getDeletionRequest, listDeletionRequests, PrivacyDeletionError, requestDeletion, runDeletion, verifyDeletionReceipt } from './privacy/deletion.js';
 import { orgo } from './orgo.js';
 import { catalog, connectedToolkits, deleteConnection, disconnect, googleProfile, startConnect, startGoogleLogin, toolkitInfo } from './composio.js';
 import { runRoutine, scheduleRoutine, unscheduleRoutine } from './routines.js';
@@ -414,14 +416,71 @@ api.get('/tasks', (c) => {
 api.get('/bots/:id/memories', (c) => {
   const b = ownBot(c.get('user').id, c.req.param('id'));
   if (!b) return c.json({ error: 'not found' }, 404);
-  return c.json({ memories: listMemories(b.id) });
+  const memories = listMemories(b.id);
+  // The derived index is rebuilt from the source list on read; a quote searches the index.
+  syncMemoryIndex(b.id, memories);
+  const query = (c.req.query('q') ?? '').trim();
+  if (!query) return c.json({ memories });
+  const ids = new Set(searchMemory(b.id, query));
+  return c.json({ memories: memories.filter((memory) => ids.has(memory.id)) });
 });
 
 api.delete('/memories/:id', (c) => {
   const botId = memoryBot(c.req.param('id'));
   if (!botId || !ownBot(c.get('user').id, botId)) return c.json({ error: 'not found' }, 404);
-  deleteMemory(c.req.param('id'));
-  return c.json({ ok: true });
+  const removed = deleteMemory(c.req.param('id'));
+  removeMemoryFromIndex(c.req.param('id'));
+  return c.json({ ok: removed });
+});
+
+// ---------- privacy / deletion ----------
+
+const deletionErrorStatus = (code: string) => code === 'subject_not_found' || code === 'request_not_found' ? 404
+  : code === 'request_key_conflict' || code === 'agent_busy' ? 409
+  : code === 'invalid_basis' || code === 'invalid_plan' ? 400
+  : 500;
+
+async function deletionFailure(c: any, error: unknown) {
+  if (error instanceof PrivacyDeletionError) {
+    return c.json({ error: error.message, code: error.code }, deletionErrorStatus(error.code));
+  }
+  throw error;
+}
+
+api.post('/privacy/deletions', async (c) => {
+  const user = c.get('user');
+  const body = await c.req.json().catch(() => null) as
+    { botId?: unknown; basis?: unknown; requestKey?: unknown } | null;
+  if (!body || typeof body.botId !== 'string' || !body.botId) return c.json({ error: 'botId required' }, 400);
+  const b = ownBot(user.id, body.botId);
+  if (!b) return c.json({ error: 'not found' }, 404);
+  try {
+    const planned = await requestDeletion({
+      tenantId: user.id, botId: b.id, basis: typeof body.basis === 'string' ? body.basis : 'user_request',
+      requestedBy: user.id, requestKey: typeof body.requestKey === 'string' && body.requestKey ? body.requestKey : undefined,
+    });
+    return c.json({ request: await runDeletion(planned.id) });
+  } catch (error) { return deletionFailure(c, error); }
+});
+
+api.get('/privacy/deletions', (c) => {
+  const botId = c.req.query('botId');
+  if (botId && !ownBot(c.get('user').id, botId)) return c.json({ error: 'not found' }, 404);
+  return c.json({ requests: listDeletionRequests(c.get('user').id, botId) });
+});
+
+api.get('/privacy/deletions/:id', (c) => {
+  const request = getDeletionRequest(c.req.param('id'));
+  if (!request || request.tenantId !== c.get('user').id) return c.json({ error: 'not found' }, 404);
+  return c.json({ request, receiptVerified: verifyDeletionReceipt(request.id) });
+});
+
+api.post('/privacy/deletions/:id/retry', async (c) => {
+  const request = getDeletionRequest(c.req.param('id'));
+  if (!request || request.tenantId !== c.get('user').id) return c.json({ error: 'not found' }, 404);
+  try {
+    return c.json({ request: await runDeletion(request.id) });
+  } catch (error) { return deletionFailure(c, error); }
 });
 
 // ---------- computer ----------

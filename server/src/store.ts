@@ -156,6 +156,29 @@ export function setLive(botId: string, patch: Partial<LiveState>) {
 
 export const allLive = (userId: string) => listBots(userId).map((b) => getLive(b.id));
 
+/** Drop the cached runtime state for an agent (privacy erasure, not a restart). */
+export function forgetLive(botId: string): boolean {
+  return live.delete(botId);
+}
+
+/**
+ * Erase an agent's conversation history: every generation of transcript rows and LLM input
+ * items, not just the current one. `clearConversation` hides rows by bumping the generation;
+ * erasure must remove the bytes.
+ */
+export function purgeConversation(botId: string): { rows: number; items: number } {
+  const b = getBotRow(botId);
+  if (!b) return { rows: 0, items: 0 };
+  return db.transaction(() => {
+    const rows = db.prepare('DELETE FROM rows WHERE bot_id=?').run(botId).changes;
+    const items = db.prepare('DELETE FROM llm_items WHERE bot_id=?').run(botId).changes;
+    db.prepare('DELETE FROM pending_turns WHERE bot_id=?').run(botId);
+    db.prepare('UPDATE bots SET generation = generation + 1, next_seq = 1 WHERE id=?').run(botId);
+    hub.emit(b.user_id, { type: 'cleared', botId, generation: b.generation + 1 });
+    return { rows, items };
+  })();
+}
+
 // ---------- routines / tasks ----------
 
 export function describeCron(expr: string): string {
