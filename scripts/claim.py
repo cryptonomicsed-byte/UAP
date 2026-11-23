@@ -15,8 +15,18 @@ def sh(c):
 
 with open(LOCK, "w") as lf:
     fcntl.flock(lf, fcntl.LOCK_EX)
-    sh(f"cd {U} && git pull --ff-only -q origin main 2>/dev/null")
+    pull = sh(f"cd {U} && git pull --ff-only -q origin main")
+    if pull.returncode != 0:
+        # Never claim from a stale ledger: a dirty tree or a diverged branch means
+        # this worker cannot see other workers' claims yet.
+        print("NOTHING pull-failed (tree dirty or diverged) — fix the tree first")
+        sys.exit(0)
     d = json.load(open(f"{U}/build-ledger.json"))
+    # belt-and-braces: re-read the ledger from origin after the pull so an
+    # in-flight claim by another worker can never be handed out twice.
+    cur = sh(f"cd {U} && git show origin/main:build-ledger.json").stdout
+    if cur:
+        d = json.loads(cur)
     items = d["items"]
     pick = None
     for it in items:                      # strict order: pending first

@@ -620,6 +620,16 @@
    "done_sha": "a587ec139e6d97f3034125b8a82e06c3ef415e6e",
    "evidence": "curl /api/deploy-status on live instance; badge visible in page || CHECKER 2026-11-23T15:44Z REWORK: at done_sha a587ec1 the route is api.get('/api/deploy-status') inside an app mounted with app.route('/api', api), so the real path is /api/api/deploy-status. The badge in web/index.html fetches /api/deploy-status, which matches no route and returns 401 {\"error\":\"unauthenticated\"}, so the badge can only render 'deploy: 401' - never the sha or the board tally. The path fix (109d670, '/deploy-status') landed 4 minutes AFTER the done commit and the board evidence was never updated. Live state confirms it: on 127.0.0.1:8796, /api/deploy-status = 401 and /api/api/deploy-status = 200 carrying sha 9c3f701; the running build is still 9c3f701 (server/dist/index.js built 15:08:44), i.e. pre-fix. The evidence line 'curl /api/deploy-status on live instance; badge visible in page' is false as written. To close: land a deploy through uap-sync.sh, then re-verify by reading the rendered badge text and /api/deploy-status at the deployed sha. || CHECKER 2026-11-23T16:35Z VERIFIED (live, behavioural). The earlier rework reason is resolved by an actual deploy, not by argument: running build is sha 1f792b5 (deployedAt 2026-11-23T14:55:12Z, contains 109d670 the path fix); curl 127.0.0.1:8796/api/deploy-status -> 200 {\"sha\":\"1f792b56...\",\"board\":{total 62, pending 45, claimed 1, done 1, verified 13, rework 2},\"error\":null}; the previously working-but-wrong path /api/api/deploy-status now returns 401. Rendered check in a real browser (DOM read, not the HTML placeholder): div#deploy-badge textContent = '1f792b5 board 13v 1d 2x' - deployed sha and board tallies both match build-ledger.json at that sha. Closes. A future deploy regression is a new find.",
    "verified": true
+  },
+  {
+   "id": "S-63",
+   "desc": "claim.py never claims from a stale ledger + elixir-worker CI gets mix deps.get",
+   "status": "done",
+   "claimed_by": "hermes-orchestrator",
+   "claimed_at": "2026-11-23T16:30:00Z",
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
   }
  ]
 }
