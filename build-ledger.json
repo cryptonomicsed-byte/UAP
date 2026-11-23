@@ -610,6 +610,16 @@
    "done_sha": null,
    "evidence": null,
    "verified": null
+  },
+  {
+   "id": "S-62",
+   "desc": "deploy-status endpoint + in-app build/board badge (always reflects deployed work)",
+   "status": "pending",
+   "claimed_by": "hermes-orchestrator",
+   "claimed_at": "2026-11-23T15:00:00Z",
+   "done_sha": null,
+   "evidence": null,
+   "verified": null
   }
  ]
 }

@@ -1,4 +1,6 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { db, now } from './db.js';
@@ -22,6 +24,28 @@ import { voiceApi } from './voice.js';
 import type { AvatarColor, AvatarShape, Toolkit } from './types.js';
 
 export const api = new Hono<AuthVars>();
+
+function deployStatus() {
+  const root = path.resolve(process.cwd(), '..');
+  const out = { sha: null as string | null, deployedAt: null as string | null, board: null as any, error: null as string | null };
+  try {
+    const sp = path.join(root, '.deploy-sha');
+    const st = fs.statSync(sp);
+    out.sha = fs.readFileSync(sp, 'utf8').trim().slice(0, 40) || null;
+    out.deployedAt = st.mtime.toISOString();
+  } catch { out.sha = null; }
+  try {
+    const bp = path.join(root, 'build-ledger.json');
+    const b = JSON.parse(fs.readFileSync(bp, 'utf8'));
+    const items = b.items ?? [];
+    const count = (s: string) => items.filter((i: any) => i.status === s).length;
+    out.board = { total: items.length, pending: count('pending'), claimed: count('claimed'),
+                  done: count('done'), verified: count('verified'), rework: count('rework') };
+  } catch (e: any) { out.board = null; out.error = String(e?.message ?? e); }
+  return out;
+}
+
+api.get('/api/deploy-status', (c) => c.json(deployStatus()));
 
 const SHAPES: AvatarShape[] = ['blob', 'pebble', 'bean', 'egg', 'squircle', 'tablet', 'capsule', 'cylinder', 'hex', 'gem', 'crystal', 'wedge', 'shield', 'dome', 'arch', 'cloud', 'teardrop', 'leaf', 'square', 'sparkle', 'clover', 'flower', 'heart', 'house', 'star'];
 const COLORS: AvatarColor[] = ['black', 'brown', 'red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'violet', 'magenta', 'gray'];

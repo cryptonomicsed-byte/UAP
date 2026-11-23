@@ -9,5 +9,17 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <div id="deploy-badge" aria-live="polite" style="position:fixed;right:10px;bottom:10px;z-index:9999;font:11px/1.4 ui-monospace,monospace;background:rgba(15,18,25,.85);color:#9fb0c8;border:1px solid #2a3648;border-radius:6px;padding:4px 8px;pointer-events:none">deploy: …</div>
+    <script type="module">
+      const b = document.getElementById('deploy-badge');
+      const fmt = (d) => d ? d.sha?.slice(0,7) + ' · board ' + (d.board
+        ? (d.board.verified + 'v ' + d.board.done + 'd ' + d.board.rework + 'x')
+        : (d.error ?? '—')) : 'no deploy data';
+      try {
+        const r = await fetch('/api/deploy-status', { cache: 'no-store' });
+        if (r.ok) b.textContent = fmt(await r.json());
+        else b.textContent = 'deploy: ' + r.status;
+      } catch { b.textContent = 'deploy: offline'; }
+    </script>
   </body>
 </html>
