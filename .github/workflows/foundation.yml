@@ -80,3 +80,20 @@ jobs:
           name: rights-sbom-evidence
           path: artifacts/rights/
           if-no-files-found: error
+  rust:
+    # V6-05 / track E: the policy kernel is the permission authority, so it is its own
+    # release gate. fmt + clippy -D warnings + the full contract suite, in debug and in
+    # release (the release profile enables overflow-checks on purpose: a policy kernel
+    # that silently wraps u64 spend arithmetic is a bug, not a performance win).
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace --locked
+      - run: cargo test --workspace --release --locked

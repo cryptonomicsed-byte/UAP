@@ -16,3 +16,6 @@ docs/SPEC.md
 web/screenshots/
 tests/out/
 artifacts/
+
+# Rust build output (Cargo.lock is committed: this is an application, not a library)
+target/

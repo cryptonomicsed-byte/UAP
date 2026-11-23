@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["crates/agentos-policy"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+rust-version = "1.85"
+repository = "https://github.com/cryptonomicsed-byte/UAP"
+
+# The policy kernel is a release gate: it must build without debug assertions
+# changing semantics, and it must never ship with overflow wrapping in release.
+[profile.release]
+overflow-checks = true
+debug-assertions = false
