@@ -204,11 +204,11 @@
   {
    "id": "B-21",
    "desc": "B-21 quarantine/secret-scan/injection scan",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T16:13:02Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "ed1da71",
+   "evidence": "node --import tsx --test tests/source-quarantine.test.mjs -> 24 passed; npm test -> 194 passed 0 failed; npm run typecheck (server+web) clean; cargo test --workspace --locked 0 failed; mix check 61 tests 0 failures (12 excluded); npm run scan:source -- <fixture> exit 0/2/3 covered by tests; no checklist box ticked, verified=null",
    "verified": null
   },
   {
