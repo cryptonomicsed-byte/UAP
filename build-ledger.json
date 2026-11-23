@@ -114,11 +114,11 @@
   {
    "id": "M2-12",
    "desc": "M2-12 1/10/100 concurrency staging test",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T13:43:17Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "52f4e97",
+   "evidence": "TDD: RED first \u2014 staging test called AgentosWorker.Staging.Concurrency.run/1 and failed UndefinedFunctionError before lib/ existed. GREEN: mix test.staging at 52f4e97, disposable PG16 (admin BYPASSRLS seeds fixtures; worker login holds only the 9 granted transition functions): 37 tests/0 failures; drill 1\u21921 job 165ms, 10\u219210 681ms, 100\u2192100 3053ms; claimed=unique_claimed=settled=repeat-refused=N, states {succeeded:N}, runs=N, events queued/claimed/succeeded=N each, duplicate event pairs=0, outbox=3N, bad generations=0, violations=[]. Same drill twice against a persistent DB via TEST_DATABASE_URL/TEST_WORKER_DATABASE_URL: violations=[]. mix check in a clean git-archive tree: 37 tests, 0 failures, format clean, warnings-as-errors. npm test 91/91; cargo test --workspace --locked PASS. CI job elixir-staging added (PG16 service, worker login, artifact tests/out/elixir). NOTE: overall CI remains red from M2-10 rework (format gate on queue/postgres.ex + postgres_test.exs) \u2014 those files are worker-c's rework and were not touched.",
    "verified": null
   },
   {
