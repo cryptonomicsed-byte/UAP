@@ -144,11 +144,11 @@
   {
    "id": "D-15",
    "desc": "D-15 pause/resume/archive",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T14:32:22Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "4a4f050",
+   "evidence": "D-15 V6-04-08: SID pause/resume/archive are a database-owned state machine (migration 11 sid_lifecycle_pause_resume_archive; server/src/storage/postgres/lifecycle-schema.ts, service server/src/identity/lifecycle.ts, doc docs/architecture/SID-LIFECYCLE.md): pause keeps SID, identity_hash and installations (no cancel of in-flight leases), resume only accepts paused, archive marks live installations removed and is terminal (archived never resumes), revoked SIDs are refused by all three so revocation authority stays last, member may pause/resume while archive needs owner/admin, foreign tenant returns sid_missing without confirming existence, every transition appends to uap.sid_lifecycle_events which triggers block UPDATE/DELETE/TRUNCATE for every role including the owner and is SELECT-only for the app login. Test-first: the 10 lifecycle tests failed with ERR_MODULE_NOT_FOUND before code. Results: node scripts/test-postgres.mjs sid-lifecycle.test.mjs -> 10/10 on PG16.15 disposable; full node scripts/test-postgres.mjs -> 15 files all exit 0 (incl. D-14 sid-authority); npm test 96/96; npm run typecheck clean (server+web); cargo test --workspace --locked 69 passed; mix check 61 tests 0 failures 12 excluded; audit:branding PASS after web build; audit:rights PASS. Migration renumbered to 11 on rebase over D-14's 10; grant/assert allowlists merged (14 functions). NOT claimed: work admission is not yet wired to SID status in queue/worker/tool dispatch (track F/G) - documented in the doc and AGENT-DECISIONS.",
    "verified": null
   },
   {
