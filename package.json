@@ -19,6 +19,7 @@
     "check": "npm run typecheck && npm test && npm run build && npm run audit:branding && npm run audit:rights",
     "test:browser": "node tests/browser-smoke.mjs",
     "test:postgres": "node scripts/test-postgres.mjs",
+    "test:staging": "bash elixir/agentos_worker/scripts/staging-concurrency.sh",
     "db:postgres": "node --import tsx server/src/storage/postgres/cli.ts",
     "audit:rights": "node scripts/audit-rights.mjs",
     "repro:build": "node scripts/reproducible-build.mjs --install-cmd \"npm ci --no-audit --no-fund\" --build-cmd \"npm run build\" --output-dir web/dist --out artifacts/reproducible/web && node scripts/reproducible-build.mjs --install-cmd \"npm ci --no-audit --no-fund\" --build-cmd \"npm run build\" --output-dir server/dist --out artifacts/reproducible/server"

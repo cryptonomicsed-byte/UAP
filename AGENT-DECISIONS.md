@@ -233,3 +233,109 @@ Not claimed
 
 Next unclaimed item: **M2-11 restart/cancel/UNCERTAIN reconciliation** (M2-09 and
 M2-10 were claimed by other workers).
+
+## 2026-11-23 — M2-12 1/10/100 concurrency staging drill (worker-b)
+
+Decision
+  The queue's concurrency claim is proven by a repeatable drill, not a load-test
+  opinion: `AgentosWorker.Staging.Concurrency` runs 1, 10 and 100 concurrent
+  worker processes against a real PostgreSQL queue and returns a report whose
+  every check is a counted fact plus a violation string. The ExUnit test fails on
+  any violation; CI job `elixir-staging` uploads the report.
+
+Why this shape
+  * The drill drives the **worker login** for every privileged transition and
+    uses the **admin login** only to seed tenant fixtures — the same authority
+    split as production, so a passing drill cannot be an artefact of superuser
+    table access.
+  * Exactly-once is checked in the ledger, not inferred: `N` succeeded runs for
+    `N` jobs, one claimed/succeeded event per job, no duplicated
+    `(job_id, event_type)` pair, `3N` outbox rows, and every job still on lease
+    generation 1 / attempt 1 (nothing was silently reclaimed or retried).
+  * Every lease is settled twice. The second settlement must be refused with
+    `StaleLeaseError`; an accepted repeat is a violation.
+  * The claim phase ends with one drain on the test process: a worker may see an
+    empty queue while another claim still holds the last row's lock, so "empty"
+    is only final after the fleet and the drain have both stopped.
+  * Database connections are capped at 20 for the 100-process level. 100 worker
+    processes contending for a realistic pool is the shape being stressed; 100
+    raw connections would only test `max_connections`.
+
+Tests (test-first: `AgentosWorker.Staging.Concurrency.run/1` was written as a
+call in the staging test and watched fail with `UndefinedFunctionError` before
+`lib/agentos_worker/staging/concurrency.ex` existed)
+  * `mix test.staging` (disposable PostgreSQL, admin + worker logins, real
+    migrations): 1 → 1 job, 10 → 10, 100 → 100; claimed/unique/settled all equal
+    the level, repeat refusals equal the level, states `%{"succeeded" => N}`,
+    violations `[]`. Observed 302–562 ms (1), 541–719 ms (10), 3.2–3.9 s (100).
+  * Same drill via `TEST_DATABASE_URL`/`TEST_WORKER_DATABASE_URL` against a
+    persistent database, twice, with unique per-run tenants: violations `[]`.
+  * `mix check` in a clean HEAD tree: 37 tests, 0 failures, format clean,
+    warnings-as-errors. `mix test` excludes `:postgres`/`:staging`, so neither
+    the default suite nor `npm run test:elixir` needs a database.
+  * CI: new `elixir-staging` job (PostgreSQL 16 service, provisioned worker
+    login, `mix test --only staging`).
+
+Not claimed / limits
+  * No worker is killed mid-lease: crash recovery, lease expiry and `UNCERTAIN`
+    reconciliation remain M2-11. The outbox relay is not run here; delivery
+    semantics stay with the queue contract tests. Elapsed times are completion
+    evidence, not a capacity benchmark. No checklist box is self-ticked; the
+    drill awaits independent verification.
+
+Next unclaimed item: **D-14 SID signature/revocation/issuer/transfer** (M2-11
+restart/cancel/`UNCERTAIN` reconciliation remains claimed by worker-a).
+
+## 2026-11-23 — M2-11 restart, graceful cancel, crash recovery, UNCERTAIN reconciliation (worker-a)
+
+Decision
+  Reconciliation splits by authority. The **database** decides what an expired
+  lease becomes (`uap.claim_task_job` recovery loop: `queued` when idempotent and
+  attempts remain, `incomplete` for `cancelling`/`reconcile_only`/consumed
+  approval, `dead_letter` at the ceiling). The **app** decides only what a living
+  worker asks for when it stops, in `AgentosWorker.Lifecycle`: prove → `succeeded`,
+  unproven on non-idempotent work → `incomplete`, unproven on idempotent work →
+  retry with the uncertainty recorded, cancellation → `cancelled` unless the
+  effect already landed (then `incomplete`). `uap.settle_task_job` validates the
+  plan again, so an app-side bug cannot cause a blind retry.
+
+Why this shape
+  * A crashed process took its lease token with it; it cannot settle, so
+    "restart" must never mean "run it again". `TaskWorker` children stay
+    `:temporary` (a test kills one and asserts it is not restarted) and
+    `Lifecycle.crash_recovery/2` only states how long the queue must wait.
+  * `reconcile_only` work is never re-queued, not even before the first effect:
+    the contract says a repeat is not provable, so the honest terminal state is
+    `incomplete` with `reconcile_only` recorded.
+  * Effect state moves forward only (`:none → :applied | :uncertain`,
+    `:uncertain → :applied` on proof) so a worker cannot downgrade proof to
+    justify a retry.
+  * A settlement refusal (`StaleLeaseError`/`TransitionError`) leaves the worker
+    running with its lease; no settlement channel is `:settlement_not_wired`, not
+    a silent stop.
+  * Cancellation has two halves by design: the operator's request lands in
+    `uap.request_task_job_cancellation` (recorded as `cancel_requested_at`), and
+    the worker mirrors it (`cancel/1`). `settle("cancelled")` without the
+    operator row is refused by the database — tested against real PostgreSQL.
+
+Tests (test-first: the 11 lifecycle tests and 9 worker tests were written and
+watched fail with `Lifecycle is undefined` / `TaskWorker.cancel/1 is undefined`
+before lib/ existed)
+  * `mix check` → 61 tests, 0 failures (49 run locally, 12 db-tagged excluded).
+  * `mix test.postgres` → 11 tests, 0 failures on a disposable real PostgreSQL,
+    including: crashed `reconcile_only` lease → `incomplete` and never re-offered;
+    crashed idempotent lease → re-queued once with a new generation and the old
+    lease stale; `cancelled` refused without an operator request, accepted after
+    it; `incomplete` settlement is never claimable again.
+  * Root suites: `cargo test --workspace --locked` 69 passed. `npm test`: the two
+    `oauth-cleanup` child-process tests hit their own 15 s spawn timeout under
+    concurrent build load and pass in isolation (10.3 s / 7.6 s); no Node change
+    in this item.
+
+Not claimed
+  * No checklist box is checked; no self-approval.
+  * Checkpointing (V6-06-06), spawn timeouts/tombstones (V6-06-08), secret wipe
+    (V6-06-09), per-SID concurrency (V6-06-04) remain open.
+
+Next unclaimed item: whatever `scripts/claim.py` hands out next (M2-12 was
+claimed by worker-b).

@@ -38,7 +38,8 @@ defmodule AgentosWorker.MixProject do
   defp aliases do
     [
       check: ["format --check-formatted", "compile --warnings-as-errors", "test"],
-      "test.postgres": ["cmd ./scripts/test-postgres.sh"]
+      "test.postgres": ["cmd ./scripts/test-postgres.sh"],
+      "test.staging": ["cmd ./scripts/staging-concurrency.sh"]
     ]
   end
 end

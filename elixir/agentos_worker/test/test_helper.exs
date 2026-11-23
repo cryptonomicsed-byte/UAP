@@ -1,1 +1,1 @@
-ExUnit.start(exclude: [:postgres])
+ExUnit.start(exclude: [:postgres, :staging])

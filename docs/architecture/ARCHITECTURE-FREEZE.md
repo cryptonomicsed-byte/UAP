@@ -27,7 +27,7 @@ lenient wins. Freezing one owner per authority makes every other component's job
 | Authority | State | Evidence in tree | Gap (track) |
 |---|---|---|---|
 | Rust policy kernel | **absent** | — | build `agentos-policy`: ActionIntent, ResourceScope, Grant, Budget, Lease, dispatch validation, one-use permits (E) |
-| Elixir worker | **scaffold only** — `elixir/agentos_worker` (M2-08) | root supervisor, unique task `Registry`, `:one_for_one` `DynamicSupervisor`, `status/0` (down = `nil`, not 0); `npm run test:elixir` | per-task GenServer + SID/lease (M2-09), queue claim/fencing/outbox (M2-10), reconciliation (M2-11), checkpointing, secret wipe (F) |
+| Elixir worker | **core built** — `elixir/agentos_worker` (M2-08..M2-10, M2-12) | root supervisor + unique task `Registry` + `:one_for_one` `DynamicSupervisor`; per-task SID/lease GenServer; Postgres claim/fencing/outbox adapter + relay; 1/10/100 concurrency staging drill (`npm run test:staging`); `npm run test:elixir` | reconciliation (M2-11, in progress), checkpointing, secret wipe (F) |
 | Hermes reasoning | present | `server/src/engine.ts`, `server/src/providers.ts`, `server/src/agent/*` | policy interception at every tool call, typed action results, model swap without SID leakage (G) |
 | Postgres truth | present | `uap.tasks`, `uap.task_jobs`, `uap.agent_runs`, `uap.approvals`, `uap.job_events`, `uap.job_worker_grants`, `uap.schema_migrations` | formal claim/fencing/outbox semantics, ledger table (E/F) |
 | One queue | partial | `server/src/storage/postgres/jobs.ts`, `job-worker-grants.ts` | single writer discipline across TS and the future Elixir worker (F) |
