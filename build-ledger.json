@@ -174,11 +174,11 @@
   {
    "id": "C-18",
    "desc": "C-18 launch roster (7 languages + creative/research)",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T15:22:03Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "c3b43d2",
+   "evidence": "tests/roles-roster.test.mjs 12/12 (RED first: ERR_MODULE_NOT_FOUND, then missing docs/roles exports); root npm test 137/137; server+web typecheck clean; cargo test --workspace --locked 69 passed; mix check 61 tests, 0 failures, 12 excluded; 16 roles / 14 families, catalog digest 5144510203df8af7\u2026",
    "verified": null
   },
   {
