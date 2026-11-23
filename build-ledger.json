@@ -164,9 +164,9 @@
   {
    "id": "C-17",
    "desc": "C-17 RoleTemplate schema + Markdown parser",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-c",
+   "claimed_at": "2026-11-23T15:10:34Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
