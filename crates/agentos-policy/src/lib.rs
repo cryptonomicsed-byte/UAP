@@ -19,6 +19,7 @@
 #![deny(missing_debug_implementations)]
 
 pub mod approval;
+pub mod authorize;
 pub mod budget;
 pub mod canonical;
 pub mod effect;

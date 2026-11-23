@@ -5,6 +5,7 @@ import { composioTools } from './composio.js';
 import { mcpToken, primaryBotId } from './engine.js';
 import { claimToolRow, enqueueBotMessage, markSilent, noteToolOutcome, requestApproval, turnDepth } from './agent/loop.js';
 import { policyFor, runComposioTool, toolMap, TOOLS, type ToolCtx } from './agent/tools.js';
+import { authorizeModelToolCall, refusalText } from './policy/tool-authority.js';
 
 /**
  * The app's tools, served to the Hermes engines over MCP (streamable HTTP, JSON answers only).
@@ -58,6 +59,14 @@ async function callTool(botId: string | null, rawName: string, args: any): Promi
   const rowSeq = await claimToolRow(botId, name);
   const ctx: ToolCtx = { userId, botId, enqueueBotMessage, depth: turnDepth(botId) };
   try {
+    // The kernel decides before anything runs: not the model that proposed the call, and
+    // not the app's own opinion of it. A refusal is a refusal even for the app's tools.
+    const verdict = await authorizeModelToolCall({ botId, userId, toolName: name, args });
+    if (!verdict.allowed) {
+      noteToolOutcome(botId, rowSeq, { status: 'denied', summary: `Refused: ${verdict.code}` });
+      return text(refusalText(verdict), true);
+    }
+
     const own = toolMap.get(name);
     if (own) {
       const r = await own.impl(args, ctx);

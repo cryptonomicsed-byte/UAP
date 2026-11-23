@@ -12,6 +12,14 @@ name = "verify-lease"
 path = "src/bin/verify_lease.rs"
 
 [[bin]]
+name = "authorize"
+path = "src/bin/authorize.rs"
+
+[[bin]]
+name = "mint"
+path = "src/bin/mint.rs"
+
+[[bin]]
 name = "mint-fixtures"
 path = "src/bin/mint_fixtures.rs"
 required-features = []

@@ -265,6 +265,29 @@ CREATE INDEX IF NOT EXISTS memory_index_lookup ON memory_index(bot_id, term);
   // One SID is one agent instance: two live agents may not claim the same identity.
   { id: 9, name: 'hermes-adapter-sid-unique', sql: `
 CREATE UNIQUE INDEX IF NOT EXISTS bots_sid_unique ON bots(sid) WHERE sid IS NOT NULL;` },
+  // Policy authorization (V6-07-03): one row per model-proposed tool intent, allowed or
+  // refused, with the kernel's stable reason code. Nullable digests stay null when the
+  // bundle never reached the kernel (policy-unavailable): a missing digest must not look
+  // like a verified one.
+  { id: 10, name: 'policy-tool-intent-decisions', sql: `
+CREATE TABLE IF NOT EXISTS policy_decisions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bot_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  tenant TEXT NOT NULL,
+  sid TEXT NOT NULL,
+  tool TEXT NOT NULL,
+  effect TEXT NOT NULL,
+  risk TEXT NOT NULL,
+  decision TEXT NOT NULL,
+  code TEXT NOT NULL,
+  intent_digest TEXT,
+  params_digest TEXT,
+  permit_id TEXT,
+  at_ms INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS policy_decisions_bot ON policy_decisions(bot_id, at_ms);
+CREATE INDEX IF NOT EXISTS policy_decisions_code ON policy_decisions(code);` },
 ];
 
 export class SqliteMigrationError extends Error {
