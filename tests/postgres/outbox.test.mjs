@@ -54,6 +54,24 @@ async function enqueue(name) {
 const claimOutbox = async (relayId, limit = 10, lockMs = 30_000) =>
   (await admin.query('SELECT * FROM uap.claim_job_outbox($1,$2,$3)', [relayId, limit, lockMs])).rows;
 
+const claimOne = async (relayId, eventId) =>
+  (await claimOutbox(relayId, 500)).find(entry => entry.event_id === eventId);
+
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// A released delivery is schedulable, not immediately deliverable: the row is
+// re-claimable only once its next_attempt_at has passed. Poll to a deadline
+// instead of assuming the retry delay is already over when the release returns.
+async function claimWithin(relayId, eventId, deadlineMs) {
+  const deadline = Date.now() + deadlineMs;
+  for (;;) {
+    const claimed = await claimOne(relayId, eventId);
+    if (claimed) return claimed;
+    if (Date.now() >= deadline) return undefined;
+    await delay(20);
+  }
+}
+
 test('an event that never commits produces no outbox row, so nothing can be delivered before the state change lands', async () => {
   const stored = await enqueue('rollback');
   const client = await admin.connect();
@@ -137,16 +155,23 @@ test('a stale relay cannot mark or release a row it does not hold', async () => 
     'a published row was claimable again');
 });
 
-test('failed delivery retries with backoff and dead-letters at the attempt ceiling, never republishing', async () => {
+test('failed delivery retries only after its backoff elapses and dead-letters at the attempt ceiling, never republishing', async () => {
   const stored = await enqueue('dead');
   const eventId = (await admin.query('SELECT event_id FROM uap.job_outbox WHERE organization_id=$1 AND job_id=$2',
     [org, stored.job.id])).rows[0].event_id;
+  const backoffMs = 120;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const claimed = (await claimOutbox('relay_a', 500)).find(entry => entry.event_id === eventId);
-    assert.ok(claimed, `row was not claimable on attempt ${attempt}`);
+    const claimed = await claimWithin('relay_a', eventId, 5_000);
+    assert.ok(claimed, `row was not claimable for attempt ${attempt} within the 5 s delivery deadline`);
     const outcome = await admin.query('SELECT uap.release_job_outbox($1,$2,$3,$4,$5) AS state',
-      [claimed.event_id, 'relay_a', 1, `publisher failure ${attempt}`, 3]);
+      [claimed.event_id, 'relay_a', backoffMs, `publisher failure ${attempt}`, 3]);
     assert.equal(outcome.rows[0].state, attempt < 3 ? 'retry' : 'dead');
+    if (attempt < 3) {
+      // Negative: a scheduled retry must not be handed out inside its own
+      // backoff window, or a failing publisher would hot-loop.
+      assert.equal(await claimOne('relay_a', eventId), undefined,
+        `retry after attempt ${attempt} was claimable inside its ${backoffMs} ms backoff window`);
+    }
   }
   const row = await admin.query('SELECT attempts,dead_lettered_at,last_error FROM uap.job_outbox WHERE event_id=$1', [eventId]);
   assert.equal(row.rows[0].attempts, 3);
@@ -154,6 +179,20 @@ test('failed delivery retries with backoff and dead-letters at the attempt ceili
   assert.equal(row.rows[0].last_error, 'publisher failure 3');
   assert.equal((await claimOutbox('relay_a', 500)).some(entry => entry.job_id === stored.job.id), false,
     'a dead-lettered row was claimable again');
+});
+
+test('a zero-delay release is immediately re-claimable, so a relay may retry without waiting', async () => {
+  const stored = await enqueue('immediate');
+  const eventId = (await admin.query('SELECT event_id FROM uap.job_outbox WHERE organization_id=$1 AND job_id=$2',
+    [org, stored.job.id])).rows[0].event_id;
+  const claimed = await claimOne('relay_a', eventId);
+  assert.ok(claimed, 'seeded row was not claimable');
+  const outcome = await admin.query('SELECT uap.release_job_outbox($1,$2,$3,$4,$5) AS state',
+    [eventId, 'relay_a', 0, 'immediate retry', 5]);
+  assert.equal(outcome.rows[0].state, 'retry');
+  const again = await claimWithin('relay_a', eventId, 2_000);
+  assert.ok(again, 'a zero-delay retry never became claimable');
+  assert.equal(again.attempts, 1);
 });
 
 test('the worker login may execute outbox functions but cannot read or write the outbox table', async () => {
