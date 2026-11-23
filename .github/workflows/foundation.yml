@@ -136,11 +136,11 @@ jobs:
         with:
           otp-version: '27'
           elixir-version: '1.17'
+      - name: Fetch dependencies
+        working-directory: elixir/agentos_worker
+        run: mix deps.get
       - name: Mix check (format + warnings-as-errors + tests)
         working-directory: elixir/agentos_worker
-        - name: Fetch dependencies
-          working-directory: elixir/agentos_worker
-          run: mix deps.get
         run: mix check
   elixir-staging:
     # Track F / M2-12: the durable queue must hold at 1/10/100 concurrent worker

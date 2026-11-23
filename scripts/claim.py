@@ -29,12 +29,12 @@ with open(LOCK, "w") as lf:
         d = json.loads(cur)
     items = d["items"]
     pick = None
-    for it in items:                      # strict order: pending first
-        if it["status"] == "pending":
+    for it in items:                      # rework first: broken items block the build
+        if it["status"] == "rework":
             pick = it; break
     if pick is None:
-        for it in items:                  # then rework items
-            if it["status"] == "rework":
+        for it in items:                  # then next pending in strict order
+            if it["status"] == "pending":
                 pick = it; break
     if pick is None:
         print("NOTHING all-claimed-or-blocked")
@@ -42,8 +42,12 @@ with open(LOCK, "w") as lf:
     pick["status"] = "claimed"; pick["claimed_by"] = worker
     pick["claimed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     json.dump(d, open(f"{U}/build-ledger.json", "w"), indent=1)
-    sh(f"cd {U} && git add build-ledger.json && "
-       f"git -c user.name=build-agent -c user.email=build@uap.local "
-       f"commit -q -m 'claim {pick['id']} by {worker}' && git push -q origin HEAD")
+    psh = sh(f"cd {U} && git add build-ledger.json && "
+             f"git -c user.name=build-agent -c user.email=build@uap.local "
+             f"commit -q -m 'claim {pick['id']} by {worker}' && git push -q origin HEAD")
+    if psh.returncode != 0:
+        sh(f"cd {U} && git reset -q --hard HEAD~1 2>/dev/null || git checkout -q -- build-ledger.json")
+        print(f"NOTHING push-failed ({psh.stderr.strip()[:120]})")
+        sys.exit(0)
     print(f"CLAIM {pick['id']} {pick['desc']}")
 
