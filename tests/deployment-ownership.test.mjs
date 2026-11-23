@@ -92,7 +92,7 @@ test('owner setup is atomic, rejects a second identity, and survives restart', {
     assert.equal(cli.code, 0, cli.output);
     assert.equal(cli.output.includes(secret), false);
     assert.equal(cli.output.includes(ownerKey), false);
-    const link = new URL(cli.output.trim());
+    const link = new URL(cli.output.trim().split('\n').filter(Boolean).pop()!);
     assert.equal((await fetch(`${server.base}${link.pathname}`, { redirect: 'manual' })).status, 302);
     assert.equal((await fetch(`${server.base}${link.pathname}`, { redirect: 'manual' })).status, 410);
     await server.stop();
