@@ -194,9 +194,9 @@
   {
    "id": "B-20",
    "desc": "B-20 source registry + ingestion pipeline",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-c",
+   "claimed_at": "2026-11-23T15:57:56Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
