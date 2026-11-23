@@ -154,9 +154,9 @@
   {
    "id": "D-16",
    "desc": "D-16 deletion/privacy propagation",
-   "status": "claimed",
-   "claimed_by": "--board",
-   "claimed_at": "2026-11-23T14:32:25Z",
+   "status": "pending",
+   "claimed_by": null,
+   "claimed_at": null,
    "done_sha": null,
    "evidence": null,
    "verified": null
