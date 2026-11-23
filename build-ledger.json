@@ -74,11 +74,11 @@
   {
    "id": "M2-08",
    "desc": "M2-08 Elixir OTP worker scaffold",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T13:13:07Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "86e1991",
+   "evidence": "TDD: elixir/agentos_worker scaffold. mix test 8/8 (negative: duplicate key refused, dead-pid terminate = {:error,:not_found}, status down=nil); mix check via scripts/test-elixir.sh OK; npm test 76/76; cargo test --workspace --locked OK. CI job elixir-worker.",
    "verified": null
   },
   {
