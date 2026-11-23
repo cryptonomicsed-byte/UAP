@@ -224,10 +224,12 @@
   {
    "id": "G-23",
    "desc": "G-23 Hermes adapter mapping + lifecycle",
-   "status": "pending",
+   "status": "claimed",
    "done_sha": null,
    "evidence": null,
-   "verified": null
+   "verified": null,
+   "claimed_by": "worker-c",
+   "claimed_at": "2026-11-23T16:52:05Z"
   },
   {
    "id": "G-24",
