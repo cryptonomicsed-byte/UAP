@@ -254,11 +254,11 @@
   {
    "id": "G-26",
    "desc": "G-26 degraded-provider tests + honest UI",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T17:54:14Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "981dd22",
+   "evidence": "G-26 = V6-07-10 degraded model/tool provider failures. NEW server/src/lib/failure.ts: classifyFailure -> stable codes (engine_unreachable, engine_auth, provider_auth, provider_rate_limited, provider_billing, provider_unavailable, model_unavailable, context_length, timeout, run_failed) with plain-language text + retryable flag; sanitizeDetail strips HTML/credentials/control bytes for logs only; ToolProviderError + toolFailure/toolUnreachable. loop.ts now throws an EngineFailure carrying HTTP status and the engine error code (never a raw body slice) on !res.ok and SSE response.failed/error, and the catch writes a notice {code, retryable, text} instead of \"Something went wrong: <raw>\"; exactly one engine request per turn, no retry, no alternate model/provider. tools.ts x_search rejects with a sanitized ToolProviderError on HTTP failure (status only), network failure and unreadable body; provider response text is drained and discarded, never echoed to the model or tool row. UI: web/src/lib/notices.ts noticeView (server text verbatim, code, hint \"Try again.\" only for transient codes) rendered by Transcript with data-code + .notice__hint. Tests tests/degraded-providers.test.mjs (RED first, 4/4): 429->provider_rate_limited retryable, 401->engine_auth not retryable, 502 HTML->provider_unavailable with no LEAKMARK123/<html leak, SSE response.failed->provider_unavailable, SSE context_length_exceeded->context_length, dead gateway->engine_unreachable with no socket detail, x_search HTTP 500 sanitized + exactly 1 attempt then network reject, UI code->hint matrix (never promises retry for setting/account/model/context errors). Clean worktree at 981dd22: degraded 4/4; hermes-model-authority+optional-providers+engine-safety 19/19; npm test 246 tests 245 pass 1 fail (tests/oauth-cleanup.test.mjs child exits null at its 15s timeout - fails identically at parent 25de2b4 in a separate clean worktree, pre-existing, not this diff); npm run typecheck clean; cargo test --workspace --locked all ok 0 failed; mix test 61 tests 0 failures (12 excluded).",
    "verified": null
   },
   {
