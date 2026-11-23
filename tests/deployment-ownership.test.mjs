@@ -32,7 +32,9 @@ async function start(env) {
   let output = '';
   try {
     const base = await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error(`server startup timed out: ${output}`)), 10000);
+      // 30s: the full suite spawns many servers concurrently; a 10s budget flaked
+      // under load while passing in isolation (no startup work changed).
+      const timeout = setTimeout(() => reject(new Error(`server startup timed out: ${output}`)), 30000);
       child.stderr.on('data', part => { output += part; });
       child.stdout.on('data', part => {
         output += part;
@@ -60,7 +62,7 @@ function snapshot(file) {
   finally { db.close(); }
 }
 
-test('owner setup is atomic, rejects a second identity, and survives restart', { timeout: 25000 }, async () => {
+test('owner setup is atomic, rejects a second identity, and survives restart', { timeout: 45000 }, async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'uap-owner-'));
   let server;
   try {

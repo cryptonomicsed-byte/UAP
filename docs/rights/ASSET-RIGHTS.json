@@ -1,0 +1,16 @@
+{
+  "name": "UAP bundled asset and font rights registry",
+  "version": 1,
+  "updated": "2026-11-23",
+  "rule": "Every bundled image/font/audio/video/model asset under web/public and web/src/avatar must have a row here with its exact sha256, its origin and a license from LICENSE-POLICY.json assetLicenses. scripts/audit-rights.mjs fails on unregistered assets, hash mismatches, incomplete rows and registry rows whose file no longer exists.",
+  "assets": [
+    {
+      "path": "web/public/favicon.svg",
+      "sha256": "b5bf5b8516f6099cb39e6949e82a483c83e691c2d12ba86c03a49fc259058d37",
+      "bytes": 410,
+      "origin": "authored in-repo for this platform (geometric node badge); no upstream mascot or traced artwork",
+      "license": "MIT",
+      "notes": "First-party addition under the repository MIT license. See THIRD_PARTY_NOTICES.md § Original platform artwork."
+    }
+  ]
+}

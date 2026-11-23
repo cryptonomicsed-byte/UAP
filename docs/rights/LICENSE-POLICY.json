@@ -1,0 +1,33 @@
+{
+  "name": "UAP third-party license policy",
+  "version": 1,
+  "updated": "2026-11-23",
+  "rule": "A dependency passes when its SPDX expression resolves true against this list. OR needs one permitted branch, AND needs every branch, WITH keeps the base license verdict. Missing, unknown, or 'SEE LICENSE IN' licenses fail closed. Adding a license here is a rights decision and requires a reviewer note in docs/rights/ASSET-RIGHTS.md history.",
+  "allow": [
+    "0BSD",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MIT-0",
+    "MPL-2.0",
+    "Python-2.0",
+    "Unlicense",
+    "Zlib"
+  ],
+  "denyExplicitly": [
+    "AGPL-3.0-only",
+    "AGPL-3.0-or-later",
+    "GPL-2.0-only",
+    "GPL-2.0-or-later",
+    "GPL-3.0-only",
+    "GPL-3.0-or-later",
+    "SSPL-1.0",
+    "BUSL-1.1",
+    "Elastic-2.0"
+  ],
+  "assetLicenses": ["MIT", "OFL-1.1", "CC-BY-4.0", "CC0-1.0", "Apache-2.0", "ISC"]
+}

@@ -57,3 +57,26 @@ jobs:
           name: postgres-storage-evidence
           path: tests/out/postgres/
           if-no-files-found: ignore
+  rights:
+    # V6-01-07: SBOM + license policy + asset/font rights manifest are a release gate,
+    # not a wiki page. Fails closed on unknown licenses, unregistered assets or an
+    # unreadable lockfile; the SBOM it uploads is bound to the lockfile hash.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Rights audit (SBOM + licenses + assets)
+        run: npm run audit:rights
+      - name: Rights audit self-tests (negative paths incl. GPL refusal)
+        run: node --import tsx --test tests/rights-audit.test.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rights-sbom-evidence
+          path: artifacts/rights/
+          if-no-files-found: error

@@ -58,6 +58,17 @@ The original `web/artwork/`, `web/public/assets/`, generated upstream avatar pat
 
 App logos supplied at runtime by Composio remain the property of their respective owners and identify connected services. Inclusion does not imply affiliation or endorsement. No third-party app logos or Google sign-in mark are bundled in the replacement UI.
 
+## Machine-enforced inventory
+
+The notices above are prose. The enforced inventory is:
+
+* `npm run audit:rights` — builds a CycloneDX 1.5 SBOM from `package-lock.json`, applies
+  `docs/rights/LICENSE-POLICY.json` (fail-closed: an unlisted, missing or unknown license
+  fails the build — GPL/AGPL/SSPL/BUSL are denied explicitly), and verifies
+  `docs/rights/ASSET-RIGHTS.json` against the actual bundled asset bytes.
+* CI job `rights` in `.github/workflows/foundation.yml` uploads the SBOM, license report
+  and asset manifest as the release evidence artifact.
+
 ## Review status
 
 These notices record source provenance and removals. They do not constitute trademark clearance, legal approval, a review of every dependency/model license, or permission to use user-supplied artwork. The descriptive name Universal Agent Platform remains provisional pending commercial name and domain clearance.

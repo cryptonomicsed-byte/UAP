@@ -13,10 +13,11 @@
     "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
     "test": "node --import tsx --test tests/*.test.mjs",
     "audit:branding": "node scripts/audit-branding.mjs",
-    "check": "npm run typecheck && npm test && npm run build && npm run audit:branding",
+    "check": "npm run typecheck && npm test && npm run build && npm run audit:branding && npm run audit:rights",
     "test:browser": "node tests/browser-smoke.mjs",
     "test:postgres": "node scripts/test-postgres.mjs",
-    "db:postgres": "node --import tsx server/src/storage/postgres/cli.ts"
+    "db:postgres": "node --import tsx server/src/storage/postgres/cli.ts",
+    "audit:rights": "node scripts/audit-rights.mjs"
   },
   "engines": {
     "node": ">=22"

@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-11-23T08:04:55.865Z",
+  "lock": "package-lock.json",
+  "lockSha256": "50fa26cf8f9046b6f7ce1be81195fa25dc28c991c4bc8f20b33ac5ffb5df020a",
+  "ok": true,
+  "licenses": {
+    "checked": 246,
+    "violations": [],
+    "summary": [
+      {
+        "license": "Apache-2.0",
+        "count": 27
+      },
+      {
+        "license": "BSD-3-Clause",
+        "count": 1
+      },
+      {
+        "license": "ISC",
+        "count": 11
+      },
+      {
+        "license": "MIT",
+        "count": 193
+      },
+      {
+        "license": "MPL-2.0",
+        "count": 13
+      },
+      {
+        "license": "Unlicense",
+        "count": 1
+      }
+    ],
+    "policy": "UAP third-party license policy"
+  },
+  "assets": {
+    "checked": 1,
+    "registered": 1,
+    "violations": []
+  }
+}
