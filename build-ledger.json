@@ -125,7 +125,7 @@
    "id": "D-13",
    "desc": "D-13 SID schema + per-instance issuance",
    "status": "done",
-   "claimed_by": "--help",
+   "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T13:46:06Z",
    "done_sha": "5f05a8f",
    "evidence": "D-13 V6-04-03/04/06: SID is issued per activated specialist instance; identity, installation, role-template version and Hermes model selection are separate records (migration 9, FORCE RLS). DB function derives identity_hash from the stored jsonb (caller cannot supply one), refuses foreign-tenant SID (42501 sid_foreign_tenant, row untouched), duplicate SID, duplicate installation, moved role-template digest, lineage parent missing; record_sid_model_selection bumps epoch without changing SID/hash. Negative paths first. Tests: node scripts/test-postgres.mjs sid-issuance.test.mjs -> 11/11 pass (full suite 13 files pass); tests/sid-legacy.test.mjs 15/15 reproducing upstream sid/0.1 fixtures @756d8d8; npm test 91/91; npm run typecheck clean; cargo test --workspace --locked 69 pass; mix test 61 tests 0 failures (12 excluded). | commit 5f05a8f",
