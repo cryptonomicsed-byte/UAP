@@ -18,12 +18,14 @@
 #![forbid(unsafe_code)]
 #![deny(missing_debug_implementations)]
 
+pub mod approval;
 pub mod budget;
 pub mod canonical;
 pub mod effect;
 pub mod grant;
 pub mod ids;
 pub mod intent;
+pub mod kernel;
 pub mod lease;
 pub mod resource;
 pub mod signature;
