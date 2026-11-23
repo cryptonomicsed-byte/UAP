@@ -64,11 +64,11 @@
   {
    "id": "M1-07",
    "desc": "M1-07 portable lease verification fixtures",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "2d3a974",
+   "evidence": "fixtures/lease-000{1,2,3,4,5}* + mint-fixtures + verify-lease bins + scripts/verify-lease.py + verifiers/go + verifiers/verify_lease.exs + scripts/portable-lease-check.sh; cargo test --workspace 69/69 debug and release; REQUIRE_ALL=1 portable-lease-check PASS 5 fixtures x 4 languages (20 runs) with identical canonical sha256; receipt docs/evidence/policy/portable-lease-report-2026-11-23.txt; mint determinism test byte-compares a fresh mint",
    "verified": null
   },
   {
