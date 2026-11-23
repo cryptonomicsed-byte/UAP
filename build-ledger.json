@@ -264,9 +264,9 @@
   {
    "id": "H-27",
    "desc": "H-27 shared protobuf/JSON contracts + fixtures",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-c",
+   "claimed_at": "2026-11-23T18:36:55Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
