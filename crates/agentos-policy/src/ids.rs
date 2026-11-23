@@ -154,6 +154,55 @@ impl fmt::Display for ToolName {
     }
 }
 
+/// A reference id: task id, lease id, intent id, grant id, approval id, idempotency key.
+///
+/// Same alphabet as [`Sid`] but without the three-character minimum (ids like `"t1"`
+/// are legal), so a caller cannot smuggle a path separator or a wildcard into a key
+/// that will be used for dedupe.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct RefId(String);
+
+impl RefId {
+    pub fn parse(s: &str) -> Result<Self, IdError> {
+        if s.is_empty() {
+            return Err(IdError::Empty);
+        }
+        if s.len() > 128 {
+            return Err(IdError::Length {
+                min: 1,
+                max: 128,
+                got: s.len(),
+            });
+        }
+        for (i, b) in s.bytes().enumerate() {
+            let first_ok = b.is_ascii_lowercase() || b.is_ascii_digit();
+            let ok = if i == 0 {
+                first_ok
+            } else {
+                first_ok || matches!(b, b'.' | b'_' | b':' | b'-')
+            };
+            if !ok {
+                return Err(IdError::Char {
+                    kind: "ref id",
+                    ch: b as char,
+                    index: i,
+                });
+            }
+        }
+        Ok(Self(s.to_string()))
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl fmt::Display for RefId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
 /// A 32-byte digest with exactly one textual spelling (lowercase hex).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Digest([u8; 32]);

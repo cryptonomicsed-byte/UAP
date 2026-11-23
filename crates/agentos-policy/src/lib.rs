@@ -11,13 +11,19 @@
 //! replayable from an audit record — and what makes a "model suggestion" unable to
 //! influence the outcome.
 //!
-//! Modules land in build order (V6-05-01..09): [`ids`] now; intent, resource, grant,
-//! lease, budget, approval and the dispatch kernel follow as each contract is tested.
+//! Modules land in build order (V6-05-01..09): [`ids`], [`canonical`], [`effect`],
+//! [`resource`], [`budget`] and [`intent`] now; grant, lease, approval and the dispatch
+//! kernel follow as each contract is tested.
 
 #![forbid(unsafe_code)]
 #![deny(missing_debug_implementations)]
 
+pub mod budget;
+pub mod canonical;
+pub mod effect;
 pub mod ids;
+pub mod intent;
+pub mod resource;
 
 /// Wire/protocol version of the policy contract set.
 ///
