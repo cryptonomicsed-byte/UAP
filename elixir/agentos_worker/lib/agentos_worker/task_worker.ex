@@ -34,7 +34,7 @@ defmodule AgentosWorker.TaskWorker do
             required(:sig_hex) => String.t(),
             required(:issuer_pub_hex) => String.t()
           },
-          optional(:clock) => (() -> integer())
+          optional(:clock) => fun()
         }
 
   @sid_re ~r/^[a-z0-9][a-z0-9._:-]{2,127}$/
