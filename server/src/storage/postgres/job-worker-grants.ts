@@ -6,6 +6,10 @@ const WORKER_FUNCTION_NAMES = [
   'settle_task_job',
   'request_task_approval',
   'consume_task_approval',
+  'claim_job_outbox',
+  'mark_job_outbox_published',
+  'release_job_outbox',
+  'job_outbox_state',
 ] as const;
 
 interface WorkerFunction {

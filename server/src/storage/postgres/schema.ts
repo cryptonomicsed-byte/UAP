@@ -3,6 +3,7 @@ import { HISTORY_IMPORT_MIGRATION } from './history-import-schema.js';
 import { RUNTIME_MIGRATION } from './runtime-schema.js';
 import { RUNTIME_TRANSITIONS_MIGRATION } from './runtime-transitions-schema.js';
 import { RUNTIME_BOUNDARY_MIGRATION } from './runtime-boundary-schema.js';
+import { OUTBOX_MIGRATION } from './outbox-schema.js';
 /** Embedded migrations ship unchanged with the compiled service. Never edit an applied entry. */
 export interface PostgresMigration {
   id: number;
@@ -219,4 +220,4 @@ CREATE POLICY llm_items_writer ON uap.llm_items FOR ALL USING (
 );
 REVOKE ALL ON uap.conversations,uap.message_rows,uap.llm_items FROM PUBLIC;
 `,
-}, SESSION_MIGRATION, HISTORY_IMPORT_MIGRATION, RUNTIME_MIGRATION, RUNTIME_TRANSITIONS_MIGRATION, RUNTIME_BOUNDARY_MIGRATION];
+}, SESSION_MIGRATION, HISTORY_IMPORT_MIGRATION, RUNTIME_MIGRATION, RUNTIME_TRANSITIONS_MIGRATION, RUNTIME_BOUNDARY_MIGRATION, OUTBOX_MIGRATION];

@@ -29,9 +29,13 @@ const workerRole = roleFrom(process.env.TEST_WORKER_DATABASE_URL);
 const quote = value => `"${value.replaceAll('"', '""')}"`;
 const quotedWorker = quote(workerRole);
 const allowedFunctions = [
+  'claim_job_outbox',
   'claim_task_job',
   'consume_task_approval',
   'heartbeat_task_job',
+  'job_outbox_state',
+  'mark_job_outbox_published',
+  'release_job_outbox',
   'request_task_approval',
   'settle_task_job',
 ];
@@ -62,7 +66,7 @@ test('worker login has only fixed transition functions and no direct durable or 
 
   for (const table of [
     'users', 'organizations', 'memberships', 'workspaces', 'agents', 'auth_sessions',
-    'tasks', 'task_jobs', 'agent_runs', 'approvals', 'job_events', 'schema_migrations',
+    'tasks', 'task_jobs', 'agent_runs', 'approvals', 'job_events', 'job_outbox', 'schema_migrations',
   ]) {
     await assert.rejects(worker.query(`SELECT * FROM uap.${table} LIMIT 1`), { code: '42501' });
   }
