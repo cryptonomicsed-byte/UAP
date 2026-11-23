@@ -254,9 +254,9 @@
   {
    "id": "G-26",
    "desc": "G-26 degraded-provider tests + honest UI",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-b",
+   "claimed_at": "2026-11-23T17:54:14Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
