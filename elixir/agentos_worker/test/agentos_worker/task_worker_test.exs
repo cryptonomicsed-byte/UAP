@@ -4,6 +4,13 @@ defmodule AgentosWorker.TaskWorkerTest do
   alias AgentosWorker.{Lease, LeaseFactory, Registry, TaskWorker}
   alias AgentosWorker.JSONTestDecoder, as: JSON
 
+  # Start through the supervisor — the production path. A startup refusal is then
+  # an `{:error, reason}` return, not an exit signal into the caller (OTP 27 sends
+  # the failure reason over the link; OTP 25 did not — tests must not depend on it).
+  defp start(spec) do
+    DynamicSupervisor.start_child(AgentosWorker.TaskSupervisor, {TaskWorker, spec})
+  end
+
   # Every test gets its own task id so the (global, unique) task registry cannot
   # collide across tests or with the scaffold suite's probes.
   defp spec(lease_overrides \\ %{}, task_overrides \\ %{}) do
@@ -16,7 +23,7 @@ defmodule AgentosWorker.TaskWorkerTest do
   test "starts with the exact SID, immutable role+skill digests and signed lease" do
     spec = spec()
 
-    assert {:ok, pid} = TaskWorker.start_link(spec)
+    assert {:ok, pid} = start(spec)
     assert {:ok, binding} = TaskWorker.binding(pid)
 
     assert binding.task_id == spec.task.task_id
@@ -34,20 +41,20 @@ defmodule AgentosWorker.TaskWorkerTest do
   end
 
   test "refuses a lease for another SID" do
-    assert {:error, :sid_mismatch} = TaskWorker.start_link(spec(%{"sid" => "sid_other01"}))
+    assert {:error, :sid_mismatch} = start(spec(%{"sid" => "sid_other01"}))
   end
 
   test "refuses a lease for another tenant" do
-    assert {:error, :tenant_mismatch} = TaskWorker.start_link(spec(%{"tenant" => "globex"}))
+    assert {:error, :tenant_mismatch} = start(spec(%{"tenant" => "globex"}))
   end
 
   test "refuses a lease for another task" do
-    assert {:error, :task_mismatch} = TaskWorker.start_link(spec(%{"task_id" => "task-other"}))
+    assert {:error, :task_mismatch} = start(spec(%{"task_id" => "task-other"}))
   end
 
   test "refuses a lease pinning another role digest" do
     assert {:error, :role_digest_mismatch} =
-             TaskWorker.start_link(spec(%{"role_digest" => String.duplicate("cc", 32)}))
+             start(spec(%{"role_digest" => String.duplicate("cc", 32)}))
   end
 
   test "refuses a lease edited after signing" do
@@ -55,52 +62,51 @@ defmodule AgentosWorker.TaskWorkerTest do
     tampered = %{spec.lease | "sid" => "sid_evil01"}
     task = %{spec.task | sid: "sid_evil01"}
 
-    assert {:error, :lease_signature} =
-             TaskWorker.start_link(%{spec | lease: tampered, task: task})
+    assert {:error, :lease_signature} = start(%{spec | lease: tampered, task: task})
   end
 
   test "refuses a lease with a field outside the contract" do
-    assert {:error, :lease_schema} = TaskWorker.start_link(spec(%{"note" => "extra"}))
+    assert {:error, :lease_schema} = start(spec(%{"note" => "extra"}))
   end
 
   test "refuses an expired lease" do
     now = System.system_time(:millisecond)
     spec = spec(%{"issued_at_ms" => now - 60_000, "expires_at_ms" => now - 1_000})
-    assert {:error, :lease_expired} = TaskWorker.start_link(spec)
+    assert {:error, :lease_expired} = start(spec)
   end
 
   test "refuses a lease that is not valid yet" do
     now = System.system_time(:millisecond)
     spec = spec(%{"issued_at_ms" => now + 60_000, "expires_at_ms" => now + 120_000})
-    assert {:error, :lease_not_yet_valid} = TaskWorker.start_link(spec)
+    assert {:error, :lease_not_yet_valid} = start(spec)
   end
 
   test "refuses epoch 0 and an inverted window" do
-    assert {:error, :lease_epoch} = TaskWorker.start_link(spec(%{"epoch" => 0}))
+    assert {:error, :lease_epoch} = start(spec(%{"epoch" => 0}))
 
     now = System.system_time(:millisecond)
     inverted = spec(%{"issued_at_ms" => now + 5_000, "expires_at_ms" => now + 1_000})
-    assert {:error, :lease_epoch} = TaskWorker.start_link(inverted)
+    assert {:error, :lease_epoch} = start(inverted)
   end
 
   test "refuses a SID outside the canonical grammar" do
     for bad <- ["sid_Test01", "ab", "sid bad", String.duplicate("9", 200)] do
-      assert {:error, :invalid_sid} = TaskWorker.start_link(spec(%{"sid" => bad}, %{sid: bad}))
+      assert {:error, :invalid_sid} = start(spec(%{"sid" => bad}, %{sid: bad}))
     end
   end
 
   test "refuses a non-digest skill pin" do
-    assert {:error, :invalid_digest} = TaskWorker.start_link(spec(%{}, %{skill_digest: "abc"}))
+    assert {:error, :invalid_digest} = start(spec(%{}, %{skill_digest: "abc"}))
   end
 
   test "refuses an incomplete task descriptor" do
     spec = spec()
     incomplete = Map.delete(spec.task, :tenant)
-    assert {:error, :invalid_task} = TaskWorker.start_link(%{spec | task: incomplete})
+    assert {:error, :invalid_task} = start(%{spec | task: incomplete})
   end
 
   test "rebind errors and leaves the binding unchanged" do
-    assert {:ok, pid} = TaskWorker.start_link(spec())
+    assert {:ok, pid} = start(spec())
     {:ok, before} = TaskWorker.binding(pid)
 
     assert {:error, :immutable_binding} = TaskWorker.rebind(pid, "sid_other01")
@@ -109,10 +115,10 @@ defmodule AgentosWorker.TaskWorkerTest do
 
   test "one live worker per task, named through the task registry" do
     spec = spec()
-    assert {:ok, pid} = TaskWorker.start_link(spec)
+    assert {:ok, pid} = start(spec)
     assert Registry.whereis({:task, spec.task.task_id}) == pid
 
-    assert {:error, {:already_started, ^pid}} = TaskWorker.start_link(spec)
+    assert {:error, {:already_started, ^pid}} = start(spec)
     assert Registry.whereis({:task, spec.task.task_id}) == pid
 
     GenServer.stop(pid)
@@ -137,7 +143,7 @@ defmodule AgentosWorker.TaskWorkerTest do
     now = System.system_time(:millisecond)
     spec = spec(%{"issued_at_ms" => now - 1_000, "expires_at_ms" => now + 300})
 
-    assert {:ok, pid} = TaskWorker.start_link(spec)
+    assert {:ok, pid} = start(spec)
     Process.unlink(pid)
     ref = Process.monitor(pid)
 
