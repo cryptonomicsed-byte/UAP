@@ -124,9 +124,9 @@
   {
    "id": "D-13",
    "desc": "D-13 SID schema + per-instance issuance",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "--help",
+   "claimed_at": "2026-11-23T13:46:06Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
