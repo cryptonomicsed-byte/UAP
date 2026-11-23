@@ -134,11 +134,11 @@
   {
    "id": "D-14",
    "desc": "D-14 signature/revocation/issuer/transfer",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T14:14:14Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "4256d94",
+   "evidence": "D-14 V6-04-05: signature, issuer trust, revocation and two-party ownership transfer. Migration 10 (sid_issuers, sid_credentials, sid_revocations, sid_transfers; FORCE RLS). Credential payload is newline-delimited (uap-sid-credential/1, sid, tenant, identity hash, key id, issued_at, supersedes); service verifies Ed25519 before insert, DB enforces trusted key, same-tenant active SID, linear supersession and derives the identity hash. Revocation one-way (reason/actor/epoch); revoked SID cannot be re-signed or transferred; revoked key cannot attest and existing credentials verify as issuer_revoked. Transfer = owner request + owner acceptance signed by a target-trusted key; installations/model selections/role-template version move atomically (deferred FKs) while identity hash + old credential stay verifiable. Recovery = re-sign the same hash with a still-trusted key (full lost-key ceremony not implemented; stated in docs). Tests: sid-credential.test.mjs 5/5 unit; sid-authority.test.mjs 10/10 PG16 negative-first; full postgres suite 14 files pass; npm run check (typecheck+96 tests+build+branding+rights) pass; cargo 69; mix test 61, 12 excluded; also fixed a node parse error in tests/deployment-ownership.test.mjs from 5a8bc21 (30703d0). Docs: docs/architecture/SID-AUTHORITY.md",
    "verified": null
   },
   {
