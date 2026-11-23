@@ -586,6 +586,58 @@ Not claimed
 
 Next unclaimed item: whatever `scripts/claim.py` hands out next (M2-12 was
 claimed by worker-b).
+
+## 2026-11-23 — B-21 (track B): quarantine, prompt-injection, executable + secret scan (worker-b)
+
+Board: claimed `B-21`; implemented V6-02-07. No checklist box is ticked and nothing is
+self-approved.
+
+Built
+  * `server/src/sources/quarantine.ts` — one scan over an imported bundle, three decisions
+    (`clean` / `needs-review` / `quarantined`), `importAllowed` true only when there are no
+    findings, and `assertImportAllowed()` as the hard gate for the ingest pipeline
+    (`SourceQuarantineError` carries `source_quarantined` / `source_needs_review` + rule ids).
+  * Secrets (line-scoped): private key blocks, AWS access key ids, GitHub/Slack/Stripe/OpenAI/
+    Google keys block; JWTs and generic credential assignments warn. Findings carry a
+    **redacted** excerpt (`AKIA...(20 chars)`) and a test asserts the raw value never appears
+    in the JSON. Placeholders (`YOUR_API_KEY`, `changeme`, `<redacted>`, runs of one char)
+    are not reported.
+  * Prompt injection: the seven override classes are **not re-declared** — the scan delegates
+    to C-19's `scanInstructions` (NFKC/zero-width-resistant, one vocabulary). This item adds
+    only what that scan lacks: credential-path exfiltration (`~/.ssh`, `id_rsa`,
+    `.aws/credentials`, `.netrc`, `.npmrc` sent outbound or posted to a URL), encoded blobs
+    (warn), and invisible characters (bidi overrides and Unicode tags block, zero-width warn).
+    `credential_exfiltration` suppresses the generic `secret_read` it supersedes.
+  * Executable analysis: `curl|bash`, `curl|python`, recursive delete at filesystem root,
+    block-device writes, `nc -e` and `/dev/tcp/`, encoded PowerShell, base64-decode-then-eval
+    block; `os.system`, `shell=True`, `child_process.exec`, `chmod 777` warn. `package.json`
+    install hooks warn. Files analysed are counted in `counts.executableFiles`.
+  * Honesty: binary files (`unscannable_binary`) and files over the byte budget
+    (`file_too_large`) force review instead of passing; findings are sorted by path/line/rule
+    and two runs on one bundle are deep-equal. `declaredSize` lets a caller report an
+    oversized file without loading it.
+  * `scripts/source-quarantine.mjs` + `npm run scan:source` — scans a checkout, skips
+    `.git`/`node_modules`/`dist`/`target`, prints `{roots, truncated, assessment}` and exits
+    0/2/3/1. A capped walk can never exit 0 (`truncated` forces 2).
+  * `docs/architecture/SOURCE-QUARANTINE.md` — rule inventory, decision ladder, honesty rules
+    and explicit non-claims (review gate, not a sandbox or antivirus).
+
+Tests (test-first: `tests/source-quarantine.test.mjs` was written and watched fail with
+`ERR_MODULE_NOT_FOUND`, then the "api keys" phrase failed on the singular-only pattern, then
+the CLI cases failed until the script existed — 24 tests)
+  * `node --import tsx --test tests/source-quarantine.test.mjs` -> 24 passed.
+  * Root `npm test` -> 173 passed, 0 failed. `npm run typecheck` clean (no TS5097).
+  * `cargo test --workspace --locked` -> all crates ok, 0 failed. `mix check` -> 61 tests,
+    0 failures, 12 excluded.
+
+Not claimed
+  * No checklist box is checked; `verified` stays null for the checker.
+  * B-20's ingest pipeline does not exist on main yet (worker-c holds it); the seam is
+    `assessSourceBundle` -> `assertImportAllowed`. Promotion to an audited status remains
+    B-22/V6-02-08 with an independent reviewer.
+
+Next unclaimed item: whatever `scripts/claim.py` hands out next (see run report).
+
 ## 2026-11-23 — B-20 source registry + ingestion pipeline (worker-c)
 
 Decision
