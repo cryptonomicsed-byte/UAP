@@ -21,9 +21,12 @@
 pub mod budget;
 pub mod canonical;
 pub mod effect;
+pub mod grant;
 pub mod ids;
 pub mod intent;
+pub mod lease;
 pub mod resource;
+pub mod signature;
 
 /// Wire/protocol version of the policy contract set.
 ///

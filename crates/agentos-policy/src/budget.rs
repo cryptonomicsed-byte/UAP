@@ -89,3 +89,35 @@ impl fmt::Display for Spend {
         )
     }
 }
+
+/// Per-task ceilings a grant confers.
+///
+/// `concurrency` is enforced by the admission ledger per `(tenant, sid)`;
+/// `wall_ms` bounds one task's lifetime; `spend` bounds the aggregate the task may
+/// reserve. All three are ceilings, never entitlements.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Budget {
+    pub concurrency: u32,
+    pub wall_ms: u64,
+    pub spend: Spend,
+}
+
+impl Budget {
+    pub(crate) fn write_into(&self, w: &mut CanonicalWriter) {
+        w.begin_object("budget");
+        w.field_int("concurrency", u64::from(self.concurrency));
+        w.field_int("wall_ms", self.wall_ms);
+        self.spend.write_into(w);
+        w.end_object();
+    }
+}
+
+impl fmt::Display for Budget {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "concurrency={} wall={}ms ({})",
+            self.concurrency, self.wall_ms, self.spend
+        )
+    }
+}

@@ -77,6 +77,47 @@ impl CanonicalWriter {
         }
     }
 
+    /// Emit a separator inside the current container if it already has a member.
+    fn sep(&mut self) {
+        if *self.need_comma.last().expect("open container") {
+            self.out.push(',');
+        }
+        *self.need_comma.last_mut().expect("open container") = true;
+    }
+
+    pub fn begin_array(&mut self, key: &str) -> &mut Self {
+        self.key(key);
+        self.out.push('[');
+        self.need_comma.push(false);
+        self
+    }
+
+    pub fn array_str(&mut self, value: &str) -> &mut Self {
+        self.sep();
+        self.out.push('"');
+        escape_into(&mut self.out, value);
+        self.out.push('"');
+        self
+    }
+
+    pub fn end_array(&mut self) -> &mut Self {
+        assert!(
+            self.need_comma.len() > 1,
+            "CanonicalWriter::end_array without a matching begin_array"
+        );
+        self.need_comma.pop();
+        self.out.push(']');
+        self
+    }
+
+    /// Begin an object that is an element of the current array.
+    pub fn begin_object_element(&mut self) -> &mut Self {
+        self.sep();
+        self.out.push('{');
+        self.need_comma.push(false);
+        self
+    }
+
     pub fn begin_object(&mut self, key: &str) -> &mut Self {
         self.key(key);
         self.out.push('{');
