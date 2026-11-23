@@ -175,6 +175,147 @@ defmodule AgentosWorker.TaskWorkerTest do
     end
   end
 
+  test "graceful cancel moves the worker to cancelling and is idempotent" do
+    assert {:ok, pid} = start(spec())
+
+    assert {:ok, :cancelling} = TaskWorker.cancel(pid)
+    assert {:ok, :cancelling} = TaskWorker.cancel(pid)
+
+    assert {:ok, %{status: :cancelling, cancel_requested: true}} = TaskWorker.status(pid)
+  end
+
+  test "effect reports only move forward; proof is never downgraded" do
+    assert {:ok, pid} = start(spec())
+
+    assert {:ok, :none} = TaskWorker.effect(pid)
+    assert {:ok, :uncertain} = TaskWorker.report_effect(pid, :uncertain)
+    assert {:ok, :applied} = TaskWorker.report_effect(pid, :applied)
+    assert {:ok, :applied} = TaskWorker.report_effect(pid, :applied)
+
+    assert {:error, :effect_already_applied} = TaskWorker.report_effect(pid, :uncertain)
+    assert {:error, :effect_already_applied} = TaskWorker.report_effect(pid, :none)
+    assert {:error, :invalid_effect} = TaskWorker.report_effect(pid, :probably)
+
+    assert {:ok, fresh} = start(spec())
+    assert {:ok, :uncertain} = TaskWorker.report_effect(fresh, :uncertain)
+    assert {:error, :effect_already_reported} = TaskWorker.report_effect(fresh, :none)
+  end
+
+  test "a killed worker is not restarted by the supervisor" do
+    before = AgentosWorker.status().tasks
+    spec = spec()
+    assert {:ok, pid} = start(spec)
+    ref = Process.monitor(pid)
+
+    Process.exit(pid, :kill)
+    assert_receive {:DOWN, ^ref, :process, ^pid, :killed}, 1_000
+
+    refute Registry.whereis({:task, spec.task.task_id})
+    assert AgentosWorker.status().tasks == before
+  end
+
+  test "finishing settles with the lifecycle plan, then stops the worker" do
+    test_pid = self()
+
+    spec =
+      Map.put(spec(), :settle, fn plan, payload ->
+        send(test_pid, {:settled, plan, payload})
+        {:ok, %{"state" => plan.outcome}}
+      end)
+
+    assert {:ok, pid} = start(spec)
+    assert {:ok, :applied} = TaskWorker.report_effect(pid, :applied)
+    ref = Process.monitor(pid)
+
+    assert {:ok, plan, %{"state" => "succeeded"}} =
+             TaskWorker.finish(pid, attempt(), %{result: %{"answer" => 42}})
+
+    assert plan.outcome == "succeeded"
+
+    assert_receive {:settled, %{outcome: "succeeded", retry_in_ms: nil},
+                    %{result: %{"answer" => 42}, error: nil}}
+
+    assert_receive {:DOWN, ^ref, :process, ^pid, {:shutdown, {:settled, "succeeded"}}}
+  end
+
+  test "a cancellation settles cancelled, or incomplete when the effect already landed" do
+    settle = fn plan, _payload -> {:ok, %{"state" => plan.outcome}} end
+
+    assert {:ok, cancelled} = start(Map.put(spec(), :settle, settle))
+    assert {:ok, :cancelling} = TaskWorker.cancel(cancelled)
+
+    assert {:ok, %{outcome: "cancelled"}, %{"state" => "cancelled"}} =
+             TaskWorker.finish(cancelled, attempt(), %{})
+
+    assert {:ok, applied} = start(Map.put(spec(), :settle, settle))
+    assert {:ok, :applied} = TaskWorker.report_effect(applied, :applied)
+    assert {:ok, :cancelling} = TaskWorker.cancel(applied)
+
+    assert {:ok, %{outcome: "incomplete", reason: :effect_applied_after_cancel},
+            %{"state" => "incomplete"}} = TaskWorker.finish(applied, attempt(), %{})
+  end
+
+  test "an uncertain reconcile-only finish asks for reconciliation, never a retry" do
+    test_pid = self()
+
+    settle = fn plan, payload ->
+      send(test_pid, {:plan, plan, payload})
+      {:ok, %{"state" => plan.outcome}}
+    end
+
+    assert {:ok, pid} = start(Map.put(spec(), :settle, settle))
+    assert {:ok, :uncertain} = TaskWorker.report_effect(pid, :uncertain)
+
+    assert {:ok, %{outcome: "incomplete", retry_in_ms: nil}, _} =
+             TaskWorker.finish(
+               pid,
+               %{retry_safety: :reconcile_only, number: 1, max: 3, retry_delay_ms: 1_000},
+               %{error: %{"why" => "provider timeout after send"}}
+             )
+
+    assert_receive {:plan, plan, payload}
+    assert plan.error.code == "uncertain_effect"
+    assert payload.error == %{"why" => "provider timeout after send"}
+  end
+
+  test "a refused settlement leaves the worker running with its lease" do
+    settle = fn _plan, _payload -> {:error, :stale_lease} end
+    assert {:ok, pid} = start(Map.put(spec(), :settle, settle))
+
+    assert {:error, :stale_lease} = TaskWorker.finish(pid, attempt(), %{})
+    assert Process.alive?(pid)
+    assert {:ok, %{status: :running}} = TaskWorker.status(pid)
+  end
+
+  test "no settlement channel is an honest refusal, not a silent stop" do
+    assert {:ok, pid} = start(spec())
+
+    assert {:error, :settlement_not_wired} = TaskWorker.finish(pid, attempt(), %{})
+    assert Process.alive?(pid)
+    assert {:ok, %{status: :running}} = TaskWorker.status(pid)
+  end
+
+  test "an invalid attempt report cannot settle anything" do
+    test_pid = self()
+
+    settle = fn _plan, _payload ->
+      send(test_pid, :wrongly_settled)
+      {:ok, %{}}
+    end
+
+    assert {:ok, pid} = start(Map.put(spec(), :settle, settle))
+
+    assert {:error, :invalid_report} =
+             TaskWorker.finish(pid, %{retry_safety: :sometimes, number: 0}, %{})
+
+    refute_receive :wrongly_settled, 50
+    assert Process.alive?(pid)
+  end
+
+  defp attempt(overrides \\ %{}) do
+    Map.merge(%{retry_safety: :idempotent, number: 1, max: 3, retry_delay_ms: 0}, overrides)
+  end
+
   defp fixture_verdict(fields, sig, pub, want_sha) do
     case Lease.verify(fields, sig, pub) do
       {:ok, body, sha} ->

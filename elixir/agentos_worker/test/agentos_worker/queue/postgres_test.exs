@@ -24,10 +24,18 @@ defmodule AgentosWorker.QueuePostgresTest do
     # transition functions and no table privileges. `admin` seeds fixtures,
     # because uap.users has FORCE ROW LEVEL SECURITY and no INSERT policy.
     {:ok, conn} =
-      Postgres.start_link(url: System.fetch_env!("TEST_WORKER_DATABASE_URL"), name: :queue_pg_test, pool_size: 1)
+      Postgres.start_link(
+        url: System.fetch_env!("TEST_WORKER_DATABASE_URL"),
+        name: :queue_pg_test,
+        pool_size: 1
+      )
 
     {:ok, admin} =
-      Postgres.start_link(url: System.fetch_env!("TEST_DATABASE_URL"), name: :queue_pg_admin, pool_size: 1)
+      Postgres.start_link(
+        url: System.fetch_env!("TEST_DATABASE_URL"),
+        name: :queue_pg_admin,
+        pool_size: 1
+      )
 
     suffix = Base.encode16(:crypto.strong_rand_bytes(6), case: :lower)
     org = "org_#{suffix}"
@@ -80,6 +88,8 @@ defmodule AgentosWorker.QueuePostgresTest do
     job = "job_#{name}_#{unique}"
     task = "task_#{name}_#{unique}"
     kind = Keyword.get(opts, :kind, "queue.test.#{name}.#{unique}")
+    retry_safety = Keyword.get(opts, :retry_safety, "idempotent")
+    max_attempts = Keyword.get(opts, :max_attempts, 3)
     now = System.system_time(:millisecond)
 
     Postgrex.query!(
@@ -100,7 +110,7 @@ defmodule AgentosWorker.QueuePostgresTest do
     Postgrex.query!(
       ctx.admin,
       "SELECT * FROM uap.enqueue_task_job($1,$2,$3,$4,$5,$6,'', $7, $8::jsonb, $9, $10,
-        'idempotent', 3, 100, $11, $12, NULL, 'v1', 'decision-1', 'unmetered_local', NULL)",
+        $13, $14, 100, $11, $12, NULL, 'v1', 'decision-1', 'unmetered_local', NULL)",
       [
         ctx.org,
         task,
@@ -113,7 +123,9 @@ defmodule AgentosWorker.QueuePostgresTest do
         "key_#{unique}",
         digest,
         now,
-        "trace_#{unique}"
+        "trace_#{unique}",
+        retry_safety,
+        max_attempts
       ]
     )
 
@@ -186,6 +198,76 @@ defmodule AgentosWorker.QueuePostgresTest do
     assert {:ok, settled} = Postgres.settle(ctx.conn, lease, "succeeded")
     assert settled["state"] == "succeeded"
     assert settled["lease_owner"] == nil
+  end
+
+  test "a crashed reconcile-only lease is reconciled to incomplete and never re-offered", ctx do
+    queued = enqueue(ctx, "reconcile", retry_safety: "reconcile_only")
+    worker = "worker_#{System.unique_integer([:positive])}"
+
+    assert {:ok, %{lease: lease}} = Postgres.claim(ctx.conn, worker, [queued.kind], 1_000)
+
+    # The worker "crashes": no heartbeat, no settlement. The next claim runs the
+    # recovery loop, which owns the decision — the app does not get to retry.
+    Process.sleep(1_200)
+
+    assert {:ok, nil} = Postgres.claim(ctx.conn, worker, [queued.kind], 60_000)
+    assert job_state(ctx, queued.job)["state"] == "incomplete"
+
+    assert {:error, %Queue.StaleLeaseError{}} = Postgres.settle(ctx.conn, lease, "succeeded"),
+           "a dead lease settled work it no longer owned"
+  end
+
+  test "a crashed idempotent lease with attempts left is re-queued exactly once", ctx do
+    queued = enqueue(ctx, "requeue")
+    worker = "worker_#{System.unique_integer([:positive])}"
+
+    assert {:ok, %{lease: first}} = Postgres.claim(ctx.conn, worker, [queued.kind], 1_000)
+    Process.sleep(1_200)
+
+    assert {:ok, %{lease: second}} = Postgres.claim(ctx.conn, worker, [queued.kind], 60_000)
+    assert second.generation == first.generation + 1
+    assert job_state(ctx, queued.job)["state"] == "running"
+
+    assert {:error, %Queue.StaleLeaseError{}} = Postgres.heartbeat(ctx.conn, first, 60_000)
+  end
+
+  test "cancellation is refused without an operator request, and settles once it exists", ctx do
+    queued = enqueue(ctx, "cancel")
+    worker = "worker_#{System.unique_integer([:positive])}"
+
+    assert {:ok, %{lease: lease}} = Postgres.claim(ctx.conn, worker, [queued.kind], 60_000)
+
+    assert {:error, %Queue.TransitionError{}} = Postgres.settle(ctx.conn, lease, "cancelled"),
+           "an unrequested cancellation was accepted"
+
+    assert job_state(ctx, queued.job)["state"] == "running"
+
+    Postgrex.query!(ctx.admin, "SELECT * FROM uap.request_task_job_cancellation($1,$2)", [
+      ctx.org,
+      queued.job
+    ])
+
+    assert job_state(ctx, queued.job)["state"] == "cancelling"
+
+    assert {:ok, settled} = Postgres.settle(ctx.conn, lease, "cancelled")
+    assert settled["state"] == "cancelled"
+    assert settled["cancel_requested_at"] != nil
+  end
+
+  test "an unproven effect can be settled incomplete, and incomplete work is never re-offered",
+       ctx do
+    queued = enqueue(ctx, "uncertain")
+    worker = "worker_#{System.unique_integer([:positive])}"
+
+    assert {:ok, %{lease: lease}} = Postgres.claim(ctx.conn, worker, [queued.kind], 60_000)
+
+    assert {:ok, settled} =
+             Postgres.settle(ctx.conn, lease, "incomplete", error: %{"code" => "uncertain_effect"})
+
+    assert settled["state"] == "incomplete"
+
+    other = "worker_#{System.unique_integer([:positive])}"
+    assert {:ok, nil} = Postgres.claim(ctx.conn, other, [queued.kind], 60_000)
   end
 
   test "committed events are claimable, a relay that lost its lease cannot publish them, and publishing is one-way",

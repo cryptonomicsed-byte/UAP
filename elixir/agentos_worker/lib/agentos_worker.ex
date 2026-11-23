@@ -3,10 +3,10 @@ defmodule AgentosWorker do
   Ephemeral task execution for UAP.
 
   This app is the **only** owner of ephemeral task lifecycle (architecture freeze
-  authority #2). It is a scaffold today: the supervision tree, the task registry
-  and an honest status read-out exist; per-task leases, queue claiming/fencing,
-  checkpointing and reconciliation are separate work items and are deliberately
-  absent here.
+  authority #2). The supervision tree, the task registry, per-task workers with
+  SID + signed lease, the Postgres queue adapter and the restart/cancel/UNCERTAIN
+  reconciliation policy exist; checkpointing and secret wipe are separate items
+  and are deliberately absent here.
 
   Status is read from the live supervisors, never from memory or config, and
   reports `nil` (not zero) when a supervisor is down — an idle worker and a dead
