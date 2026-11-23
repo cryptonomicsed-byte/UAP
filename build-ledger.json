@@ -94,11 +94,11 @@
   {
    "id": "M2-10",
    "desc": "M2-10 queue claim/fencing/outbox",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T13:13:15Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "3919ba4",
+   "evidence": "TDD: single durable queue authority (Postgres) with claim, fencing and transactional outbox. tests/postgres/outbox.test.mjs 7/7 + grants 5/5 on PG16 (RED first: 42P01/42883). Elixir client: mix test.postgres 7/7 green against a disposable DB with a real worker login (grant-job-worker: 9 SECURITY DEFINER transition functions, no table privileges); mix test on committed files 45/0; npm test 76/76. Harness fix in 3919ba4: admin(BYPASSRLS) seeds fixtures (uap.users FORCE RLS, no INSERT policy), worker login drives the adapter; enqueue payload passed as a map (jsonb), release-after-publish asserted stale, per-test outbox truncation.",
    "verified": null
   },
   {
