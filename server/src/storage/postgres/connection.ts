@@ -55,11 +55,15 @@ export async function assertApplicationRole(client: PoolClient): Promise<void> {
             OR has_table_privilege(candidate.oid,'uap.agent_installations','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
             OR has_table_privilege(candidate.oid,'uap.hermes_model_selections','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
             OR has_table_privilege(candidate.oid,'uap.role_template_versions','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+            OR has_table_privilege(candidate.oid,'uap.sid_issuers','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+            OR has_table_privilege(candidate.oid,'uap.sid_credentials','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+            OR has_table_privilege(candidate.oid,'uap.sid_revocations','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+            OR has_table_privilege(candidate.oid,'uap.sid_transfers','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
             OR EXISTS (
               SELECT 1 FROM pg_proc function
               JOIN pg_namespace namespace ON namespace.oid=function.pronamespace
               WHERE namespace.nspname='uap'
-                AND function.proname<>ALL(ARRAY['has_org_role','authenticate_session','revoke_session','enqueue_task_job','request_task_job_cancellation','resolve_task_approval','issue_sid_instance','record_sid_model_selection'])
+                AND function.proname<>ALL(ARRAY['has_org_role','authenticate_session','revoke_session','enqueue_task_job','request_task_job_cancellation','resolve_task_approval','issue_sid_instance','record_sid_model_selection','register_sid_issuer','set_sid_issuer_status','record_sid_credential','revoke_sid_identity','request_sid_transfer','accept_sid_transfer'])
                 AND has_function_privilege(candidate.oid,function.oid,'EXECUTE')
             ))
       )
