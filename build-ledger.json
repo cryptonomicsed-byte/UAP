@@ -234,9 +234,9 @@
   {
    "id": "G-24",
    "desc": "G-24 policy-authorized tool intents",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-c",
+   "claimed_at": "2026-11-23T17:45:55Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
