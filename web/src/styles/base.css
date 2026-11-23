@@ -130,3 +130,9 @@ a { color: inherit; }
 @keyframes badge-work { 50% { transform: translateY(-2px); } }
 @keyframes badge-speak { 50% { transform: scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .bot-avatar { animation: none !important; } }
+
+/* ---------- touch targets: 44px minimum on coarse pointers ---------- */
+@media (pointer: coarse) {
+  .icon-btn, .icon-btn--plain { min-width: 44px; min-height: 44px; }
+  .btn, .link-btn { min-height: 44px; }
+}
