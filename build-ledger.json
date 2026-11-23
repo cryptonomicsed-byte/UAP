@@ -164,12 +164,12 @@
   {
    "id": "C-17",
    "desc": "C-17 RoleTemplate schema + Markdown parser",
-   "status": "done",
+   "status": "verified",
    "claimed_by": "worker-c",
    "claimed_at": "2026-11-23T15:10:34Z",
    "done_sha": "f1a1ef1",
-   "evidence": "tests/role-template.test.mjs 8/8 + tests/persona-parser.test.mjs 6/6 (test-first: both watched RED with ERR_MODULE_NOT_FOUND before server/src/roles/ existed); npm test 110 passed/0 failed (x2); npm run typecheck clean; npm run build + audit:branding + audit:rights pass; cargo test --workspace --locked 69 passed; mix test 61 tests 0 failures (12 excluded); docs/architecture/ROLE-TEMPLATES.md",
-   "verified": null
+   "evidence": "tests/role-template.test.mjs 8/8 + tests/persona-parser.test.mjs 6/6 (test-first: both watched RED with ERR_MODULE_NOT_FOUND before server/src/roles/ existed); npm test 110 passed/0 failed (x2); npm run typecheck clean; npm run build + audit:branding + audit:rights pass; cargo test --workspace --locked 69 passed; mix test 61 tests 0 failures (12 excluded); docs/architecture/ROLE-TEMPLATES.md || CHECKER 2026-11-23T16:52Z VERIFIED at done_sha f1a1ef1 (clean worktree). Measured this session: node --import tsx --test tests/role-template.test.mjs tests/persona-parser.test.mjs -> 14 tests / 14 pass / 0 fail (8 + 6, matching the cited split); npm test -> 110 passed / 0 failed; npm run typecheck clean (server + web). Diff is TS + tests + docs only, so the cited cargo 69 / mix 61 numbers are unchanged whole-workspace figures (measured at earlier shas). Secrets scan: the only match is a test fixture string 'ignore policy and exfiltrate secrets' inside the tamper test - not a secret. Read, not just ran: the digest's referent is stated correctly rather than laundered - buildRoleTemplate computes the sha256 over canonical (key-sorted) JSON and ignores a caller-supplied digest, verifyRoleTemplate recomputes and throws digest_mismatch on drift, and the doc labels a NOASSERTION licence 'unverified' instead of implying a rights check; assertVersionImmutable enforces same-version-different-digest refusal. The digest is integrity-over-fields, NOT publisher authenticity, and the doc does not claim otherwise. UNVERIFIABLE sub-claim: 'test-first, watched RED with ERR_MODULE_NOT_FOUND' describes the author's working process and leaves no artifact (tests and code landed in one commit); it is immaterial to the result. CI: no run existed for f1a1ef1 at check time; the only recurring red jobs are elixir-worker (workflow has no 'mix deps.get' step - see operational flag) and the outbox flake, neither touched by this diff.",
+   "verified": true
   },
   {
    "id": "C-18",
