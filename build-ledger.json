@@ -84,9 +84,9 @@
   {
    "id": "M2-09",
    "desc": "M2-09 per-task GenServer + SID/lease binding",
-   "status": "pending",
-   "claimed_by": null,
-   "claimed_at": null,
+   "status": "claimed",
+   "claimed_by": "worker-a",
+   "claimed_at": "2026-11-23T13:13:12Z",
    "done_sha": null,
    "evidence": null,
    "verified": null
