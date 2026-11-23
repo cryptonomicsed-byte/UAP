@@ -1,7 +1,24 @@
+import { createHash } from 'node:crypto';
 import { db } from '../db.js';
 import { getBotRow, listRoutines } from '../store.js';
 import { connectedToolkits } from '../composio.js';
 import { LIBRARY_ROOT } from './tools.js';
+import {
+  DEFAULT_SKILL_BUDGET_TOKENS,
+  SKILL_CONTEXT_FLOOR_TOKENS,
+  buildSkillContext,
+} from './skill-context.js';
+
+/**
+ * Token budget for the skill block of this turn, per role. `SKILL_CONTEXT_BUDGET_TOKENS`
+ * lets an operator price a role's context without a code change; values below the
+ * builder's floor are ignored rather than silently producing an empty block.
+ * Read per turn so a restart is not needed, but constant within a turn.
+ */
+function skillBudgetTokens(): number {
+  const raw = Number(process.env.SKILL_CONTEXT_BUDGET_TOKENS ?? '');
+  return Number.isInteger(raw) && raw >= SKILL_CONTEXT_FLOOR_TOKENS ? raw : DEFAULT_SKILL_BUDGET_TOKENS;
+}
 
 /**
  * What the app adds to the agent's own system prompt on every turn (sent as `instructions`).
@@ -21,7 +38,17 @@ export async function instructionsFor(userId: string, botId: string): Promise<st
     .map((b) => `- ${b.name}${b.label ? ` (${b.label})` : ''}${b.is_primary ? ' [main point of contact]' : ''}`)
     .join('\n');
   const groups = (db.prepare("SELECT name FROM bots WHERE user_id=? AND kind='room' AND members LIKE ? ORDER BY created_at").all(userId, `%${botId}%`) as any[]).map((g) => g.name).join(', ');
-  const skills = (db.prepare('SELECT name, body FROM skills WHERE bot_id=? ORDER BY created_at').all(botId) as any[]).map((s) => `### ${s.name}\n${s.body}`).join('\n\n');
+  const skillRows = db.prepare('SELECT id, name, body FROM skills WHERE bot_id=? ORDER BY created_at, id').all(botId) as any[];
+  const roleDigest = createHash('sha256')
+    .update(`bot-role/1\n${bot.name}\n${bot.label ?? ''}\n${bot.description ?? ''}`)
+    .digest('hex');
+  const skillText = buildSkillContext({
+    // The role's own wording is already in `who` above, so the budgeted block
+    // carries the role's skills only; the digest binds which role it belongs to.
+    role: { id: `bot:${botId}`, version: 1, digest: roleDigest, title: bot.label || bot.name, instructions: '' },
+    skills: skillRows.map((s) => ({ id: s.id, name: s.name, body: s.body })),
+    budgetTokens: skillBudgetTokens(),
+  }).data.text;
   const routines = listRoutines(botId).map((r) => `- ${r.name} (${r.id}): ${r.enabled ? r.description : 'paused'}; ${r.prompt.slice(0, 120)}`).join('\n');
   let apps = '';
   try { apps = [...(await connectedToolkits(userId))].sort().join(', '); } catch { apps = '(could not check right now)'; }
@@ -57,5 +84,5 @@ You have your own screen on a Linux computer shared by the team: a desktop with 
 - User: ${owner}${user?.email ? ` <${user.email}>` : ''}
 - Connected apps: ${apps || 'none yet'}
 ${team ? `- Other agents on the team:\n${team}` : '- You are the only agent on the team so far.'}${groups ? `\n- Group chats you are in: ${groups}` : ''}
-${routines ? `\n## Your routines in the app\n${routines}\n` : ''}${skills ? `\n## Skills ${owner} gave you\n${skills}\n` : ''}${bot.instructions ? `\n## Instructions from ${owner}\n${bot.instructions}\n` : ''}`;
+${routines ? `\n## Your routines in the app\n${routines}\n` : ''}${skillText ? `\n## Skills ${owner} gave you\n${skillText}\n` : ''}${bot.instructions ? `\n## Instructions from ${owner}\n${bot.instructions}\n` : ''}`;
 }
