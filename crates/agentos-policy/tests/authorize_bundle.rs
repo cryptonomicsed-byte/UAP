@@ -21,10 +21,11 @@ mod common;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-use agentos_policy::authorize::{
-    approval_fields_json, authorize_bundle, grant_fields_json, intent_fields_json, lease_fields_json,
-};
 use agentos_policy::approval::{ApprovalRecord, SignedApproval, APPROVAL_DOMAIN};
+use agentos_policy::authorize::{
+    approval_fields_json, authorize_bundle, grant_fields_json, intent_fields_json,
+    lease_fields_json,
+};
 use agentos_policy::effect::{EffectClass, RiskTier};
 use agentos_policy::grant::{SignedGrant, GRANT_DOMAIN};
 use agentos_policy::ids::{Digest, RefId};
@@ -95,7 +96,12 @@ fn approval_value(a: &SignedApproval) -> Value {
 
 /// A complete, strict bundle. `include_approval` decides whether the (optional) signed
 /// human approval travels with it.
-fn bundle(grant_json: Value, lease_json: Value, intent: &ActionIntent, approval: Option<Value>) -> Value {
+fn bundle(
+    grant_json: Value,
+    lease_json: Value,
+    intent: &ActionIntent,
+    approval: Option<Value>,
+) -> Value {
     let mut trust = json!({
         "issuers": [{ "id": ISSUER, "public_key_hex": common::key().public_key_hex() }],
     });
@@ -133,12 +139,7 @@ fn run(bundle: &Value) -> Value {
 
 fn default_bundle(intent: &ActionIntent) -> Value {
     let g = common::grant();
-    bundle(
-        signed_grant_value(&g),
-        signed_lease_value(&g),
-        intent,
-        None,
-    )
+    bundle(signed_grant_value(&g), signed_lease_value(&g), intent, None)
 }
 
 // ------------------------------------------------------------------ allow path
@@ -149,7 +150,10 @@ fn a_granted_read_with_a_valid_lease_and_grant_is_allowed() {
     assert_eq!(d["allowed"], json!(true), "decision: {d}");
     assert_eq!(d["code"], json!("allow"));
     assert_eq!(d["audit_seq"], json!(0));
-    assert_eq!(d["intent_digest"], json!(common::intent().digest().to_hex()));
+    assert_eq!(
+        d["intent_digest"],
+        json!(common::intent().digest().to_hex())
+    );
     // The permit names the exact intent; the executor can re-check it.
     assert_eq!(d["permit"]["intent_id"], json!("int-0001"));
     assert_eq!(d["permit"]["effect"], json!("read"));
@@ -331,7 +335,10 @@ fn an_unknown_field_anywhere_in_the_bundle_is_invalid_request() {
     let d: Value = serde_json::from_str(&text).unwrap();
     assert_eq!(d["allowed"], json!(false));
     assert_eq!(d["code"], json!("invalid-request"));
-    assert!(d["detail"].as_str().unwrap().contains("unknown field"), "{d}");
+    assert!(
+        d["detail"].as_str().unwrap().contains("unknown field"),
+        "{d}"
+    );
 }
 
 #[test]
@@ -365,9 +372,14 @@ fn non_json_input_is_invalid_request_not_a_panic() {
 #[test]
 fn the_wire_fields_rebuild_the_exact_canonical_documents() {
     let g = common::grant();
-    assert_eq!(grant_fields_json(&g).as_object().unwrap()["v"], json!(GRANT_DOMAIN));
     assert_eq!(
-        lease_fields_json(&common::lease_for(&g, 1)).as_object().unwrap()["v"],
+        grant_fields_json(&g).as_object().unwrap()["v"],
+        json!(GRANT_DOMAIN)
+    );
+    assert_eq!(
+        lease_fields_json(&common::lease_for(&g, 1))
+            .as_object()
+            .unwrap()["v"],
         json!(LEASE_DOMAIN)
     );
     assert_eq!(
@@ -439,14 +451,16 @@ fn the_cli_exits_twenty_on_unparseable_input_and_still_prints_a_decision() {
 fn minting_a_grant_from_a_seed_produces_a_document_the_kernel_accepts() {
     let g = common::grant();
     let seed = [7u8; 32];
-    let minted = agentos_policy::authorize::mint_json(&json!({
-        "v": "uap-mint/1",
-        "kind": "grant",
-        "issuer": ISSUER,
-        "seed_hex": hex32(&seed),
-        "fields": grant_fields_json(&g),
-    })
-    .to_string())
+    let minted = agentos_policy::authorize::mint_json(
+        &json!({
+            "v": "uap-mint/1",
+            "kind": "grant",
+            "issuer": ISSUER,
+            "seed_hex": hex32(&seed),
+            "fields": grant_fields_json(&g),
+        })
+        .to_string(),
+    )
     .expect("mint succeeds");
     let m: Value = serde_json::from_str(&minted).unwrap();
     assert_eq!(m["public_key_hex"], json!(common::key().public_key_hex()));
@@ -468,14 +482,16 @@ fn minting_a_grant_from_a_seed_produces_a_document_the_kernel_accepts() {
 fn minting_refuses_a_field_set_the_domain_type_rejects() {
     let mut fields = grant_fields_json(&common::grant());
     fields["effects"] = json!([]); // a grant with no effect class can never be valid
-    let err = agentos_policy::authorize::mint_json(&json!({
-        "v": "uap-mint/1",
-        "kind": "grant",
-        "issuer": ISSUER,
-        "seed_hex": hex32(&[7u8; 32]),
-        "fields": fields,
-    })
-    .to_string())
+    let err = agentos_policy::authorize::mint_json(
+        &json!({
+            "v": "uap-mint/1",
+            "kind": "grant",
+            "issuer": ISSUER,
+            "seed_hex": hex32(&[7u8; 32]),
+            "fields": fields,
+        })
+        .to_string(),
+    )
     .unwrap_err();
     assert!(err.contains("invalid-grant"), "{err}");
 }
@@ -487,14 +503,16 @@ fn a_lease_signed_with_a_different_seed_verifies_against_its_own_key_only() {
     // is not whatever key the caller happened to use.
     let g = common::grant();
     let rogue = [9u8; 32];
-    let minted = agentos_policy::authorize::mint_json(&json!({
-        "v": "uap-mint/1",
-        "kind": "lease",
-        "issuer": ISSUER,
-        "seed_hex": hex32(&rogue),
-        "fields": lease_fields_json(&common::lease_for(&g, 1)),
-    })
-    .to_string())
+    let minted = agentos_policy::authorize::mint_json(
+        &json!({
+            "v": "uap-mint/1",
+            "kind": "lease",
+            "issuer": ISSUER,
+            "seed_hex": hex32(&rogue),
+            "fields": lease_fields_json(&common::lease_for(&g, 1)),
+        })
+        .to_string(),
+    )
     .unwrap();
     let m: Value = serde_json::from_str(&minted).unwrap();
     let mut b = default_bundle(&common::intent());

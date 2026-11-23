@@ -572,9 +572,8 @@ pub fn authorize_bundle(input: &str) -> Result<String, String> {
         return Ok(refusal(&denial, &intent));
     }
     if let Some(record) = approval {
-        let approver = same(&raw.approval, "approver").and_then(|s| {
-            IssuerId::from_str(&s).map_err(|e| format!("approval approver: {e}"))
-        });
+        let approver = same(&raw.approval, "approver")
+            .and_then(|s| IssuerId::from_str(&s).map_err(|e| format!("approval approver: {e}")));
         let approver = match approver {
             Ok(a) => a,
             Err(e) => return Ok(invalid(&e)),
@@ -682,8 +681,7 @@ pub fn mint_json(input: &str) -> Result<String, String> {
     let public_key_hex = key.public_key_hex();
     let (signature_hex, canonical_sha256) = match raw.kind.as_str() {
         "grant" => {
-            let fields: RawGrantFields =
-                parse_fields(&raw.fields, "grant.fields")?;
+            let fields: RawGrantFields = parse_fields(&raw.fields, "grant.fields")?;
             let grant = fields.typed()?;
             grant
                 .validate()
@@ -696,8 +694,8 @@ pub fn mint_json(input: &str) -> Result<String, String> {
         }
         "lease" => {
             let fields = serde_json::to_string(&raw.fields).map_err(|e| e.to_string())?;
-            let lease = crate::fixtures::parse_fields(&fields)
-                .map_err(|e| format!("lease.fields: {e}"))?;
+            let lease =
+                crate::fixtures::parse_fields(&fields).map_err(|e| format!("lease.fields: {e}"))?;
             lease
                 .validate()
                 .map_err(|e| format!("invalid-lease: {e}"))?;
@@ -708,8 +706,7 @@ pub fn mint_json(input: &str) -> Result<String, String> {
             )
         }
         "approval" => {
-            let fields: RawApprovalFields =
-                parse_fields(&raw.fields, "approval.fields")?;
+            let fields: RawApprovalFields = parse_fields(&raw.fields, "approval.fields")?;
             let record = fields.typed()?;
             record
                 .validate()
