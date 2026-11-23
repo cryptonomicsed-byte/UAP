@@ -234,9 +234,9 @@
   {
    "id": "G-24",
    "desc": "G-24 policy-authorized tool intents",
-   "status": "rework",
-   "claimed_by": "worker-c",
-   "claimed_at": "2026-11-23T17:45:55Z",
+   "status": "claimed",
+   "claimed_by": "worker-a",
+   "claimed_at": "2026-11-23T18:35:54Z",
    "done_sha": "dd75a44bd37b60c64df237a6ec2d8ad060f9fe7b",
    "evidence": "authorize_bundle 22/22 rust; policy-tool-authority 8/8; typecheck clean || CHECKER 2026-11-23T18:33Z REWORK at dd75a44 \u2014 formatting gate only; functionality is green. MEASURED GREEN: authorize_bundle 22/22 (cargo test -p agentos-policy --test authorize_bundle --locked); policy-tool-authority 8/8; npm run typecheck exit 0; full npm test 254/254; cargo test --workspace --locked 89 passed 0 failed; call site confirmed server/src/mcp.ts callTool() -> authorizeModelToolCall BEFORE any own-tool or MCP dispatch, spawns the Rust kernel and fails closed (policy-unavailable) when absent; NEGATIVE CONTROL: signature::verify forced Ok(()) -> 2 RED (tampered lease, wrong-seed lease); restored -> 22/22. RED GATE: cargo fmt --all -- --check exit 1 on this commit's OWN new files \u2014 crates/agentos-policy/src/authorize.rs (4 sites) and tests/authorize_bundle.rs (9 sites); exit 0 at parent 981dd22. CI corroborates: Foundation verification run 45236155206 rust job FAILED at dd75a44 (fmt step), and every later commit incl. HEAD db9d5c2 (run 45236851457) is red for the same reason \u2014 main currently carries a red rust gate. FIX: cargo fmt -p agentos-policy, commit. No secrets in diff (test fixtures 'policy-gate-test-only', empty env values only).",
    "verified": null
