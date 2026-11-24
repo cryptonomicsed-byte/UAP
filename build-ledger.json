@@ -514,11 +514,11 @@
   {
    "id": "R-52",
    "desc": "R-52 backup/restore/replay",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "c2a6932742932273300e4f6e448135e004d47856",
+   "evidence": "ops-security bundle",
    "verified": null
   },
   {
