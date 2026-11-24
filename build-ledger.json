@@ -287,7 +287,7 @@
    "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": "32e2e8833270258b485ede1d8e686f1f04ac4e39",
+   "done_sha": "a3e06def2a6639f77b46aba59166fe7f272bca87",
    "evidence": "npm test 254/254; cargo test ok; mix test 61/0/12; import verification passes",
    "verified": null
   },
