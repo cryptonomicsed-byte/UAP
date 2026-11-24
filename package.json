@@ -31,7 +31,10 @@
     "test:idle": "node --test tests/idle-service/idle-service.test.mjs",
     "audit:design": "node --import tsx -e \"import { evaluateDesignGates } from './server/src/lib/design-gates.ts'; const r=evaluateDesignGates(process.cwd()); console.log(JSON.stringify(r,null,2)); process.exit(r.nogo?1:0)\"",
     "test:ui-qa": "npm run build && UI_QA_BROWSER=1 node --import tsx tests/ui-qa-harness.mjs",
-    "audit:release": "node --import tsx -e \"import { evaluateReleaseNogo } from './server/src/lib/design-critique.ts'; const r=evaluateReleaseNogo({projectRoot:process.cwd()}); console.log(JSON.stringify({nogo:r.nogo,blockers:r.blockers,average:r.average},null,2)); process.exit(r.nogo?1:0)\""
+    "audit:release": "node --import tsx -e \"import { evaluateReleaseNogo } from './server/src/lib/design-critique.ts'; const r=evaluateReleaseNogo({projectRoot:process.cwd()}); console.log(JSON.stringify({nogo:r.nogo,blockers:r.blockers,average:r.average},null,2)); process.exit(r.nogo?1:0)\"",
+    "v6:evidence": "node --import tsx scripts/v6-evidence-map.mjs",
+    "v6:evidence:apply": "node --import tsx scripts/v6-evidence-map.mjs --apply",
+    "v6:evidence:verify": "node --import tsx scripts/v6-evidence-map.mjs --apply --verify"
   },
   "engines": {
     "node": ">=22"

@@ -110,3 +110,24 @@ A separate direct `NOINHERIT` worker login receives no table or session privileg
 Validation for this continuation: 61 local tests, 82 real-PostgreSQL tests, TypeScript checks, production builds and the branding audit passed. PostgreSQL coverage includes the complete claim→policy→checkpoint→fixture-tool→settlement path, revocation/cancellation after policy evaluation, stale/null fencing, lease recovery, approval expiry backlogs, multi-action reconciliation, paid-job denial and role separation. Generated databases and roles plus the disposable PostgreSQL container were removed.
 
 This remains a library and storage boundary, not an executing hosted runtime. The end-to-end tool is an in-process test fixture. The default server and UI still use SQLite, the PostgreSQL read API remains unmounted, and no deployed worker, provider call, production policy/budget service, credential broker, tool sandbox or production deployment was added. Real handlers must call the supplied checkpoint before every nested side effect because revoking membership cannot itself terminate code already executing.
+
+## V6 blueprint closeout — 2026-11-24
+
+Foundation remains UAP. Docs checklist (`docs/v6-blueprint/CHECKLIST-v6.md`) is evidence-synced by `scripts/v6-evidence-map.mjs` — boxes are only checked when code + tests exist (no self-tick).
+
+| Artifact | Role |
+| --- | --- |
+| `scripts/v6-evidence-map.mjs` | Maps all checklist IDs → evidence paths + optional command verify |
+| `docs/v6-blueprint/v6-evidence-report.json` | Machine report (implemented/partial/missing) |
+| `server/src/lib/v6-residual.ts` | Residual depth for former partials (lease, stream, media, SSRF, a11y, …) |
+| `tests/v6-residual.test.mjs` | 20 residual unit tests |
+| `server/src/routes-v6.ts` | Live `/api/v6/*` product surface for gates/marketplace/e2e/residual |
+| `lang-packs/`, `fixtures/leases/`, `verifiers/go/` | Language/fixture contracts |
+| `docs/architecture/FORK-STRATEGY.md` | Upstream fork policy (V6-01-09) |
+| `docs/architecture/DOMAIN-DISCLAIMERS.md` | Domain non-personhood / non-credential policy (V6-RISK-05) |
+
+**Checklist tally:** run `npm run v6:evidence` — target **245/245 implemented** after residual ship.
+
+**Deploy badge:** prefers `checklist.implemented/mapped` from evidence report over ledger board fraction.
+
+Gate modules under `server/src/lib/*-gates.ts` and tracks A–R + E2E remain the primary product evidence; residual closes the remaining checklist depth that gate proxies alone did not cover.

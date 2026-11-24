@@ -1,0 +1,1 @@
+{"family":"sui_move","invariants":["object_ownership","capability_access"],"networks":["localnet","testnet"],"mainnet_signing":"human_only"}

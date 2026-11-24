@@ -11,6 +11,13 @@ export type DeployStatusPayload = {
     claimed?: number;
     rework?: number;
   } | null;
+  checklist?: {
+    implemented?: number;
+    partial?: number;
+    missing?: number;
+    mapped?: number;
+    generatedAt?: string | null;
+  } | null;
   error?: string | null;
 };
 
@@ -29,10 +36,20 @@ export function boardClosed(board: DeployStatusPayload['board']): { closed: numb
   return { closed, total, label: `${closed}/${total} closed` };
 }
 
+/** Prefer full checklist evidence totals when present. */
+export function checklistLabel(checklist: DeployStatusPayload['checklist']): string | null {
+  const mapped = Number(checklist?.mapped ?? 0);
+  const implemented = Number(checklist?.implemented ?? 0);
+  if (!mapped) return null;
+  return `${implemented}/${mapped} checklist`;
+}
+
 export function deployBadgeText(payload: DeployStatusPayload | null): string {
   if (!payload) return 'deploy …';
   if (payload.error) return `deploy err`;
   const sha = shortSha(payload.sha);
+  const cl = checklistLabel(payload.checklist);
+  if (cl) return `UAP ${sha} · ${cl}`;
   const { label } = boardClosed(payload.board);
   return `UAP ${sha} · ${label}`;
 }

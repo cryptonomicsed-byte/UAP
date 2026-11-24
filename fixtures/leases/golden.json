@@ -1,0 +1,7 @@
+{
+  "agentSid": "sid_fixture",
+  "resource": "tool:search",
+  "budget": { "tokens": 1000, "toolCalls": 5, "wallMs": 30000 },
+  "langs": ["rust", "elixir", "go", "python"],
+  "note": "HMAC payload verified by server/src/lib/v6-residual.ts"
+}

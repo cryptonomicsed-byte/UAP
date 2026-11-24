@@ -33,7 +33,14 @@ export const api = new Hono<AuthVars>();
 
 function deployStatus() {
   const root = path.resolve(process.cwd(), '..');
-  const out = { sha: null as string | null, deployedAt: null as string | null, board: null as any, tracks: null as any, error: null as string | null };
+  const out = {
+    sha: null as string | null,
+    deployedAt: null as string | null,
+    board: null as any,
+    tracks: null as any,
+    checklist: null as any,
+    error: null as string | null,
+  };
   try {
     const sp = path.join(root, '.deploy-sha');
     const st = fs.statSync(sp);
@@ -45,7 +52,7 @@ function deployStatus() {
     const b = JSON.parse(fs.readFileSync(bp, 'utf8'));
     const items = b.items ?? [];
     const count = (s: string) => items.filter((i: any) => i.status === s).length;
-        const tracks = new Map<string, any>();
+    const tracks = new Map<string, any>();
     for (const i of items) {
       const t = String(i.id ?? '').split('-')[0] || '?';
       const tr = tracks.get(t) ?? { track: t, total: 0, closed: 0, rework: 0, pending: 0, claimed: 0 };
@@ -57,9 +64,26 @@ function deployStatus() {
       tracks.set(t, tr);
     }
     out.tracks = [...tracks.values()];
-out.board = { total: items.length, pending: count('pending'), claimed: count('claimed'),
-                  done: count('done'), verified: count('verified'), rework: count('rework') };
+    out.board = {
+      total: items.length,
+      pending: count('pending'),
+      claimed: count('claimed'),
+      done: count('done'),
+      verified: count('verified'),
+      rework: count('rework'),
+    };
   } catch (e: any) { out.board = null; out.error = String(e?.message ?? e); }
+  try {
+    const ep = path.join(root, 'docs/v6-blueprint/v6-evidence-report.json');
+    const rep = JSON.parse(fs.readFileSync(ep, 'utf8'));
+    out.checklist = {
+      implemented: rep.totals?.implemented ?? 0,
+      partial: rep.totals?.partial ?? 0,
+      missing: rep.totals?.missing ?? 0,
+      mapped: rep.totals?.mapped ?? 0,
+      generatedAt: rep.generatedAt ?? null,
+    };
+  } catch { /* optional */ }
   return out;
 }
 

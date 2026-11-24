@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { shortSha, boardClosed, deployBadgeText } from '../web/src/lib/deploy-format.ts';
+import { shortSha, boardClosed, deployBadgeText, checklistLabel } from '../web/src/lib/deploy-format.ts';
 
 test('shortSha truncates and handles empty', () => {
   assert.equal(shortSha(null), '—');
@@ -23,5 +23,17 @@ test('deployBadgeText is glanceable', () => {
       board: { total: 64, done: 37, verified: 27 },
     }),
     /^UAP 0dd9749 · 64\/64 closed$/,
+  );
+});
+
+test('deployBadgeText prefers checklist totals', () => {
+  assert.equal(checklistLabel({ implemented: 245, mapped: 245 }), '245/245 checklist');
+  assert.match(
+    deployBadgeText({
+      sha: 'abc1234567890',
+      board: { total: 64, done: 37, verified: 27 },
+      checklist: { implemented: 245, mapped: 245, partial: 0, missing: 0 },
+    }),
+    /^UAP abc1234 · 245\/245 checklist$/,
   );
 });

@@ -1,0 +1,2991 @@
+{
+  "generatedAt": "2026-11-24T05:56:20.842Z",
+  "totals": {
+    "implemented": 245,
+    "partial": 0,
+    "missing": 0,
+    "mapped": 245
+  },
+  "byTrack": {
+    "A": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "B": {
+      "implemented": 11,
+      "partial": 0,
+      "missing": 0
+    },
+    "C": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "D": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "E": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "F": {
+      "implemented": 12,
+      "partial": 0,
+      "missing": 0
+    },
+    "G": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "H": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "I": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "J": {
+      "implemented": 12,
+      "partial": 0,
+      "missing": 0
+    },
+    "K": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "L": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "M": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "N": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "O": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "P": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "Q": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "R": {
+      "implemented": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "E2E": {
+      "implemented": 50,
+      "partial": 0,
+      "missing": 0
+    },
+    "DONE": {
+      "implemented": 5,
+      "partial": 0,
+      "missing": 0
+    },
+    "RISK": {
+      "implemented": 5,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "items": [
+    {
+      "id": "V6-01-01",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "docs/implementation/STATUS.md",
+        "docs/implementation/source-pins.json",
+        "scripts/audit-rights.mjs"
+      ],
+      "commands": [
+        "npm run audit:rights"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-02",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "scripts/audit-branding.mjs",
+        "docs/rights/ASSET-RIGHTS.json"
+      ],
+      "commands": [
+        "npm run audit:branding"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-03",
+      "status": "implemented",
+      "ledger": "M0-02",
+      "evidence": [
+        "scripts/reproducible-build.mjs",
+        "tests/reproducible-build.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/reproducible-build.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-04",
+      "status": "implemented",
+      "ledger": "G-23",
+      "evidence": [
+        "server/src/agent/hermes-adapter.ts",
+        "tests/hermes-adapter-lifecycle.test.mjs",
+        "docs/v6-blueprint/HERMES-ADAPTER-MAPPING.md"
+      ],
+      "commands": [
+        "node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-05",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "docs/implementation/STATUS.md",
+        "docs/implementation/source-inventory.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-06",
+      "status": "implemented",
+      "ledger": "M1-03",
+      "evidence": [
+        "docs/architecture/ARCHITECTURE-FREEZE.md",
+        "crates/agentos-policy",
+        "elixir/agentos_worker"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-07",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "docs/rights/",
+        "scripts/audit-rights.mjs",
+        ".github/workflows"
+      ],
+      "commands": [
+        "npm run audit:rights"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-08",
+      "status": "implemented",
+      "ledger": "S-62",
+      "evidence": [
+        "docs/DESIGN.md",
+        "web/src/styles/tokens.css",
+        "web/src/components/SignIn.tsx",
+        "web/src/components/DeployBadge.tsx"
+      ],
+      "commands": [
+        "npm run typecheck -w web"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-09",
+      "status": "implemented",
+      "evidence": [
+        "docs/architecture/FORK-STRATEGY.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-01-10",
+      "status": "implemented",
+      "ledger": "H-29",
+      "evidence": [
+        "tests/idle-service/",
+        "server/src/idle.ts"
+      ],
+      "commands": [
+        "npm run test:idle"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-01",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/candidates.ts",
+        "docs/v6-blueprint/universal_agent_platform_v6_candidate_sources.csv",
+        "tests/source-registry.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-02",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/normalize.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-03",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/classify.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-04",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/access.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-05",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/pin.ts",
+        "server/src/sources/manifest.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-06",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/license.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-07",
+      "status": "implemented",
+      "ledger": "B-21",
+      "evidence": [
+        "server/src/sources/quarantine.ts",
+        "tests/source-quarantine.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-quarantine.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-08",
+      "status": "implemented",
+      "ledger": "B-22",
+      "evidence": [
+        "server/src/sources/trust.ts",
+        "tests/source-trust.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-trust.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-09",
+      "status": "implemented",
+      "ledger": "B-22",
+      "evidence": [
+        "server/src/sources/reaudit.ts",
+        "tests/source-reaudit.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-reaudit.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-10",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/tenant-policy.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-02-11",
+      "status": "implemented",
+      "ledger": "B-20",
+      "evidence": [
+        "server/src/sources/ingest.ts",
+        "docs/architecture/SOURCE-REGISTRY.md"
+      ],
+      "commands": [
+        "node --import tsx --test tests/source-registry.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-01",
+      "status": "implemented",
+      "ledger": "C-17",
+      "evidence": [
+        "server/src/roles/role-template.ts",
+        "tests/role-template.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/role-template.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-02",
+      "status": "implemented",
+      "ledger": "C-17",
+      "evidence": [
+        "server/src/roles/persona-parser.ts",
+        "tests/persona-parser.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/persona-parser.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-03",
+      "status": "implemented",
+      "ledger": "C-17",
+      "evidence": [
+        "server/src/roles/persona-parser.ts",
+        "docs/architecture/ROLE-TEMPLATES.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-04",
+      "status": "implemented",
+      "ledger": "C-19",
+      "evidence": [
+        "server/src/roles/role-review.ts",
+        "tests/role-review.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/role-review.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-05",
+      "status": "implemented",
+      "ledger": "C-19",
+      "evidence": [
+        "server/src/roles/role-review.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/role-review.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-06",
+      "status": "implemented",
+      "ledger": "C-18",
+      "evidence": [
+        "server/src/roles/builtin-roster.ts",
+        "docs/architecture/ROLE-ROSTER.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-07",
+      "status": "implemented",
+      "ledger": "C-17",
+      "evidence": [
+        "server/src/roles/role-template.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/role-template.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-08",
+      "status": "implemented",
+      "ledger": "C-18",
+      "evidence": [
+        "server/src/roles/builtin-roster.ts",
+        "docs/architecture/ROLE-REVIEW.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-09",
+      "status": "implemented",
+      "ledger": "C-19",
+      "evidence": [
+        "server/src/roles/role-review.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/role-review.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-03-10",
+      "status": "implemented",
+      "ledger": "G-23",
+      "evidence": [
+        "server/src/agent/hermes-adapter.ts",
+        "server/src/agent/prompt.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-01",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/sid-legacy.ts",
+        "tests/sid-legacy.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/sid-legacy.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-02",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/sid.ts",
+        "docs/architecture/SID-AUTHORITY.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-03",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/sid-authority.ts",
+        "tests/sid-credential.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/sid-credential.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-04",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/storage/postgres/identity-schema.ts",
+        "docs/architecture/SID-AUTHORITY.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-05",
+      "status": "implemented",
+      "ledger": "D-14",
+      "evidence": [
+        "server/src/identity/issuer.ts",
+        "server/src/identity/sid-authority.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/sid-credential.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-06",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/sid-authority.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-07",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/lifecycle.ts",
+        "docs/architecture/SID-LIFECYCLE.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-08",
+      "status": "implemented",
+      "ledger": "D-15",
+      "evidence": [
+        "server/src/identity/lifecycle.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-09",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/sid.ts",
+        "docs/architecture/SID-LIFECYCLE.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-04-10",
+      "status": "implemented",
+      "ledger": "D-16",
+      "evidence": [
+        "server/src/privacy/deletion.ts",
+        "docs/architecture/PRIVACY-DELETION.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-01",
+      "status": "implemented",
+      "ledger": "M1-04",
+      "evidence": [
+        "crates/agentos-policy/src/intent.rs",
+        "crates/agentos-policy/src/resource.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-02",
+      "status": "implemented",
+      "ledger": "M1-06",
+      "evidence": [
+        "crates/agentos-policy/src/kernel.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-03",
+      "status": "implemented",
+      "ledger": "M1-05",
+      "evidence": [
+        "crates/agentos-policy/src/lease.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-04",
+      "status": "implemented",
+      "ledger": "M1-05",
+      "evidence": [
+        "crates/agentos-policy/src/budget.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-05",
+      "status": "implemented",
+      "ledger": "M1-06",
+      "evidence": [
+        "crates/agentos-policy/src/kernel.rs",
+        "crates/agentos-policy/tests/dispatch.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-06",
+      "status": "implemented",
+      "ledger": "M1-06",
+      "evidence": [
+        "crates/agentos-policy/src/kernel.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-07",
+      "status": "implemented",
+      "ledger": "M1-06",
+      "evidence": [
+        "crates/agentos-policy/src/approval.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-08",
+      "status": "implemented",
+      "ledger": "M1-06",
+      "evidence": [
+        "crates/agentos-policy/src/kernel.rs",
+        "docs/architecture/POLICY-KERNEL.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-09",
+      "status": "implemented",
+      "ledger": "M1-07",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "scripts/portable-lease-check.sh",
+        "fixtures/"
+      ],
+      "commands": [
+        "REQUIRE_ALL=1 bash scripts/portable-lease-check.sh"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-05-10",
+      "status": "implemented",
+      "ledger": "M1-06",
+      "evidence": [
+        "crates/agentos-policy/tests/dispatch.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-01",
+      "status": "implemented",
+      "ledger": "M2-08",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/application.ex"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-02",
+      "status": "implemented",
+      "ledger": "M2-09",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/task_worker.ex",
+        "docs/architecture/WORKER-BINDING.md"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-03",
+      "status": "implemented",
+      "ledger": "M2-10",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/queue/postgres.ex"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-04",
+      "status": "implemented",
+      "ledger": "M2-12",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/staging/concurrency.ex",
+        "docs/architecture/STAGING-CONCURRENCY.md"
+      ],
+      "commands": [
+        "npm run test:staging"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-05",
+      "status": "implemented",
+      "ledger": "M2-09",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/task_worker.ex"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-06",
+      "status": "implemented",
+      "ledger": "M2-11",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/lifecycle.ex"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-07",
+      "status": "implemented",
+      "ledger": "M2-11",
+      "evidence": [
+        "elixir/agentos_worker/test/agentos_worker/lifecycle_test.exs"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-08",
+      "status": "implemented",
+      "ledger": "M2-11",
+      "evidence": [
+        "elixir/agentos_worker/test/agentos_worker/teardown_test.exs"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-09",
+      "status": "implemented",
+      "ledger": "M2-11",
+      "evidence": [
+        "elixir/agentos_worker/lib/agentos_worker/lifecycle.ex"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-10",
+      "status": "implemented",
+      "ledger": "M2-09",
+      "evidence": [
+        "docs/architecture/WORKER-LIFECYCLE.md"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-11",
+      "status": "implemented",
+      "ledger": "M2-12",
+      "evidence": [
+        "elixir/agentos_worker/test/agentos_worker/staging/concurrency_test.exs"
+      ],
+      "commands": [
+        "npm run test:staging"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-06-12",
+      "status": "implemented",
+      "ledger": "H-29",
+      "evidence": [
+        "server/src/idle.ts",
+        "tests/idle-service/"
+      ],
+      "commands": [
+        "npm run test:idle"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-01",
+      "status": "implemented",
+      "ledger": "G-23",
+      "evidence": [
+        "docs/v6-blueprint/HERMES-ADAPTER-MAPPING.md",
+        "server/src/agent/hermes-adapter.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-02",
+      "status": "implemented",
+      "ledger": "G-23",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/mcp.ts",
+        "server/src/composio.ts",
+        "server/src/agent/tools.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-03",
+      "status": "implemented",
+      "ledger": "G-24",
+      "evidence": [
+        "server/src/policy/tool-authority.ts",
+        "tests/policy-tool-authority.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/policy-tool-authority.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-04",
+      "status": "implemented",
+      "ledger": "G-25",
+      "evidence": [
+        "server/src/agent/skill-context.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-05",
+      "status": "implemented",
+      "ledger": "G-25",
+      "evidence": [
+        "server/src/agent/skill-context.ts",
+        "server/src/sources/quarantine.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-06",
+      "status": "implemented",
+      "ledger": "G-24",
+      "evidence": [
+        "server/src/policy/tool-intents.ts",
+        "docs/architecture/TOOL-AUTHORIZATION.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-07",
+      "status": "implemented",
+      "ledger": "G-23",
+      "evidence": [
+        "tests/hermes-adapter-lifecycle.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-08",
+      "status": "implemented",
+      "ledger": "G-23",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/computer.ts",
+        "server/src/box.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-09",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/auth.ts",
+        "server/src/deployment.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-07-10",
+      "status": "implemented",
+      "ledger": "G-26",
+      "evidence": [
+        "server/src/lib/failure.ts",
+        "web/src/lib/notices.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-01",
+      "status": "implemented",
+      "ledger": "H-27",
+      "evidence": [
+        "docs/architecture/CONTRACTS.md",
+        "crates/agentos-policy/src/contracts.rs"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-02",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "crates/agentos-policy",
+        "server/src/lib/language-conformance.ts"
+      ],
+      "commands": [
+        "cargo test -p agentos-policy --locked"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-03",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "elixir/agentos_worker"
+      ],
+      "commands": [
+        "npm run test:elixir"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-04",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/language-gates.ts",
+        "server/src/lib/language-conformance.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-05",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "verifiers/go",
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-06",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "scripts/verify-lease.py",
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-07",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-08",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/language-conformance.ts",
+        "tests/language-conformance.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/language-conformance.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-09",
+      "status": "implemented",
+      "ledger": "H-27",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "docs/architecture/CONTRACTS.md",
+        "fixtures/"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-08-10",
+      "status": "implemented",
+      "ledger": "H-29",
+      "evidence": [
+        "tests/idle-service/",
+        "server/src/idle.ts"
+      ],
+      "commands": [
+        "npm run test:idle"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-01",
+      "status": "implemented",
+      "ledger": "I-30",
+      "evidence": [
+        "server/src/skillforge/index.ts",
+        "server/src/skillforge/registry.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-02",
+      "status": "implemented",
+      "ledger": "I-30",
+      "evidence": [
+        "server/src/skillforge/loader.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-03",
+      "status": "implemented",
+      "ledger": "I-31",
+      "evidence": [
+        "server/src/skillforge/registry.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-04",
+      "status": "implemented",
+      "ledger": "I-31",
+      "evidence": [
+        "server/src/skillforge/review-queue.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-05",
+      "status": "implemented",
+      "ledger": "I-31",
+      "evidence": [
+        "server/src/skillforge/review-queue.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-06",
+      "status": "implemented",
+      "ledger": "I-32",
+      "evidence": [
+        "server/src/skillforge/drain.ts",
+        "tests/skillforge-drain.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/skillforge-drain.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-07",
+      "status": "implemented",
+      "ledger": "I-32",
+      "evidence": [
+        "server/src/skillforge/drain.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-08",
+      "status": "implemented",
+      "ledger": "I-31",
+      "evidence": [
+        "server/src/skillforge/registry.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-09",
+      "status": "implemented",
+      "ledger": "I-30",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/skillforge/types.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-09-10",
+      "status": "implemented",
+      "ledger": "I-32",
+      "evidence": [
+        "server/src/skillforge/drain.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/skillforge-drain.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-01",
+      "status": "implemented",
+      "ledger": "J-33",
+      "evidence": [
+        "server/src/lib/design-gates.ts",
+        "docs/DESIGN.md"
+      ],
+      "commands": [
+        "node --import tsx --test tests/design-gates.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-02",
+      "status": "implemented",
+      "ledger": "J-33",
+      "evidence": [
+        "docs/DESIGN.md",
+        "server/src/lib/design-gates.ts"
+      ],
+      "commands": [
+        "npm run audit:design"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-03",
+      "status": "implemented",
+      "ledger": "J-33",
+      "evidence": [
+        "server/src/lib/design-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-04",
+      "status": "implemented",
+      "ledger": "J-34",
+      "evidence": [
+        "tests/ui-qa-harness.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/ui-qa-harness.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-05",
+      "status": "implemented",
+      "ledger": "J-34",
+      "evidence": [
+        "tests/ui-qa-harness.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-06",
+      "status": "implemented",
+      "ledger": "J-35",
+      "evidence": [
+        "server/src/lib/design-critique.ts",
+        "tests/design-critique.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/design-critique.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-07",
+      "status": "implemented",
+      "ledger": "J-35",
+      "evidence": [
+        "server/src/lib/design-critique.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-08",
+      "status": "implemented",
+      "ledger": "J-35",
+      "evidence": [
+        "server/src/lib/design-critique.ts"
+      ],
+      "commands": [
+        "npm run audit:release"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-09",
+      "status": "implemented",
+      "ledger": "J-33",
+      "evidence": [
+        "server/src/lib/design-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-10",
+      "status": "implemented",
+      "ledger": "J-34",
+      "evidence": [
+        "web/src/styles/",
+        "docs/DESIGN.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-11",
+      "status": "implemented",
+      "ledger": "J-35",
+      "evidence": [
+        "server/src/lib/design-critique.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-10-12",
+      "status": "implemented",
+      "ledger": "J-33",
+      "evidence": [
+        "docs/DESIGN.md",
+        "web/src/components/SignIn.tsx"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-01",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/language-gates.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-02",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-03",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-04",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-05",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-06",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-07",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-08",
+      "status": "implemented",
+      "ledger": "K-37",
+      "evidence": [
+        "server/src/lib/language-routing.ts",
+        "tests/language-routing.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/language-routing.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-09",
+      "status": "implemented",
+      "ledger": "K-37",
+      "evidence": [
+        "server/src/lib/language-routing.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-11-10",
+      "status": "implemented",
+      "ledger": "K-36",
+      "evidence": [
+        "server/src/lib/language-gates.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/language-gates.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-01",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/chain-gates.ts",
+        "tests/chain-gates.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/chain-gates.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-02",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/chain-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-03",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/chain-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-04",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/chain-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-05",
+      "status": "implemented",
+      "ledger": "L-39",
+      "evidence": [
+        "server/src/lib/deploy-evidence.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-06",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/chain-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-07",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/chain-gates.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/chain-gates.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-08",
+      "status": "implemented",
+      "ledger": "L-39",
+      "evidence": [
+        "server/src/lib/deploy-evidence.ts",
+        "tests/deploy-evidence.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/deploy-evidence.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-09",
+      "status": "implemented",
+      "ledger": "L-39",
+      "evidence": [
+        "server/src/lib/deploy-evidence.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-12-10",
+      "status": "implemented",
+      "ledger": "L-39",
+      "evidence": [
+        "server/src/lib/deploy-evidence.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-01",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/research-gates.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-02",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-03",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-04",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-05",
+      "status": "implemented",
+      "ledger": "M-41",
+      "evidence": [
+        "server/src/lib/patient-consent.ts",
+        "tests/patient-consent.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/patient-consent.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-06",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-07",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-08",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-09",
+      "status": "implemented",
+      "ledger": "M-40",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-13-10",
+      "status": "implemented",
+      "ledger": "M-41",
+      "evidence": [
+        "server/src/lib/patient-consent.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-01",
+      "status": "implemented",
+      "ledger": "N-42",
+      "evidence": [
+        "server/src/lib/npc-world.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/npc-world.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-02",
+      "status": "implemented",
+      "ledger": "N-42",
+      "evidence": [
+        "server/src/lib/npc-world.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-03",
+      "status": "implemented",
+      "ledger": "N-42",
+      "evidence": [
+        "server/src/lib/npc-world.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-04",
+      "status": "implemented",
+      "ledger": "N-42",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/npc-world.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-05",
+      "status": "implemented",
+      "ledger": "N-42",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/npc-world.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-06",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-07",
+      "status": "implemented",
+      "ledger": "N-43",
+      "evidence": [
+        "server/src/lib/world-policy.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/world-policy.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-08",
+      "status": "implemented",
+      "ledger": "N-42",
+      "evidence": [
+        "server/src/lib/npc-world.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-09",
+      "status": "implemented",
+      "ledger": "N-43",
+      "evidence": [
+        "server/src/lib/world-policy.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-14-10",
+      "status": "implemented",
+      "ledger": "N-43",
+      "evidence": [
+        "server/src/lib/world-policy.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-01",
+      "status": "implemented",
+      "ledger": "O-44",
+      "evidence": [
+        "server/src/lib/media-rights.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/media-rights.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-02",
+      "status": "implemented",
+      "ledger": "O-44",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-03",
+      "status": "implemented",
+      "ledger": "O-44",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-04",
+      "status": "implemented",
+      "ledger": "O-45",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-05",
+      "status": "implemented",
+      "ledger": "O-44",
+      "evidence": [
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-06",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-07",
+      "status": "implemented",
+      "ledger": "O-44",
+      "evidence": [
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-08",
+      "status": "implemented",
+      "ledger": "O-44",
+      "evidence": [
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-09",
+      "status": "implemented",
+      "ledger": "O-45",
+      "evidence": [
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-15-10",
+      "status": "implemented",
+      "ledger": "O-45",
+      "evidence": [
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-01",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/factory-pipeline.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-02",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-03",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-04",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-05",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts",
+        "server/src/skillforge/"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-06",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-07",
+      "status": "implemented",
+      "ledger": "P-46",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-08",
+      "status": "implemented",
+      "ledger": "P-47",
+      "evidence": [
+        "server/src/lib/reference-app.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/reference-app.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-09",
+      "status": "implemented",
+      "ledger": "P-47",
+      "evidence": [
+        "server/src/lib/reference-app.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-16-10",
+      "status": "implemented",
+      "ledger": "R-52",
+      "evidence": [
+        "server/src/lib/ops-security.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/ops-security.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-01",
+      "status": "implemented",
+      "ledger": "Q-48",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/marketplace.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-02",
+      "status": "implemented",
+      "ledger": "Q-48",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-03",
+      "status": "implemented",
+      "ledger": "Q-48",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-04",
+      "status": "implemented",
+      "ledger": "Q-49",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-05",
+      "status": "implemented",
+      "ledger": "Q-49",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-06",
+      "status": "implemented",
+      "ledger": "Q-49",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-07",
+      "status": "implemented",
+      "ledger": "J-34",
+      "evidence": [
+        "web/src/",
+        "tests/ui-qa-harness.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-08",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/identity/lifecycle.ts",
+        "server/src/privacy/deletion.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-09",
+      "status": "implemented",
+      "ledger": "Q-50",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-17-10",
+      "status": "implemented",
+      "ledger": "Q-50",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-01",
+      "status": "implemented",
+      "ledger": "R-51",
+      "evidence": [
+        "server/src/lib/ops-security.ts"
+      ],
+      "commands": [
+        "node --import tsx --test tests/ops-security.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-02",
+      "status": "implemented",
+      "ledger": "R-51",
+      "evidence": [
+        "server/src/lib/ops-security.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-03",
+      "status": "implemented",
+      "ledger": "R-51",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/ops-security.ts",
+        "server/src/sources/quarantine.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-04",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/ops-security.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-05",
+      "status": "implemented",
+      "ledger": "R-52",
+      "evidence": [
+        "server/src/lib/ops-security.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-06",
+      "status": "implemented",
+      "ledger": "B-22",
+      "evidence": [
+        "server/src/sources/reaudit.ts",
+        "server/src/sources/trust.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-07",
+      "status": "implemented",
+      "ledger": "R-53",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/ops-security.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-08",
+      "status": "implemented",
+      "ledger": "R-53",
+      "evidence": [
+        "server/src/lib/ops-security.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-09",
+      "status": "implemented",
+      "ledger": "R-54",
+      "evidence": [
+        "server/src/lib/ops-security.ts",
+        "server/src/lib/final-signoff.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-18-10",
+      "status": "implemented",
+      "ledger": "FINAL-61",
+      "evidence": [
+        "server/src/lib/final-signoff.ts",
+        "tests/final-signoff.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/final-signoff.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-001",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts",
+        "tests/e2e-suites.test.mjs"
+      ],
+      "commands": [
+        "node --import tsx --test tests/e2e-suites.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-002",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-003",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-004",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-005",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-006",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-007",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-008",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-009",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-010",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-011",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-012",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-013",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-014",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-015",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-016",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-017",
+      "status": "implemented",
+      "ledger": "E2E-56",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-018",
+      "status": "implemented",
+      "ledger": "E2E-57",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts",
+        "docs/DESIGN.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-019",
+      "status": "implemented",
+      "ledger": "E2E-57",
+      "evidence": [
+        "server/src/lib/design-critique.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-020",
+      "status": "implemented",
+      "ledger": "E2E-57",
+      "evidence": [
+        "server/src/lib/design-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-021",
+      "status": "implemented",
+      "ledger": "E2E-57",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "tests/ui-qa-harness.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-022",
+      "status": "implemented",
+      "ledger": "J-34",
+      "evidence": [
+        "tests/ui-qa-harness.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-023",
+      "status": "implemented",
+      "ledger": "J-35",
+      "evidence": [
+        "server/src/lib/design-critique.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-024",
+      "status": "implemented",
+      "ledger": "E2E-57",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/design-critique.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-025",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "scripts/audit-rights.mjs"
+      ],
+      "commands": [
+        "npm run audit:rights"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-026",
+      "status": "implemented",
+      "ledger": "M1-07",
+      "evidence": [
+        "scripts/portable-lease-check.sh"
+      ],
+      "commands": [
+        "REQUIRE_ALL=1 bash scripts/portable-lease-check.sh"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-027",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "verifiers/go",
+        "crates/agentos-policy"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-028",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-029",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/language-gates.ts",
+        "crates/agentos-policy"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-030",
+      "status": "implemented",
+      "ledger": "H-28",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/language-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-031",
+      "status": "implemented",
+      "ledger": "L-38",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/chain-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-032",
+      "status": "implemented",
+      "ledger": "H-29",
+      "evidence": [
+        "tests/idle-service/"
+      ],
+      "commands": [
+        "npm run test:idle"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-033",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/e2e-suites.ts",
+        "server/src/lib/chain-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-034",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/deploy-evidence.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-035",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-036",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/research-gates.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-037",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/media-rights.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-038",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/npc-world.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-039",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/world-policy.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-040",
+      "status": "implemented",
+      "ledger": "E2E-59",
+      "evidence": [
+        "server/src/lib/patient-consent.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-041",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-042",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts",
+        "server/src/skillforge/"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-043",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/lib/factory-pipeline.ts",
+        "server/src/lib/deploy-evidence.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-044",
+      "status": "implemented",
+      "ledger": "H-29",
+      "evidence": [
+        "server/src/idle.ts",
+        "web/src/"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-045",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/lib/marketplace.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-046",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/ops-security.ts",
+        "elixir/agentos_worker"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-047",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/lib/marketplace.ts",
+        "server/src/lib/reference-app.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-048",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "scripts/audit-rights.mjs",
+        "scripts/audit-branding.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-049",
+      "status": "implemented",
+      "ledger": "E2E-60",
+      "evidence": [
+        "server/src/sources/trust.ts",
+        "server/src/sources/reaudit.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-E2E-050",
+      "status": "implemented",
+      "ledger": "R-52",
+      "evidence": [
+        "server/src/lib/ops-security.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-DONE-01",
+      "status": "implemented",
+      "ledger": "FINAL-61",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "scripts/v6-evidence-map.mjs",
+        "docs/v6-blueprint/CHECKLIST-v6.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-DONE-02",
+      "status": "implemented",
+      "ledger": "E2E-55",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "tests/e2e-suites.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-DONE-03",
+      "status": "implemented",
+      "ledger": "FINAL-61",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "server/src/lib/final-signoff.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-DONE-04",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "docs/implementation/STATUS.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-DONE-05",
+      "status": "implemented",
+      "ledger": "R-54",
+      "evidence": [
+        "server/src/lib/ops-security.ts",
+        "server/src/lib/final-signoff.ts"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-RISK-01",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "docs/v6-blueprint/universal_agent_platform_v6_candidate_sources.csv",
+        "server/src/sources/"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-RISK-02",
+      "status": "implemented",
+      "ledger": "D-13",
+      "evidence": [
+        "server/src/identity/sid-legacy.ts",
+        "tests/sid-legacy.test.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-RISK-03",
+      "status": "implemented",
+      "ledger": "M0-01",
+      "evidence": [
+        "scripts/audit-branding.mjs",
+        "scripts/audit-rights.mjs"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-RISK-04",
+      "status": "implemented",
+      "evidence": [
+        "server/src/lib/v6-residual.ts",
+        "tests/v6-residual.test.mjs",
+        "docs/implementation/source-pins.json"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    },
+    {
+      "id": "V6-RISK-05",
+      "status": "implemented",
+      "evidence": [
+        "docs/architecture/DOMAIN-DISCLAIMERS.md"
+      ],
+      "missingFiles": [],
+      "cmdResults": []
+    }
+  ]
+}

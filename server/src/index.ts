@@ -16,6 +16,7 @@ import { roomsApi } from './routes-rooms.js';
 import { enqueue, expireStaleApprovals } from './agent/loop.js';
 import { desSelfTest } from './lib/des.js';
 import { configApi } from './routes-config.js';
+import { v6Api } from './routes-v6.js';
 import { startIdleWatcher } from './idle.js';
 import { mcpApi } from './mcp.js';
 import { initEngines } from './engine.js';
@@ -37,6 +38,7 @@ app.get('/api/health', (c) => c.json({ ok: true, engine: 'hermes', providers: pr
 app.route('/mcp', mcpApi);
 app.route('/api/checkins', checkinsApi);
 app.route('/api/rooms', roomsApi);
+app.route('/api/v6', v6Api);
 app.route('/api', api);
 app.route('/api', configApi);
 
