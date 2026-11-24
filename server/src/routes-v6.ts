@@ -21,6 +21,7 @@ import { RESEARCH_ROLES, evaluateResearchOutput } from './lib/research-gates.js'
 import { MEDIA_ROLES, createMediaAsset, reviewRights } from './lib/media-rights.js';
 import { createFactoryJob, smithersBuild, skillforgeAttachPack, reaEvaluate, assertFactoryPromoteAllowed } from './lib/factory-pipeline.js';
 import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
+import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-templates.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -368,5 +369,38 @@ v6Api.get('/agentos/adoption', (c) => {
     p0: report.p0,
     note: 'A matrix row is not an install. Content is not executed.',
   });
+});
+
+const sidTemplates = () => new SidTemplateRuntime(db);
+
+v6Api.get('/sid/templates', (c) => c.json({
+  templates: sidTemplates().templates(),
+  note: 'A template is a SID birth recipe. It carries no grants. Spawn creates a new SID, never a copy of the parent.',
+}));
+
+v6Api.post('/sid/install', async (c) => {
+  const body = await c.req.json<{ tenantId?: string; template?: string }>().catch(() => ({}));
+  if (!body.template) return c.json({ error: 'template required' }, 400);
+  try {
+    const agent = sidTemplates().install({ tenantId: body.tenantId || 'local', template: body.template });
+    const supervised = superviseSpawn(agent.sid, null);
+    return c.json({ agent, supervised });
+  } catch (error) {
+    const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
+});
+
+v6Api.post('/sid/spawn', async (c) => {
+  const body = await c.req.json<{ tenantId?: string; parentSid?: string; template?: string }>().catch(() => ({}));
+  if (!body.parentSid || !body.template) return c.json({ error: 'parentSid and template required' }, 400);
+  try {
+    const agent = sidTemplates().spawnSubAgent({ tenantId: body.tenantId || 'local', parentSid: body.parentSid, template: body.template });
+    const supervised = superviseSpawn(agent.sid, agent.parentSid);
+    return c.json({ agent, supervised });
+  } catch (error) {
+    const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
 });
 
