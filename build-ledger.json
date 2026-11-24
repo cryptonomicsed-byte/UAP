@@ -294,11 +294,11 @@
   {
    "id": "I-30",
    "desc": "I-30 SkillForge integration",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "793c819901cf207c80201439c7e2707dac785478",
+   "evidence": "254 npm tests, 61 Elixir, cargo ok, build ok; SkillForge types/registry/loader/routes implemented",
    "verified": null
   },
   {
