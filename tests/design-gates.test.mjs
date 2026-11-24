@@ -8,7 +8,7 @@ import {
   parseDesignFrontmatter,
   assertDesignGatesPass,
   findDesignMd,
-} from '../server/src/design/gates.ts';
+} from '../server/src/lib/design-gates.ts';
 
 test('parseDesignFrontmatter extracts name and nested colors.primary', () => {
   const fm = parseDesignFrontmatter(`---

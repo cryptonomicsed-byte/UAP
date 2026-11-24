@@ -29,7 +29,7 @@
     "agents:bind-sid": "node --import tsx scripts/bind-agent-sid.mjs",
     "scan:source": "node --import tsx scripts/source-quarantine.mjs",
     "test:idle": "node --test tests/idle-service/idle-service.test.mjs",
-    "audit:design": "node --import tsx -e \"import { evaluateDesignGates } from './server/src/design/gates.ts'; const r=evaluateDesignGates(process.cwd()); console.log(JSON.stringify(r,null,2)); process.exit(r.nogo?1:0)\""
+    "audit:design": "node --import tsx -e \"import { evaluateDesignGates } from './server/src/lib/design-gates.ts'; const r=evaluateDesignGates(process.cwd()); console.log(JSON.stringify(r,null,2)); process.exit(r.nogo?1:0)\""
   },
   "engines": {
     "node": ">=22"
