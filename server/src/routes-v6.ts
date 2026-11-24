@@ -379,7 +379,7 @@ v6Api.get('/sid/templates', (c) => c.json({
 }));
 
 v6Api.post('/sid/install', async (c) => {
-  const body = await c.req.json<{ tenantId?: string; template?: string }>().catch(() => ({}));
+  const body = await c.req.json<{ tenantId?: string; template?: string }>().catch(() => ({ tenantId: undefined as string | undefined, template: undefined as string | undefined }));
   if (!body.template) return c.json({ error: 'template required' }, 400);
   try {
     const agent = sidTemplates().install({ tenantId: body.tenantId || 'local', template: body.template });
@@ -392,7 +392,7 @@ v6Api.post('/sid/install', async (c) => {
 });
 
 v6Api.post('/sid/spawn', async (c) => {
-  const body = await c.req.json<{ tenantId?: string; parentSid?: string; template?: string }>().catch(() => ({}));
+  const body = await c.req.json<{ tenantId?: string; parentSid?: string; template?: string }>().catch(() => ({ tenantId: undefined as string | undefined, parentSid: undefined as string | undefined, template: undefined as string | undefined }));
   if (!body.parentSid || !body.template) return c.json({ error: 'parentSid and template required' }, 400);
   try {
     const agent = sidTemplates().spawnSubAgent({ tenantId: body.tenantId || 'local', parentSid: body.parentSid, template: body.template });
