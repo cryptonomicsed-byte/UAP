@@ -343,6 +343,14 @@ const ALL_TOOLS: ToolDef[] = [
 // dispatch entries so stale clients receive the precise provider configuration error.
 export const TOOLS = ALL_TOOLS.filter((tool) => !tool.provider || isProviderConfigured(tool.provider));
 export const toolMap = new Map(ALL_TOOLS.map((t) => [t.name, t]));
+/** Full catalog for UI surface (includes tools gated by missing providers). */
+export function listAllToolCatalog(): { name: string; description: string; provider?: OptionalProvider }[] {
+  return ALL_TOOLS.map((t) => ({
+    name: t.name,
+    description: String(t.description ?? ''),
+    provider: t.provider,
+  }));
+}
 
 // ---------- approvals policy ----------
 

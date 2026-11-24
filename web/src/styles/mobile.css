@@ -1,0 +1,106 @@
+/* Mobile / narrow viewport shell — drawer sidebar + bottom sheet details */
+@media (max-width: 900px) {
+  .app {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 40;
+    inset: 0 auto 0 0;
+    width: min(300px, 86vw);
+    transform: translateX(-105%);
+    transition: transform 180ms var(--ease-out, ease-out);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+  }
+  .app.is-nav-open .sidebar {
+    transform: translateX(0);
+  }
+  .app.is-sidebar-collapsed .sidebar {
+    width: min(300px, 86vw);
+  }
+
+  .shell__scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgba(0, 0, 0, 0.45);
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .app.is-nav-open .shell__scrim,
+  .app.is-details-sheet .shell__scrim {
+    display: block;
+  }
+
+  .details {
+    position: fixed;
+    z-index: 45;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: 100% !important;
+    max-height: min(78vh, 640px);
+    height: min(78vh, 640px);
+    border-left: none;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    border-radius: 16px 16px 0 0;
+    transform: translateY(110%);
+    transition: transform 200ms var(--ease-out, ease-out);
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.4);
+  }
+  .app.has-details .details {
+    transform: translateY(0);
+  }
+
+  .chat__header {
+    padding-left: 52px;
+  }
+  .shell__nav-toggle {
+    display: inline-flex !important;
+    position: absolute;
+    left: 10px;
+    top: 12px;
+    z-index: 5;
+  }
+
+  .viewer {
+    inset: 0;
+    border-radius: 0;
+  }
+}
+
+@media (min-width: 901px) {
+  .shell__nav-toggle,
+  .shell__scrim {
+    display: none !important;
+  }
+}
+
+@supports (padding: max(0px)) {
+  @media (max-width: 900px) {
+    .details {
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .composer {
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+    }
+  }
+}
+
+@media (pointer: coarse) {
+  .icon-btn,
+  .chat__quick,
+  .segmented > button {
+    min-height: 40px;
+  }
+  .panel-row,
+  .operate__row {
+    min-height: 44px;
+  }
+}

@@ -7,9 +7,12 @@ import './styles/shell.css';
 import './styles/chat.css';
 import './styles/cards.css';
 import './styles/details.css';
+import './styles/config.css';
+import './styles/operate.css';
 import './styles/modals.css';
 import './styles/viewer.css';
 import './styles/voice.css';
+import './styles/mobile.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

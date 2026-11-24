@@ -46,7 +46,7 @@ const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect
   );
 });
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const bots = useStore((s) => s.bots);
   const live = useStore((s) => s.live);
   const storeSelectedBotId = useStore((s) => s.selectedBotId);
@@ -57,7 +57,11 @@ export function Sidebar() {
   const set = useStore((s) => s.set);
   const storeSelectBot = useStore((s) => s.selectBot);
   // Picking a bot (even the one already selected) leaves the Tasks view.
-  const selectBot = useCallback((id: string) => { useConfigUI.getState().setView('chat'); storeSelectBot(id); }, [storeSelectBot]);
+  const selectBot = useCallback((id: string) => {
+    useConfigUI.getState().setView('chat');
+    storeSelectBot(id);
+    onNavigate?.();
+  }, [storeSelectBot, onNavigate]);
   const setModal = useStore((s) => s.setModal);
   const [accountMenu, setAccountMenu] = useState(false);
   const logout = async () => { await api.logout().catch(() => {}); location.reload(); };

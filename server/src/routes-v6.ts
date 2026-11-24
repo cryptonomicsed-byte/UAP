@@ -28,6 +28,9 @@ import {
   a11yCoreFlow,
   discoverTools,
 } from './lib/v6-residual.js';
+import { providerConfiguration, isProviderConfigured } from './providers.js';
+import { env } from './env.js';
+import { TOOLS, listAllToolCatalog } from './agent/tools.js';
 
 export const v6Api = new Hono<AuthVars>();
 
@@ -247,3 +250,33 @@ v6Api.get('/residual/tools', (c) =>
     }),
   }),
 );
+
+/** Operator surface for the details sidecar — providers, computer mode, MCP tools. */
+v6Api.get('/operate-surface', (c) => {
+  const catalog = listAllToolCatalog();
+  const tools = catalog.map((t) => ({
+    name: t.name,
+    description: (t.description || '').slice(0, 160),
+    provider: t.provider ?? null,
+    available: !t.provider || isProviderConfigured(t.provider),
+  }));
+  return c.json({
+    providers: providerConfiguration(),
+    computer: {
+      localBox: env.localBox,
+      orgoConfigured: Boolean(env.orgoKey && env.orgoComputerId),
+      maxScreens: Math.min(env.maxBots, 4),
+    },
+    hermes: {
+      url: env.hermesUrl,
+      bin: env.hermesBin,
+    },
+    mcp: {
+      tools,
+      activeCount: TOOLS.length,
+      note: tools.length
+        ? undefined
+        : 'No built-in MCP tools registered on this server.',
+    },
+  });
+});

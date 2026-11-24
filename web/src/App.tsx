@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { startEvents } from './lib/events';
 import { useStore } from './store';
 import { ChatView } from './components/ChatView';
@@ -22,6 +22,8 @@ function Shell() {
   const collapsed = useStore((s) => s.sidebarCollapsed);
   const hasBot = useStore((s) => !!s.selectedBotId);
   const view = useConfigUI((s) => s.view);
+  const set = useStore((s) => s.set);
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     const st = useStore.getState();
@@ -47,7 +49,11 @@ function Shell() {
       const st = useStore.getState();
       const key = e.key.toLowerCase();
       if (key === 'k') { e.preventDefault(); st.setModal(st.modal === 'search' ? null : 'search'); }
-      else if (key === 'b') { e.preventDefault(); st.set({ sidebarCollapsed: !st.sidebarCollapsed }); }
+      else if (key === 'b') {
+        e.preventDefault();
+        if (window.matchMedia('(max-width: 900px)').matches) setNavOpen((v) => !v);
+        else st.set({ sidebarCollapsed: !st.sidebarCollapsed });
+      }
       else if (e.shiftKey && (key === ',' || key === '<')) { e.preventDefault(); st.set({ detailsOpen: !st.detailsOpen }); }
       else if (key === ',') { e.preventDefault(); useConfigUI.getState().openAppSettings(); }
     };
@@ -55,11 +61,36 @@ function Shell() {
     return () => window.removeEventListener('keydown', k);
   }, []);
 
+  // Close mobile drawers when switching bots / views
+  useEffect(() => {
+    setNavOpen(false);
+  }, [view]);
+
+  const showDetails = detailsOpen && hasBot && view === 'chat';
+  const closeOverlays = () => {
+    setNavOpen(false);
+    if (window.matchMedia('(max-width: 900px)').matches && detailsOpen) set({ detailsOpen: false });
+  };
+
   return (
-    <div className={`app${collapsed ? ' is-sidebar-collapsed' : ''}${detailsOpen && hasBot && view === 'chat' ? ' has-details' : ''}`}>
-      <Sidebar />
-      {view === 'tasks' ? <TasksView /> : <ChatView />}
-      {detailsOpen && hasBot && view === 'chat' && <DetailsPanel />}
+    <div
+      className={[
+        'app',
+        collapsed ? 'is-sidebar-collapsed' : '',
+        showDetails ? 'has-details' : '',
+        navOpen ? 'is-nav-open' : '',
+        showDetails ? 'is-details-sheet' : '',
+      ].filter(Boolean).join(' ')}
+    >
+      <button type="button" className="shell__scrim" aria-label="Close panel" onClick={closeOverlays} />
+      <Sidebar onNavigate={() => setNavOpen(false)} />
+      {view === 'tasks' ? <TasksView /> : (
+        <ChatView
+          navOpen={navOpen}
+          onToggleNav={() => setNavOpen((v) => !v)}
+        />
+      )}
+      {showDetails && <DetailsPanel />}
       {modal === 'create' && <CreateBotModal />}
       {modal === 'group' && <CreateGroupModal />}
       {modal === 'search' && <SearchModal />}

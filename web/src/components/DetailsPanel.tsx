@@ -17,6 +17,7 @@ import { useConfigUI } from '../configStore';
 import { Glyph } from './config/glyphs';
 import { LibraryTab } from './config/LibraryTab';
 import { BotTasks } from './config/TasksView';
+import { OperateRail } from './OperateRail';
 
 // Other files import this from here; it lives in lib/computer so the viewer can use it too.
 export { computerStatusText };
@@ -55,7 +56,7 @@ export function DetailsPanel() {
   const appsConfigured = useStore((s) => isProviderConfigured(s.providers, 'composio'));
   const viewerOpen = useStore((s) => s.viewerOpen);
   const set = useStore((s) => s.set);
-  const [tab, setTab] = useState<'activity' | 'tasks' | 'library'>('activity');
+  const [tab, setTab] = useState<'operate' | 'activity' | 'tasks' | 'library'>('operate');
   const [hideSuggested, setHideSuggested] = useState(() => { try { return readPreference('uap.hideSuggested') === '1'; } catch { return false; } });
   if (!bot) return null;
 
@@ -98,13 +99,18 @@ export function DetailsPanel() {
           </div>
         )}
         <div className="details__tabs">
-          <div className="segmented">
+          <div className="segmented segmented--wrap">
+            <button type="button" className={tab === 'operate' ? 'is-active' : ''} onClick={() => setTab('operate')}>Operate</button>
             <button type="button" className={tab === 'activity' ? 'is-active' : ''} onClick={() => setTab('activity')}>Activity</button>
             <button type="button" className={tab === 'tasks' ? 'is-active' : ''} onClick={() => setTab('tasks')}>Tasks</button>
             <button type="button" className={tab === 'library' ? 'is-active' : ''} onClick={() => setTab('library')}>Library</button>
           </div>
         </div>
-        {tab === 'activity' ? (
+        {tab === 'operate' ? (
+          <div className="details__sections">
+            <OperateRail />
+          </div>
+        ) : tab === 'activity' ? (
           <div className="details__sections">
             <section>
               <div className="section-label section-label--row">
