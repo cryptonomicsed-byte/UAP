@@ -354,11 +354,11 @@
   {
    "id": "K-36",
    "desc": "K-36 seven language gate packs",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "15c28e08d238af200b8f7842f544aa29172d091a",
+   "evidence": "7 packs + digests; claim-without-evidence rejected; 6/6 tests",
    "verified": null
   },
   {
