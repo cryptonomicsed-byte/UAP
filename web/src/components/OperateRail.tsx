@@ -75,7 +75,17 @@ export function OperateRail() {
                 <StatusDot ok={ok} />
                 <span className="operate__row-text">
                   <span className="operate__row-title">{p.label}</span>
-                  <span className="operate__row-sub">{ok ? 'Configured' : providerRecovery[p.id]}</span>
+                  <span className="operate__row-sub">
+                {ok
+                  ? 'Paid provider configured'
+                  : p.id === 'orgo' && localBox
+                    ? 'Free local computer (HQ_LOCAL). Orgo not required.'
+                    : p.id === 'xai'
+                      ? 'Free device voice. xAI is an optional upgrade.'
+                      : p.id === 'composio'
+                        ? 'Free local connectors. Composio is an optional upgrade.'
+                        : providerRecovery[p.id]}
+              </span>
                 </span>
               </div>
             );

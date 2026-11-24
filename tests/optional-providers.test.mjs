@@ -235,11 +235,18 @@ test('real server boots without optional keys; authenticated disabled-provider r
       assert.equal(health.ok, true);
       for (const id of ['orgo', 'xai', 'composio']) assert.deepEqual(health.providers[id], { status: 'unconfigured' });
       assert.equal((await fetch(`${url}/api/voice/options`)).status, 401);
+      const options = await fetch(`${url}/api/voice/options`, { headers: { cookie: 'grokbot_session=provider-test-session' } });
+      assert.equal(options.status, 200);
+      const optionsBody = await options.json();
+      assert.equal(optionsBody.provider, 'local');
+      assert.equal(optionsBody.paidFallback, false);
+      const apps = await fetch(`${url}/api/apps`, { headers: { cookie: 'grokbot_session=provider-test-session' } });
+      assert.equal(apps.status, 200);
+      assert.equal((await apps.json()).provider, 'local');
       for (const [route, provider, method] of [
-        ['/api/voice/options', 'xai', 'GET'], ['/api/voice/session', 'xai', 'POST'],
         ['/api/voice/preview', 'xai', 'POST'], ['/api/voice/stt', 'xai', 'POST'],
         ['/api/computer/ensure', 'orgo', 'POST'],
-        ['/api/apps', 'composio', 'GET'], ['/api/apps/gmail/connect', 'composio', 'POST'],
+        ['/api/apps/gmail/connect', 'composio', 'POST'],
       ]) {
         const result = await fetch(`${url}${route}`, {
           method, headers: { cookie: 'grokbot_session=provider-test-session' },

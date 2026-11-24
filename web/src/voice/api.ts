@@ -1,6 +1,8 @@
 import type { VoiceOption } from '@shared/types';
 
 export interface VoiceSession {
+  provider?: 'local' | 'xai';
+  paidFallback?: boolean;
   callId: string;
   clientSecret: string;
   expiresAt: number;

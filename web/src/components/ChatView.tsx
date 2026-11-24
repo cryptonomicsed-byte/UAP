@@ -45,7 +45,7 @@ export function ChatView(props: {
     setVoiceBusy(true);
     try {
       if (inCall) endCall();
-      else if (!voiceOk) flash('Voice needs XAI_API_KEY on the server');
+      else if (!voiceOk && typeof window !== 'undefined' && !('speechSynthesis' in window)) flash('Voice needs a browser with speech synthesis');
       else await startCall(bot.id);
     } catch (e) {
       flash(e instanceof Error ? e.message : 'Voice failed');

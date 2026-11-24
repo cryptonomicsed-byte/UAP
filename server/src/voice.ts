@@ -6,7 +6,8 @@ import { Hono } from 'hono';
 import OpenAI from 'openai';
 import { db, now } from './db.js';
 import { env } from './env.js';
-import { requireProvider } from './providers.js';
+import { requireProvider, isProviderConfigured } from './providers.js';
+import { LOCAL_VOICES } from './lib/free-runtime.js';
 import { newId } from './lib/ids.js';
 import type { AuthVars } from './lib/auth.js';
 import { appendRow, emitBot, getBotRow, getLive, listRoutines, listTasks, updateRow } from './store.js';
@@ -16,8 +17,11 @@ import type { ActivityKind, EventBody, MessageBody, RowBody, VoiceCallRecord, Vo
 import { listMemories } from './engine-memory.js';
 
 export const voiceApi = new Hono<AuthVars>();
-voiceApi.use('*', async (_c, next) => {
-  requireProvider('xai');
+voiceApi.use('*', async (c, next) => {
+  // Local device voice does not need xAI. Paid realtime paths check inside the handler.
+  if (c.req.path.endsWith('/preview') || c.req.path.endsWith('/stt')) {
+    requireProvider('xai');
+  }
   await next();
 });
 
@@ -252,8 +256,11 @@ const fmtDuration = (ms: number) => {
 };
 
 voiceApi.get('/options', async (c) => {
+  if (!isProviderConfigured('xai')) {
+    return c.json({ voices: LOCAL_VOICES, languages: LANGUAGES, speeds: SPEEDS, provider: 'local', paidFallback: false });
+  }
   try {
-    return c.json({ voices: await listVoices(), languages: LANGUAGES, speeds: SPEEDS });
+    return c.json({ voices: await listVoices(), languages: LANGUAGES, speeds: SPEEDS, provider: 'xai', paidFallback: false });
   } catch (error) {
     if (!(error instanceof VoiceOptionsUnavailableError)) throw error;
     return c.json({ error: error.message, code: 'provider_options_unavailable', provider: 'xai', retryable: true }, 502);
@@ -266,6 +273,30 @@ voiceApi.post('/session', async (c) => {
   const bot = ownBot(user.id, botId);
   if (!bot) return c.json({ error: 'not found' }, 404);
   const s = settingsOf(bot);
+  const instructions = voiceInstructions(user.id, bot, s.language);
+  const callId = newId('call');
+  const startRow = appendRow(bot.id, 'event', callEvent(`Voice call with ${bot.name} started`, { id: callId, phase: 'started' }));
+  calls.set(callId, { id: callId, botId: bot.id, userId: user.id, startedAt: now(), startSeq: startRow.seq, tasks: [] });
+  emitBot(bot.id);
+
+  if (!isProviderConfigured('xai')) {
+    return c.json({
+      provider: 'local',
+      paidFallback: false,
+      callId,
+      clientSecret: '',
+      expiresAt: Date.now() + 300_000,
+      model: 'device-speech',
+      websocketUrl: '',
+      sampleRate: SAMPLE_RATE,
+      instructions,
+      voice: s.voice || 'local-default',
+      speed: s.speed,
+      language: s.language,
+      tools: VOICE_TOOLS,
+      session: { provider: 'local' },
+    });
+  }
 
   const r = await fetch(`${XAI}/realtime/client_secrets`, {
     method: 'POST',
@@ -280,7 +311,6 @@ voiceApi.post('/session', async (c) => {
   }
   const secret = (await r.json()) as { value: string; expires_at: number };
 
-  const instructions = voiceInstructions(user.id, bot, s.language);
   const session: Record<string, unknown> = {
     voice: s.voice,
     instructions,
@@ -295,12 +325,9 @@ voiceApi.post('/session', async (c) => {
     },
   };
 
-  const callId = newId('call');
-  const startRow = appendRow(bot.id, 'event', callEvent(`Voice call with ${bot.name} started`, { id: callId, phase: 'started' }));
-  calls.set(callId, { id: callId, botId: bot.id, userId: user.id, startedAt: now(), startSeq: startRow.seq, tasks: [] });
-  emitBot(bot.id);
-
   return c.json({
+    provider: 'xai',
+    paidFallback: false,
     callId,
     clientSecret: secret.value,
     expiresAt: secret.expires_at,

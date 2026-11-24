@@ -5,6 +5,7 @@ import { create } from 'zustand';
 import type { Row } from '@shared/types';
 import { sortedRows, useStore } from '../store';
 import { voiceApi, type VoiceSession } from './api';
+import { api } from '../lib/api';
 import { MicCapture, PcmPlayer, base64ToPcm, createAudioContext, micErrorMessage, openMic, pcmToBase64 } from './audio';
 
 export interface Caption { id: string; role: 'user' | 'assistant'; text: string; final: boolean }
@@ -110,11 +111,58 @@ class VoiceCall {
       this.sess = await voiceApi.session(this.botId);
       if (this.ended) { void voiceApi.end(this.botId, this.sess.callId, [], 'Cancelled'); return; }
       setV({ callId: this.sess.callId });
+      if (this.sess.provider === 'local' || !this.sess.websocketUrl) {
+        stream.getTracks().forEach((t) => t.stop());
+        this.startLocal(this.sess);
+        return;
+      }
       this.connect(this.sess);
     } catch (e) {
       this.end((e as Error).message || 'Could not start the call');
     }
   }
+
+  private startLocal(sess: VoiceSession) {
+    const w = window as unknown as {
+      SpeechRecognition?: new () => any;
+      webkitSpeechRecognition?: new () => any;
+    };
+    const Rec = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    this.ready = true;
+    setV({ status: 'live', startedAt: Date.now(), thinking: false, error: null });
+    const speak = (text: string) => {
+      if (!text.trim() || !window.speechSynthesis) return;
+      const u = new SpeechSynthesisUtterance(text.slice(0, 500));
+      u.rate = sess.speed || 1;
+      setV({ speaking: true });
+      u.onend = () => setV({ speaking: false });
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    };
+    speak('Listening on this device. No paid voice provider.');
+    if (!Rec) {
+      setV({ error: 'This browser has speech synthesis but no speech recognition. Type in chat.' });
+      return;
+    }
+    const rec = new Rec();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.onresult = (ev: any) => {
+      const last = ev.results[ev.results.length - 1];
+      const text = last?.[0]?.transcript?.trim() ?? '';
+      if (!text) return;
+      setV({ listening: !last.isFinal, captions: [...useVoice.getState().captions, { id: `u-${Date.now()}`, role: 'user', text, final: last.isFinal }] });
+      if (!last.isFinal || this.ended) return;
+      void api.send(this.botId, text).then(() => {
+        speak('Sent to the agent.');
+      }).catch((e: Error) => setV({ error: e.message }));
+    };
+    rec.onerror = () => setV({ error: 'Device speech recognition stopped' });
+    try { rec.start(); } catch { setV({ error: 'Could not start device speech recognition' }); }
+    this.localRec = rec;
+  }
+
+  private localRec: { stop: () => void } | null = null;
 
   private connect(sess: VoiceSession) {
     const ws = new WebSocket(sess.websocketUrl, [`xai-client-secret.${sess.clientSecret}`]);
@@ -412,6 +460,8 @@ class VoiceCall {
     if (this.connectTimer) clearTimeout(this.connectTimer);
     if (this.checkTimer) clearTimeout(this.checkTimer);
     this.unsubStore?.();
+    try { this.localRec?.stop(); } catch { /* ignore */ }
+    try { window.speechSynthesis?.cancel(); } catch { /* ignore */ }
     try { this.ws?.close(1000, 'call ended'); } catch { /* ignore */ }
     this.mic?.stop();
     this.player.dispose();

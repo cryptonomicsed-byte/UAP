@@ -23,6 +23,8 @@ import { evaluatePromotion, type PromotionSignature, type ReviewerKey, type Trus
 import { dueReaudits, matchAdvisories, type Advisory, type ReauditSource } from './sources/reaudit.js';
 import { orgo } from './orgo.js';
 import { catalog, connectedToolkits, deleteConnection, disconnect, googleProfile, startConnect, startGoogleLogin, toolkitInfo } from './composio.js';
+import { LOCAL_CONNECTORS } from './lib/free-runtime.js';
+import { isProviderConfigured } from './providers.js';
 import { runRoutine, scheduleRoutine, unscheduleRoutine } from './routines.js';
 import { deleteEventTrigger } from './triggers.js';
 import { dispatchRoomMessage } from './agent/rooms.js';
@@ -610,6 +612,20 @@ api.get('/bots/:id/screenshot', async (c) => {
 
 api.get('/apps', async (c) => {
   const user = c.get('user');
+  if (!isProviderConfigured('composio')) {
+    const search = (c.req.query('search') ?? '').toLowerCase();
+    let apps = LOCAL_CONNECTORS.map((t) => ({ ...t, logo: undefined as string | undefined }));
+    if (search) apps = apps.filter((t) => t.name.toLowerCase().includes(search) || t.slug.includes(search));
+    return c.json({
+      apps,
+      connected: apps.map((a) => a.slug),
+      connectedApps: apps,
+      categories: [...new Set(apps.flatMap((a) => a.categories))],
+      total: apps.length,
+      provider: 'local',
+      paidFallback: false,
+    });
+  }
   const search = (c.req.query('search') ?? '').toLowerCase();
   const category = c.req.query('category') ?? '';
   const [all, connected] = await Promise.all([catalog(), connectedToolkits(user.id).catch(() => new Set<string>())]);

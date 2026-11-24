@@ -1,6 +1,7 @@
 import { db, now } from './db.js';
 import { env } from './env.js';
 import { requireOrgoComputer, ProviderUnavailableError } from './providers.js';
+import { selectRuntime } from './lib/free-runtime.js';
 import { hub } from './lib/hub.js';
 import { orgo, OrgoError, type OrgoScreen } from './orgo.js';
 import { cdpPortFor, dressScreen, resetScreen, undressScreen, type DeskBot } from './desk.js';
@@ -72,8 +73,21 @@ async function waitRunning(id: string, timeoutMs = 240_000) {
 let checkedAt = 0;
 let inflight: Promise<string> | null = null;
 
-/** Make sure the shared computer is awake. Returns its Orgo id. */
+function runtimeChoice() {
+  return selectRuntime({
+    localBox: env.localBox,
+    orgoConfigured: Boolean(env.orgoKey.trim() && env.orgoComputerId.trim()),
+    xaiConfigured: Boolean(env.xaiKey.trim()),
+    composioConfigured: Boolean(env.composioKey.trim()),
+  });
+}
+
+/** Make sure the shared computer is awake. Local box needs no Orgo id. */
 export function ensureComputer(userId: string): Promise<string> {
+  if (runtimeChoice().computer === 'local') {
+    if (rowFor(userId).status !== 'running') setStatus(userId, 'running');
+    return Promise.resolve('local');
+  }
   const id = computerId();
   if (Date.now() - checkedAt < 30_000) return Promise.resolve(id);
   if (inflight) return inflight;
@@ -141,6 +155,7 @@ export function screenFor(userId: string, botId: string): Promise<BotScreen> {
 
 async function lease(userId: string, botId: string): Promise<BotScreen> {
   const id = await ensureComputer(userId);
+  if (id === 'local') return leaseLocal(userId, botId);
   const mine = db.prepare('SELECT screen_id, width, height FROM screens WHERE bot_id=?').get(botId) as any;
   if (mine) {
     const fresh = Date.now() - (verified.get(botId) ?? 0) < 120_000;
@@ -251,8 +266,30 @@ export async function forgetBotFiles(botId: string): Promise<void> {
   await box.bash(`rm -rf -- /root/grokbot/profiles/${botId} /root/grokbot/files/${botId}`, 60);
 }
 
-/** Refresh status and screen sizes from Orgo (cheap; used when the UI opens). */
+function leaseLocal(userId: string, botId: string): BotScreen {
+  const mine = db.prepare('SELECT screen_id, width, height FROM screens WHERE bot_id=?').get(botId) as any;
+  if (mine) {
+    db.prepare('UPDATE screens SET last_used_at=? WHERE bot_id=?').run(now(), botId);
+    return { computerId: 'local', screenId: mine.screen_id, width: mine.width ?? 1280, height: mine.height ?? 800 };
+  }
+  const taken = new Set((db.prepare('SELECT screen_id FROM screens').all() as any[]).map((r) => r.screen_id as string));
+  let screenId = 'default';
+  if (!isPrimaryEngine(botId)) {
+    const n = [100, 101, 102].find((i) => !taken.has(`screen-${i}`));
+    if (n === undefined) throw new Error(`Every local screen is in use (${MAX_SCREENS} at most). Remove a bot to free one.`);
+    screenId = `screen-${n}`;
+  }
+  db.prepare('INSERT OR REPLACE INTO screens(bot_id,user_id,screen_id,last_used_at,width,height) VALUES (?,?,?,?,?,?)').run(botId, userId, screenId, now(), 1280, 800);
+  hub.emit(userId, { type: 'computer', state: computerState(userId) });
+  return { computerId: 'local', screenId, width: 1280, height: 800 };
+}
+
+/** Refresh status. Local box is running without calling Orgo. */
 export async function refreshComputer(userId: string): Promise<ComputerState> {
+  if (runtimeChoice().computer === 'local') {
+    setStatus(userId, 'running');
+    return computerState(userId);
+  }
   let id: string;
   try {
     id = requireOrgoComputer();

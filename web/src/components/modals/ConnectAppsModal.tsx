@@ -107,7 +107,6 @@ export function ConnectAppsModal() {
   useEffect(() => { const t = setTimeout(() => setDebounced(search.trim()), 200); return () => clearTimeout(t); }, [search]);
 
   useEffect(() => {
-    if (!configured) { setData(null); setLoading(false); return; }
     let alive = true;
     setLoading(true); setError(null);
     const category = view.kind === 'category' ? view.category : '';
@@ -116,7 +115,7 @@ export function ConnectAppsModal() {
       .catch((e) => { if (alive) setError(e.message); })
       .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
-  }, [debounced, view, connectionsVersion, bump, configured]);
+  }, [debounced, view, connectionsVersion, bump]);
 
   // Connected list (for the header chip and the Connected view): resolve the connected slugs to full entries.
   useEffect(() => {
@@ -142,7 +141,7 @@ export function ConnectAppsModal() {
   const activeCategory = view.kind === 'category' ? view.category : null;
   const moreActive = activeCategory !== null && !PILLS.some((p) => p.category === activeCategory);
 
-  if (!configured) return (
+  if (false && !configured) return (
     <Modal onClose={close} className="apps-modal" label="Connect Apps">
       <button type="button" className="modal__close apps-modal__close" onClick={close} aria-label="Close"><Icon name="close" size={16} /></button>
       <div className="apps-modal__head"><h2>App connections</h2></div>
