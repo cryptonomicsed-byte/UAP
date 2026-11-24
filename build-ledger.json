@@ -394,11 +394,11 @@
   {
    "id": "M-40",
    "desc": "M-40 research/medical roles + citation tests",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "f1af937d33c01d2424eb8401c9e43003f3e0d953",
+   "evidence": "4 roles + citation audit; 7/7",
    "verified": null
   },
   {
