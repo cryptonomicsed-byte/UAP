@@ -424,11 +424,11 @@
   {
    "id": "N-43",
    "desc": "N-43 world policy + scene-unload teardown",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "f1637b8ba80144900e6e1b537a8738c9e263b2b4",
+   "evidence": "world policy + unload 4/4",
    "verified": null
   },
   {
