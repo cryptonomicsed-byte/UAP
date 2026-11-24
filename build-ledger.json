@@ -304,11 +304,11 @@
   {
    "id": "I-31",
    "desc": "I-31 signed capability packs + review queue",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "e013cc5738fb61e5a4007ab31b5da020ae9bea68",
+   "evidence": "typecheck clean; 254/254; build ok; review-queue + rollback + publish history",
    "verified": null
   },
   {
