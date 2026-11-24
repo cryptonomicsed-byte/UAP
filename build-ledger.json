@@ -434,11 +434,11 @@
   {
    "id": "O-44",
    "desc": "O-44 music/media roles + rights review",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "2569a07e0e0e10eac2c9148f1a56ef4920a450f7",
+   "evidence": "media roles + rights 6/6",
    "verified": null
   },
   {
