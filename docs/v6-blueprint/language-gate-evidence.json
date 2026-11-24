@@ -1,0 +1,13 @@
+{
+  "recordedAt": "2026-11-24T18:40:00Z",
+  "note": "Tool output from this host. A missing binary is blocked, not skipped as a pass.",
+  "runs": [
+    {"id": "V6-11-01", "language": "rust", "commands": ["cargo fmt -- --check", "cargo clippy -- -D warnings", "cargo test"], "result": "pass", "detail": "1 test passed"},
+    {"id": "V6-11-02", "language": "elixir", "commands": ["mix test"], "result": "pass", "detail": "1 doctest, 1 test, 0 failures"},
+    {"id": "V6-11-03", "language": "julia", "commands": ["julia check.jl"], "result": "pass", "detail": "0.1+0.2 within 1e-12; printed julia-ok"},
+    {"id": "V6-11-04", "language": "move", "commands": ["sui move build", "sui move test"], "result": "pass", "detail": "build ok; unit tests 0 (empty package, not a fake pass of object invariants)"},
+    {"id": "V6-11-05", "language": "go", "commands": ["go vet ./...", "go test ./..."], "result": "pass", "detail": "ok gate.local"},
+    {"id": "V6-11-06", "language": "python", "commands": ["python3 -m unittest test_gate.py"], "result": "pass", "detail": "1 test OK. pytest is not installed; unittest was the real runner"},
+    {"id": "V6-11-07", "language": "clojure", "commands": [], "result": "blocked", "detail": "clojure and lein are not installed on this host"}
+  ]
+}
