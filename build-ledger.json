@@ -314,11 +314,11 @@
   {
    "id": "I-32",
    "desc": "I-32 skill-drain + end-to-end invocation",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "56c3535159be0baa232ac7dc4704420a297bb954",
+   "evidence": "skillforge-drain 2/2; typecheck; pack PK (id,version); invoke+drain",
    "verified": null
   },
   {
