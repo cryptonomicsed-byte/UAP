@@ -3,6 +3,7 @@ export { SkillPackVersion, SkillCandidate, ToolDescriptor, SideEffect, SkillDepe
 export { SkillForgeRegistry } from './registry.js';
 export { SkillForgeLoader } from './loader.js';
 export { SkillForgeReviewQueue } from './review-queue.js';
+export { SkillForgeDrain } from './drain.js';
 
 // Static method wrappers for API routes
 export async function listCandidates(status?: string) {
@@ -44,8 +45,30 @@ export async function loadForRole(roleId: string, budgetTokens: number) {
 export async function initRegistry() {
   const { SkillForgeRegistry } = await import('./registry.js');
   const { SkillForgeReviewQueue } = await import('./review-queue.js');
+  const { SkillForgeDrain } = await import('./drain.js');
   await SkillForgeRegistry.init();
   await SkillForgeReviewQueue.init();
+  await SkillForgeDrain.init();
+}
+
+export async function planSkillDrain(input: any) {
+  const { SkillForgeDrain } = await import('./drain.js');
+  return SkillForgeDrain.planDrain(input);
+}
+
+export async function executeSkillDrain(drainId: string) {
+  const { SkillForgeDrain } = await import('./drain.js');
+  return SkillForgeDrain.executeDrain(drainId);
+}
+
+export async function invokeSkillTool(input: any) {
+  const { SkillForgeDrain } = await import('./drain.js');
+  return SkillForgeDrain.invoke(input);
+}
+
+export async function listSkillDrains(packId?: string) {
+  const { SkillForgeDrain } = await import('./drain.js');
+  return SkillForgeDrain.listDrains(packId);
 }
 
 // Review Queue API

@@ -25,7 +25,7 @@ export class SkillForgeRegistry {
       CREATE INDEX IF NOT EXISTS idx_candidates_proposed ON ${this.CANDIDATES_TABLE}(proposed_by);
 
       CREATE TABLE IF NOT EXISTS ${this.PACKS_TABLE} (
-        id TEXT PRIMARY KEY,
+        id TEXT NOT NULL,
         version TEXT NOT NULL,
         name TEXT NOT NULL,
         publisher TEXT NOT NULL,
@@ -41,7 +41,8 @@ export class SkillForgeRegistry {
         signed_at TEXT NOT NULL,
         signed_by TEXT NOT NULL,
         signature TEXT NOT NULL,
-        capability_pack TEXT NOT NULL
+        capability_pack TEXT NOT NULL,
+        PRIMARY KEY (id, version)
       );
       CREATE INDEX IF NOT EXISTS idx_packs_publisher ON ${this.PACKS_TABLE}(publisher);
       CREATE INDEX IF NOT EXISTS idx_packs_name ON ${this.PACKS_TABLE}(name, version);
@@ -83,7 +84,7 @@ export class SkillForgeRegistry {
   }
 
   static async publishPack(pack: SkillPackVersion, capabilityPack: any): Promise<void> {
-    await db.prepare(`INSERT INTO ${this.PACKS_TABLE} VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+    await db.prepare(`INSERT INTO ${this.PACKS_TABLE} VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
       pack.id, pack.version, pack.name, pack.publisher, pack.license,
       pack.sourceSha, pack.sourceUrl, JSON.stringify(pack.tools),
       JSON.stringify(pack.dependencies), JSON.stringify(pack.grants),
@@ -93,15 +94,28 @@ export class SkillForgeRegistry {
     );
   }
 
-  static async getPack(id: string): Promise<SkillPackVersion | null> {
-    const row = db.prepare(`SELECT * FROM ${this.PACKS_TABLE} WHERE id=?`).get(id) as any;
+  static async getPack(id: string, version?: string): Promise<SkillPackVersion | null> {
+    const row = version
+      ? db.prepare(`SELECT * FROM ${this.PACKS_TABLE} WHERE id=? AND version=?`).get(id, version) as any
+      : db.prepare(`SELECT * FROM ${this.PACKS_TABLE} WHERE id=? ORDER BY version DESC LIMIT 1`).get(id) as any;
     if (!row) return null;
     return {
-      ...row,
+      id: row.id,
+      version: row.version,
+      name: row.name,
+      publisher: row.publisher,
+      license: row.license,
+      sourceSha: row.source_sha,
+      sourceUrl: row.source_url,
       tools: JSON.parse(row.tools),
       dependencies: JSON.parse(row.dependencies),
       grants: JSON.parse(row.grants),
-      compatibleRoles: JSON.parse(row.compatible_roles)
+      compatibleRoles: JSON.parse(row.compatible_roles),
+      minHermesVersion: row.min_hermes_version,
+      maxHermesVersion: row.max_hermes_version ?? undefined,
+      signedAt: row.signed_at,
+      signedBy: row.signed_by,
+      signature: row.signature,
     };
   }
 
