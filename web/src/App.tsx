@@ -12,6 +12,7 @@ import { CreateGroupModal } from './components/modals/CreateGroupModal';
 import { SearchModal } from './components/modals/SearchModal';
 import { ConfigLayer } from './components/config/ConfigLayer';
 import { TasksView } from './components/config/TasksView';
+import { DeployBadge } from './components/DeployBadge';
 import { useConfigUI } from './configStore';
 
 function Shell() {
@@ -73,6 +74,18 @@ export function App() {
   const authChecked = useStore((s) => s.authChecked);
   const user = useStore((s) => s.user);
   useEffect(() => { useStore.getState().checkAuth(); }, []);
-  if (!authChecked) return <div className="boot" />;
-  return user ? <Shell /> : <SignIn />;
+  if (!authChecked) {
+    return (
+      <>
+        <div className="boot" />
+        <DeployBadge />
+      </>
+    );
+  }
+  return (
+    <>
+      {user ? <Shell /> : <SignIn />}
+      <DeployBadge />
+    </>
+  );
 }

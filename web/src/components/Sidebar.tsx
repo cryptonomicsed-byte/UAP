@@ -69,6 +69,13 @@ export function Sidebar() {
     <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}`}>
       <div className="sidebar__titlebar">
         <TrafficLights />
+        {!collapsed && (
+          <div className="sidebar__brand" title="Universal Agent Platform">
+            <span className="sidebar__brand-mark" aria-hidden>U</span>
+            <span className="sidebar__brand-name">UAP</span>
+            <span className="sidebar__brand-ver">v6</span>
+          </div>
+        )}
         <div className="sidebar__controls">
           <button type="button" className="icon-btn icon-btn--plain" onClick={() => set({ sidebarCollapsed: !collapsed })} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title="Toggle sidebar (⌘B)">
             <Icon name="sidebar" opacity={0.66} />

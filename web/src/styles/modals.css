@@ -102,19 +102,110 @@
 .menu__header { padding: 6px 10px 4px; font-size: 12px; line-height: 16px; color: var(--color-text-tertiary); }
 
 /* ---------- sign-in ---------- */
-.signin { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; background: var(--color-bg-sidebar); }
-.signin__chrome { position: absolute; inset: 0 auto auto 0; }
-.signin__card { display: flex; flex-direction: column; align-items: center; width: 360px; max-width: calc(100% - 32px); padding: 40px 32px 28px; background: var(--color-bg-elevated); border: 0.5px solid var(--color-border-secondary); border-radius: 24px; box-shadow: var(--shadow-modal); }
-.signin__hero { margin-bottom: 20px; animation: bob 2.4s ease-in-out infinite; }
-.signin__title { margin: 0; font-size: 22px; font-weight: 600; line-height: 28px; letter-spacing: -0.2px; }
-.signin__sub { margin: 6px 0 24px; text-align: center; font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
+/* Sign-in: Operate surface — split rail + card, live build stats, no marketing hero grid */
+.signin {
+  position: relative; display: grid; grid-template-columns: minmax(240px, 340px) minmax(320px, 420px);
+  align-items: stretch; justify-content: center; gap: 0; height: 100%;
+  padding: 24px; box-sizing: border-box;
+  background:
+    radial-gradient(1200px 600px at 12% 0%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 55%),
+    var(--color-bg-chrome);
+}
+.signin__chrome { position: absolute; inset: 12px auto auto 12px; z-index: 2; }
+.signin__rail {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
+  padding: 36px 28px; border-radius: 24px 0 0 24px;
+  background: var(--color-bg-sidebar);
+  border: 0.5px solid var(--color-border-secondary); border-right: 0;
+  box-shadow: var(--shadow-modal);
+}
+.signin__mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--color-primary); color: var(--color-on-primary);
+  box-shadow: 0 0 0 0.5px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+.signin__mark-glyph { font-size: 20px; font-weight: 700; letter-spacing: -0.6px; line-height: 1; }
+.signin__kicker {
+  margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-text-tertiary);
+}
+.signin__rail-title { margin: 0 0 8px; font-size: 22px; font-weight: 600; letter-spacing: -0.3px; color: var(--color-ink); }
+.signin__rail-body { margin: 0; font-size: 14px; line-height: 20px; color: var(--color-text-secondary); max-width: 26ch; }
+.signin__stats {
+  display: grid; gap: 10px; margin: 0; padding: 14px; border-radius: 14px;
+  background: var(--color-bg-pane); border: 0.5px solid var(--color-border-tertiary);
+}
+.signin__stats > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.signin__stats dt { margin: 0; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.signin__stats dd { margin: 0; font-size: 13px; font-weight: 500; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+.signin__stats code { font-family: var(--font-mono-stack); font-size: 12px; }
+.signin__live { color: var(--color-success-text); }
+.signin__card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 100%; max-width: 100%; padding: 40px 32px 28px;
+  background: var(--color-bg-elevated); border: 0.5px solid var(--color-border-secondary);
+  border-radius: 0 24px 24px 0; box-shadow: var(--shadow-modal);
+}
+.signin__hero { margin-bottom: 12px; animation: bob 2.4s ease-in-out infinite; }
+.signin__product {
+  margin: 0 0 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--color-primary);
+}
+.signin__title { margin: 0; font-size: 22px; font-weight: 600; line-height: 28px; letter-spacing: -0.2px; text-align: center; }
+.signin__sub { margin: 6px 0 24px; text-align: center; font-size: 14px; line-height: 20px; color: var(--color-text-secondary); max-width: 32ch; }
 .signin__google { width: 100%; gap: 10px; }
 .signin__google svg { background: #FFFFFF; border-radius: 50%; padding: 1px; width: 18px; height: 18px; }
 .signin__dev { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 20px; }
 .signin__divider { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; font-size: 12px; line-height: 16px; color: var(--color-text-tertiary); }
 .signin__divider::before, .signin__divider::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-secondary); }
 .signin__error { padding: 12px 0 0; text-align: center; }
-.signin__foot { margin: 24px 0 0; font-size: 12px; line-height: 16px; color: var(--color-text-quaternary); }
+.signin__foot { margin: 24px 0 0; font-size: 12px; line-height: 16px; color: var(--color-text-quaternary); text-align: center; }
+@media (max-width: 720px) {
+  .signin { grid-template-columns: 1fr; padding: 16px; align-content: center; }
+  .signin__rail { border-radius: 20px 20px 0 0; border-right: 0.5px solid var(--color-border-secondary); }
+  .signin__card { border-radius: 0 0 20px 20px; }
+}
+
+/* Live deploy chip — always on, so green deploys are visible without DevTools */
+.deploy-badge {
+  position: fixed; right: 14px; bottom: 14px; z-index: 80;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  font-family: var(--font-stack);
+}
+.deploy-badge__chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 32px; padding: 6px 12px 6px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-elevated);
+  border: 0.5px solid var(--color-border-secondary);
+  box-shadow: var(--shadow-pill);
+  color: var(--color-text-secondary);
+  font-size: 12px; font-weight: 500; letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.deploy-badge__chip:hover { background: var(--color-bg-elevated-hover); color: var(--color-ink); }
+.deploy-badge__dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-text-quaternary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-text-quaternary) 25%, transparent);
+}
+.deploy-badge.is-live .deploy-badge__dot {
+  background: var(--color-success);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-success) 28%, transparent);
+}
+.deploy-badge__text { font-variant-numeric: tabular-nums; max-width: 42ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deploy-badge__panel {
+  min-width: 220px; padding: 12px 14px;
+  border-radius: 14px; background: var(--color-bg-elevated);
+  border: 0.5px solid var(--color-border-secondary); box-shadow: var(--shadow-popover);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.deploy-badge__row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; color: var(--color-text-secondary); }
+.deploy-badge__row code, .deploy-badge__row span:last-child { color: var(--color-ink); font-variant-numeric: tabular-nums; }
+.deploy-badge__row code { font-family: var(--font-mono-stack); font-size: 11px; }
+.deploy-badge__link { font-size: 12px; color: var(--color-primary); text-decoration: none; }
+.deploy-badge__link:hover { text-decoration: underline; }
 
 /* new group chat */
 .group-pick { display: flex; flex-direction: column; gap: 2px; max-height: 260px; overflow: auto; margin-top: 6px; }
