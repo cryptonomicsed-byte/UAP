@@ -374,11 +374,11 @@
   {
    "id": "L-38",
    "desc": "L-38 Sui/EVM separation + approval gates",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "6fb3cd82c2391c3bfa17026a9ae791191ff42db3",
+   "evidence": "Sui/EVM split + approval; 8/8; typecheck",
    "verified": null
   },
   {
