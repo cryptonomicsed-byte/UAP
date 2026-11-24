@@ -27,7 +27,8 @@
     "repro:build": "node scripts/reproducible-build.mjs --install-cmd \"npm ci --no-audit --no-fund\" --build-cmd \"npm run build\" --output-dir web/dist --out artifacts/reproducible/web && node scripts/reproducible-build.mjs --install-cmd \"npm ci --no-audit --no-fund\" --build-cmd \"npm run build\" --output-dir server/dist --out artifacts/reproducible/server",
     "sources:ingest": "node --import tsx scripts/sources-ingest.mjs",
     "agents:bind-sid": "node --import tsx scripts/bind-agent-sid.mjs",
-    "scan:source": "node --import tsx scripts/source-quarantine.mjs"
+    "scan:source": "node --import tsx scripts/source-quarantine.mjs",
+    "test:idle": "node --test tests/idle-service/idle-service.test.mjs"
   },
   "engines": {
     "node": ">=22"
