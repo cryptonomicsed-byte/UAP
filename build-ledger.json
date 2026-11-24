@@ -284,11 +284,11 @@
   {
    "id": "H-29",
    "desc": "H-29 idle-service proof (Rust+Elixir+Hermes only)",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "32e2e8833270258b485ede1d8e686f1f04ac4e39",
+   "evidence": "npm test 254/254; cargo test ok; mix test 61/0/12; import verification passes",
    "verified": null
   },
   {
