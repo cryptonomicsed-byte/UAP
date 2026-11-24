@@ -364,11 +364,11 @@
   {
    "id": "K-37",
    "desc": "K-37 role-routing isolation + version rollback",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "c75f1483ab9eb3d8cc26a13560559eb72c2e0785",
+   "evidence": "isolation + pin/rollback; 7/7 tests; typecheck",
    "verified": null
   },
   {
