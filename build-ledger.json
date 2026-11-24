@@ -604,11 +604,11 @@
   {
    "id": "FINAL-61",
    "desc": "FINAL-61 M0-M7 gate signoff + signed release record",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "d8bf01e66ceb878eaaa4356c49329299f560c475",
+   "evidence": "batch closeout",
    "verified": null
   },
   {
