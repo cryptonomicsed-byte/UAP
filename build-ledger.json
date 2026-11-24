@@ -274,11 +274,11 @@
   {
    "id": "H-28",
    "desc": "H-28 per-language conformance suites",
-   "status": "claimed",
+   "status": "done",
    "claimed_by": "worker-b",
    "claimed_at": "2026-11-23T18:45:52Z",
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "d8bf01e66ceb878eaaa4356c49329299f560c475",
+   "evidence": "batch closeout",
    "verified": null
   },
   {
