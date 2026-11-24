@@ -384,11 +384,11 @@
   {
    "id": "L-39",
    "desc": "L-39 audit gates + deployment evidence chain",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "22a02a2a7529612fc77e57537c1b4772eb05cb50",
+   "evidence": "audit blockers + evidence chain; 6/6",
    "verified": null
   },
   {
