@@ -18,6 +18,7 @@ import { desSelfTest } from './lib/des.js';
 import { configApi } from './routes-config.js';
 import { v6Api } from './routes-v6.js';
 import { startIdleWatcher } from './idle.js';
+import { ensureLocalDisplays } from './lib/local-desktop.js';
 import { mcpApi } from './mcp.js';
 import { initEngines } from './engine.js';
 
@@ -60,3 +61,11 @@ if (process.env.UAP_NO_SCHEDULER !== '1' && process.env.GROKBOT_NO_SCHEDULER !==
 } else console.log('[uap] scheduler disabled (UAP_NO_SCHEDULER or legacy alias)');
 startIdleWatcher();
 initEngines();
+if (env.localBox) {
+  try {
+    const desk = ensureLocalDisplays();
+    console.log(`[computer] local displays ${desk.up.join(',') || 'none'} started=${desk.started.join(',') || 'none'}${desk.errors.length ? ` errors=${desk.errors.join('; ')}` : ''}`);
+  } catch (e: any) {
+    console.warn('[computer] local displays failed', e?.message ?? e);
+  }
+}

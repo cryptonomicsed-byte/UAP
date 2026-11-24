@@ -1,4 +1,6 @@
 import type { IncomingMessage, Server } from 'node:http';
+import net from 'node:net';
+import { EventEmitter } from 'node:events';
 import { WebSocket, WebSocketServer } from 'ws';
 import { db } from './db.js';
 import { userFromCookieHeader } from './lib/auth.js';
@@ -6,6 +8,43 @@ import { vncAuthResponse } from './lib/des.js';
 import { orgo } from './orgo.js';
 import { readyScreen, screenFor } from './computer.js';
 import { viewerClosed, viewerOpened } from './idle.js';
+import { localVncPort } from './lib/local-vnc.js';
+import { ensureLocalDisplays } from './lib/local-desktop.js';
+
+/** Enough of a WebSocket for the relay: send, message, close, error. */
+interface Upstream {
+  readyState: number;
+  send(b: Buffer): void;
+  close(): void;
+  on(ev: string, fn: (...a: any[]) => void): void;
+  once(ev: string, fn: (...a: any[]) => void): void;
+}
+
+class LocalVncUpstream extends EventEmitter implements Upstream {
+  readyState = 0;
+  constructor(private sock: net.Socket) {
+    super();
+    sock.on('data', (b) => this.emit('message', b));
+    sock.on('close', () => { this.readyState = 3; this.emit('close', 1000, Buffer.from('local closed')); });
+    sock.on('error', (e) => this.emit('error', e));
+  }
+  send(b: Buffer) { this.sock.write(b); }
+  close() { this.sock.destroy(); }
+}
+
+function connectLocalVnc(port: number): Promise<LocalVncUpstream> {
+  return new Promise((resolve, reject) => {
+    const sock = net.connect({ host: '127.0.0.1', port });
+    const up = new LocalVncUpstream(sock);
+    const fail = (e: Error) => { sock.destroy(); reject(e); };
+    sock.once('error', fail);
+    sock.once('connect', () => {
+      sock.off('error', fail);
+      up.readyState = WebSocket.OPEN;
+      resolve(up);
+    });
+  });
+}
 
 /**
  * VNC relay: browser <-> our server <-> Orgo websockify.
@@ -140,7 +179,7 @@ export function attachVncRelay(server: Server) {
 async function relay(client: WebSocket, userId: string, botId: string, mode: 'watch' | 'control') {
   const fromClient = new ByteQueue();
   const fromUp = new ByteQueue();
-  let upstream: WebSocket | null = null;
+  let upstream: Upstream | null = null;
   let piping = false;
   const filter = new WatchFilter();
   const closeAll = (code = 1000, reason = '') => {
@@ -160,9 +199,16 @@ async function relay(client: WebSocket, userId: string, botId: string, mode: 'wa
     const { computerId, screenId } = await screenFor(userId, botId);
     // A screen nobody has used yet is bare; set it up while the person is already watching.
     readyScreen(userId, botId).catch(() => {});
-    const { password } = await orgo.vncPassword(computerId);
-    const upUrl = `wss://www.orgo.ai/desktops/${computerId}/ws/websockify?token=${encodeURIComponent(password)}${screenId !== 'default' ? `&screen=${encodeURIComponent(screenId)}` : ''}`;
-    upstream = new WebSocket(upUrl, ['binary']);
+    let password = '';
+    if (computerId === 'local') {
+      ensureLocalDisplays();
+      upstream = await connectLocalVnc(localVncPort(screenId));
+    } else {
+      const creds = await orgo.vncPassword(computerId);
+      password = creds.password;
+      const upUrl = `wss://www.orgo.ai/desktops/${computerId}/ws/websockify?token=${encodeURIComponent(password)}${screenId !== 'default' ? `&screen=${encodeURIComponent(screenId)}` : ''}`;
+      upstream = new WebSocket(upUrl, ['binary']);
+    }
     upstream.on('message', (data: Buffer) => {
       if (!piping) return fromUp.push(Buffer.from(data));
       if (client.readyState === WebSocket.OPEN) client.send(data);
