@@ -324,11 +324,11 @@
   {
    "id": "J-33",
    "desc": "J-33 design personas + DESIGN.md gates",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "32e8ad8d012ba30ec005db446863e27b0ed601bf",
+   "evidence": "design-gates 5/5; audit:design exit 0 on UAP; typecheck; full suite",
    "verified": null
   },
   {
