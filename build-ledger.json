@@ -414,11 +414,11 @@
   {
    "id": "N-42",
    "desc": "N-42 NPC/SID/world-entity separation + scene sims",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "148ef04be2e7acef17c23e263b6bfce14780e529",
+   "evidence": "NPC/SID separation 7/7",
    "verified": null
   },
   {
