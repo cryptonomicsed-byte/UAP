@@ -1,0 +1,31 @@
+{
+  "recordedAt": "2026-11-24T18:12:00Z",
+  "job": "open-source edition builds without enterprise/",
+  "source": {
+    "url": "https://github.com/milind-soni/OpenMausBot.git",
+    "sha": "0c352d70286aceb8ccabc9d11a56713e35026920",
+    "worktree": "/opt/ares/OpenMausBot-oss",
+    "enterpriseRemoved": true
+  },
+  "steps": {
+    "pnpm": "10.33.0",
+    "node": "v24.22.1",
+    "install": "pnpm install --frozen-lockfile exit 0",
+    "typecheck": "exit 0",
+    "vitest": "server/enterprise.test.ts server/brand.test.ts — 19 passed",
+    "hermesDriver": "server/drivers/acp/hermes.test.ts — 67 passed",
+    "boot": {
+      "port": 18797,
+      "licenseKeySet": true,
+      "edition": "oss",
+      "features": [],
+      "notice": "OMB_LICENSE_KEY is set but no enterprise layer exists"
+    }
+  },
+  "notClaimed": [
+    "Live Hermes tool-calling bakeoff against Bot HQ on the same model account",
+    "Electron desktop package",
+    "Legal signoff for hosted/white-label use",
+    "Import of enterprise/ into UAP"
+  ]
+}
