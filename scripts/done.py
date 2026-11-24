@@ -10,7 +10,11 @@ for it in d["items"]:
         it["status"] = "done"; it["done_sha"] = sha; it["evidence"] = ev
         it["verified"] = None
 json.dump(d, open(f"{U}/build-ledger.json", "w"), indent=1)
-subprocess.run(f"cd {U} && git add build-ledger.json && "
-               f"git -c user.name=build-agent -c user.email=build@uap.local "
-               f"commit -q -m 'done {iid} @ {sha}' && git push -q origin HEAD", shell=True)
+# S-64: only publish ledger — clear foreign staged files first
+subprocess.run(
+    f"cd {U} && git reset -q HEAD && git add -- build-ledger.json && "
+    f"git -c user.name=build-agent -c user.email=build@uap.local "
+    f"commit -q -m 'done {iid} @ {sha}' -- build-ledger.json && git push -q origin HEAD",
+    shell=True,
+)
 print(f"DONE {iid}")

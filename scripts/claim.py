@@ -45,10 +45,16 @@ with open(LOCK, "w") as lf:
     pick["claimed_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     json.dump(d, open(f"{U}/build-ledger.json", "w"), indent=1)
     base = sh(f"cd {U} && git rev-parse HEAD").stdout.strip()
-    psh = sh(f"cd {U} && git add build-ledger.json && "
-             f"git -c user.name=build-agent -c user.email=build@uap.local "
-             f"commit -q -m 'claim {pick['id']} by {worker}' -- build-ledger.json && "
-             f"git push -q origin HEAD")
+    # S-64: never publish another worker's staged files. Clear the index, stage
+    # only the ledger, and pathspec-limit the commit to that single path.
+    psh = sh(
+        f"cd {U} && "
+        f"git reset -q HEAD && "
+        f"git add -- build-ledger.json && "
+        f"git -c user.name=build-agent -c user.email=build@uap.local "
+        f"commit -q -m 'claim {pick['id']} by {worker}' -- build-ledger.json && "
+        f"git push -q origin HEAD"
+    )
     if psh.returncode != 0:
         # The push may have landed even though the command reported failure
         # (hook noise, transport hiccup). Trust the remote, not the exit code.
@@ -62,6 +68,8 @@ with open(LOCK, "w") as lf:
         # not ours, so undo the commit softly and restore that one file.
         if head and head != base:
             sh(f"cd {U} && git reset -q --soft {base}")
+        # Drop staged leftovers from the failed claim attempt without touching WD.
+        sh(f"cd {U} && git reset -q HEAD")
         sh(f"cd {U} && git checkout -q HEAD -- build-ledger.json")
         detail = " ".join(psh.stderr.split())[:120]
         print(f"NOTHING push-failed ({detail})")
