@@ -334,11 +334,11 @@
   {
    "id": "J-34",
    "desc": "J-34 UI QA screenshot harness + accessibility",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "3fcfa81681dc812c3cde5ceaa369355c10b50179",
+   "evidence": "ui-qa unit 2/2; harness mobile/tablet/desktop \u00d7 light/dark; test:ui-qa script",
    "verified": null
   },
   {
