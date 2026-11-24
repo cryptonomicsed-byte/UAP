@@ -504,11 +504,11 @@
   {
    "id": "R-51",
    "desc": "R-51 SBOM signing + prompt-injection CI",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "2d8cfad0e0741cbb8538cdd1431e4322dc1bd10c",
+   "evidence": "ops-security bundle",
    "verified": null
   },
   {
