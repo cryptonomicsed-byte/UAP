@@ -454,11 +454,11 @@
   {
    "id": "P-46",
    "desc": "P-46 factory integration (Smithers/SkillForge/REA)",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "626be21ee98d94dbb324723fdf71211932559e31",
+   "evidence": "factory smithers/skillforge/rea 6/6",
    "verified": null
   },
   {
