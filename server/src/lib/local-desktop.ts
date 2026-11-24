@@ -61,7 +61,9 @@ export function ensureLocalDisplays(): { up: number[]; started: string[]; errors
         '-shared',
         '-forever',
         '-noxdamage',
-      ], `x11vnc-${n}`);
+        '-wait', '100',
+        '-defer', '30',
+        ], `x11vnc-${n}`);
       started.push(`x11vnc:${port}`);
     } else if (!fs.existsSync('/usr/bin/x11vnc')) {
       errors.push('x11vnc is not installed');

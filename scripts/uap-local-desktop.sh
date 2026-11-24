@@ -9,7 +9,7 @@ start_one() {
     sleep 0.4
   fi
   if ! timeout 1 bash -c "echo >/dev/tcp/127.0.0.1/$port" 2>/dev/null; then
-    x11vnc -display ":$n" -rfbport "$port" -localhost -nopw -shared -forever -noxdamage >>"/opt/hq/logs/x11vnc-$n.log" 2>&1 &
+    x11vnc -display ":$n" -rfbport "$port" -localhost -nopw -shared -forever -noxdamage -wait 100 -defer 30 >>"/opt/hq/logs/x11vnc-$n.log" 2>&1 &
   fi
 }
 while true; do

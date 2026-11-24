@@ -26,7 +26,10 @@ class LocalVncUpstream extends EventEmitter implements Upstream {
     super();
     sock.on('data', (b) => this.emit('message', b));
     sock.on('close', () => { this.readyState = 3; this.emit('close', 1000, Buffer.from('local closed')); });
-    sock.on('error', (e) => this.emit('error', e));
+    sock.on('error', (e) => {
+      if (this.listenerCount('error') === 0) return;
+      this.emit('error', e);
+    });
   }
   send(b: Buffer) { this.sock.write(b); }
   close() { this.sock.destroy(); }

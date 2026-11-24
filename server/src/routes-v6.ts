@@ -20,6 +20,7 @@ import { ConsentRegistry, type ConsentPurpose } from './lib/patient-consent.js';
 import { RESEARCH_ROLES, evaluateResearchOutput } from './lib/research-gates.js';
 import { MEDIA_ROLES, createMediaAsset, reviewRights } from './lib/media-rights.js';
 import { createFactoryJob, smithersBuild, skillforgeAttachPack, reaEvaluate, assertFactoryPromoteAllowed } from './lib/factory-pipeline.js';
+import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -353,6 +354,19 @@ v6Api.get('/workforce/elixir-probe', (c) => {
     backend: probe.status === 0 && probe.stdout.includes('ALIVE') ? 'elixir' : 'unavailable',
     status: probe.status,
     note: 'Elixir is the worker supervisor when present. The task ledger remains authoritative if the BEAM process dies.',
+  });
+});
+
+v6Api.get('/agentos/adoption', (c) => {
+  const file = path.resolve(new URL('../../docs/agentos/AgentOS_repository_adoption_matrix.csv', import.meta.url).pathname);
+  if (!fs.existsSync(file)) return c.json({ error: 'adoption matrix is not installed' }, 404);
+  const report = adoptionReport(loadAdoptionMatrix(file));
+  return c.json({
+    count: report.count,
+    installable: report.installable,
+    executed: report.executed,
+    p0: report.p0,
+    note: 'A matrix row is not an install. Content is not executed.',
   });
 });
 
