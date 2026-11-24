@@ -404,11 +404,11 @@
   {
    "id": "M-41",
    "desc": "M-41 patient-data privacy/consent controls",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "4d186d714188c955e316b6f287934c9790826b0c",
+   "evidence": "consent/revoke/export; 6/6",
    "verified": null
   },
   {
