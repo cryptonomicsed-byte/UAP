@@ -288,6 +288,39 @@ CREATE TABLE IF NOT EXISTS policy_decisions (
 );
 CREATE INDEX IF NOT EXISTS policy_decisions_bot ON policy_decisions(bot_id, at_ms);
 CREATE INDEX IF NOT EXISTS policy_decisions_code ON policy_decisions(code);` },
+  { id: 11, name: 'sid-workforce-ledger', sql: `
+CREATE TABLE IF NOT EXISTS workforce_installations (
+  sid TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  role_slug TEXT NOT NULL,
+  role_digest TEXT NOT NULL,
+  status TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS workforce_tasks (
+  task_id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  sid TEXT NOT NULL,
+  status TEXT NOT NULL,
+  intent TEXT NOT NULL,
+  risk_class TEXT NOT NULL,
+  lease_id TEXT,
+  lease_epoch INTEGER,
+  worker_id TEXT,
+  idempotency_key TEXT NOT NULL UNIQUE,
+  uncertain_reason TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS workforce_workers (
+  worker_id TEXT PRIMARY KEY,
+  sid TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  status TEXT NOT NULL,
+  backend TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  terminated_at INTEGER
+);` },
 ];
 
 export class SqliteMigrationError extends Error {

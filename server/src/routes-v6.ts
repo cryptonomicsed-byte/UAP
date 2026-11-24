@@ -31,6 +31,9 @@ import {
 import { providerConfiguration, isProviderConfigured } from './providers.js';
 import { env } from './env.js';
 import { TOOLS, listAllToolCatalog } from './agent/tools.js';
+import { db } from './db.js';
+import { openWorkforce, validateTeamPackage, validateComputerLease, validateVoiceSession, authorizeVoiceEffect, validateOauthBinding, driverCall, WorkforceError } from './lib/workforce-runtime.js';
+import { spawnSync } from 'node:child_process';
 
 export const v6Api = new Hono<AuthVars>();
 
@@ -280,3 +283,76 @@ v6Api.get('/operate-surface', (c) => {
     },
   });
 });
+
+const workforce = () => openWorkforce(db);
+
+v6Api.post('/workforce/activate', async (c) => {
+  const body = await c.req.json<{ tenantId?: string; roleSlug?: string; roleDigest?: string }>().catch(() => ({ tenantId: 'local', roleSlug: 'specialist', roleDigest: 'b'.repeat(64) }));
+  try {
+    const installation = workforce().activateRole({
+      tenantId: body.tenantId || 'local',
+      roleSlug: body.roleSlug || 'specialist',
+      roleDigest: body.roleDigest || 'b'.repeat(64),
+    });
+    return c.json({ installation, note: 'SID persists across tasks' });
+  } catch (error) {
+    const err = error instanceof WorkforceError ? error : new WorkforceError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
+});
+
+v6Api.post('/workforce/task', async (c) => {
+  const body = await c.req.json<{ tenantId?: string; sid?: string; intent?: string; riskClass?: string; idempotencyKey?: string }>().catch(() => ({ tenantId: 'local', sid: '', intent: '', riskClass: 'READ_DRAFT', idempotencyKey: '' }));
+  if (!body.sid || !body.intent || !body.idempotencyKey) return c.json({ error: 'sid, intent, idempotencyKey required' }, 400);
+  try {
+    const task = workforce().assignTask({
+      tenantId: body.tenantId || 'local',
+      sid: body.sid,
+      intent: body.intent,
+      riskClass: body.riskClass || 'READ_DRAFT',
+      idempotencyKey: body.idempotencyKey,
+    });
+    return c.json({ task });
+  } catch (error) {
+    const err = error instanceof WorkforceError ? error : new WorkforceError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
+});
+
+v6Api.post('/workforce/teardown', async (c) => {
+  const body = await c.req.json<{ taskId?: string; outcome?: 'SUCCEEDED' | 'FAILED' | 'CANCELLED' }>().catch(() => ({ taskId: '', outcome: 'SUCCEEDED' as const }));
+  if (!body.taskId) return c.json({ error: 'taskId required' }, 400);
+  try {
+    return c.json(workforce().teardown(body.taskId, body.outcome || 'SUCCEEDED'));
+  } catch (error) {
+    const err = error instanceof WorkforceError ? error : new WorkforceError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
+});
+
+v6Api.post('/workforce/contracts', async (c) => {
+  const body = await c.req.json<Record<string, unknown>>().catch(() => ({}) as Record<string, unknown>);
+  try {
+    return c.json({
+      team: body.team ? validateTeamPackage(body.team as Record<string, unknown>) : null,
+      computer: body.computer ? validateComputerLease(body.computer as Record<string, unknown>) : null,
+      voice: body.voice ? validateVoiceSession(body.voice as Record<string, unknown>) : null,
+      voiceEffect: body.voiceEffect ? authorizeVoiceEffect(body.voiceEffect as { highRisk?: boolean; confirmed?: boolean }) : null,
+      oauth: body.oauth && body.actingSid ? validateOauthBinding(body.oauth as Record<string, unknown>, String(body.actingSid)) : null,
+      driver: body.driver && body.method ? driverCall(body.driver as { protocol?: string }, String(body.method)) : null,
+    });
+  } catch (error) {
+    const err = error instanceof WorkforceError ? error : new WorkforceError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
+});
+
+v6Api.get('/workforce/elixir-probe', (c) => {
+  const probe = spawnSync('elixir', ['-e', 'IO.puts("ALIVE")'], { timeout: 8000, encoding: 'utf8' });
+  return c.json({
+    backend: probe.status === 0 && probe.stdout.includes('ALIVE') ? 'elixir' : 'unavailable',
+    status: probe.status,
+    note: 'Elixir is the worker supervisor when present. The task ledger remains authoritative if the BEAM process dies.',
+  });
+});
+
