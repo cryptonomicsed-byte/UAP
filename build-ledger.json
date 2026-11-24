@@ -474,11 +474,11 @@
   {
    "id": "Q-48",
    "desc": "Q-48 marketplace + one-click install",
-   "status": "pending",
+   "status": "done",
    "claimed_by": null,
    "claimed_at": null,
-   "done_sha": null,
-   "evidence": null,
+   "done_sha": "01fcedceb83700674a08a70901eada2169ec2a96",
+   "evidence": "marketplace one-click",
    "verified": null
   },
   {
