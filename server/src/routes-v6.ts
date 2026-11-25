@@ -24,6 +24,9 @@ import { createFactoryJob, smithersBuild, skillforgeAttachPack, reaEvaluate, ass
 import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
 import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-templates.js';
 import { materializeSidBot } from './lib/sid-bots.js';
+import { polyglotMap } from './lib/polyglot-map.js';
+import { SOURCE_RIGHTS, duskbotBlocked } from './lib/source-rights.js';
+import { autonomyDecision, getAutonomy, setAutonomy, type Autonomy } from './lib/autonomy.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -404,6 +407,15 @@ v6Api.post('/sid/spawn', async (c) => {
     const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
     return c.json({ error: err.message, code: err.code }, 400);
   }
+});
+
+v6Api.get('/sources', (c) => c.json({ sources: SOURCE_RIGHTS, duskbot: duskbotBlocked() }));
+v6Api.get('/polyglot', (c) => c.json({ pillars: polyglotMap() }));
+v6Api.get('/bots/:id/autonomy', (c) => c.json({ mode: getAutonomy(db, c.req.param('id')) }));
+v6Api.post('/bots/:id/autonomy', async (c) => {
+  const body = await c.req.json<{ mode?: Autonomy }>().catch(() => ({ mode: undefined as Autonomy | undefined }));
+  if (body.mode !== 'ask' && body.mode !== 'draft' && body.mode !== 'act') return c.json({ error: 'mode must be ask, draft, or act' }, 400);
+  return c.json({ mode: setAutonomy(db, c.req.param('id'), body.mode), sample: autonomyDecision(body.mode, 'spawn_sid_subagent') });
 });
 
 v6Api.post('/sid/materialize', requireUser, async (c) => {

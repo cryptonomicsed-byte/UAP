@@ -6,6 +6,8 @@ import { mcpToken, primaryBotId } from './engine.js';
 import { claimToolRow, enqueueBotMessage, markSilent, noteToolOutcome, requestApproval, turnDepth } from './agent/loop.js';
 import { policyFor, runComposioTool, toolMap, TOOLS, type ToolCtx } from './agent/tools.js';
 import { authorizeModelToolCall, refusalText } from './policy/tool-authority.js';
+import { db } from './db.js';
+import { autonomyDecision, getAutonomy } from './lib/autonomy.js';
 
 /**
  * The app's tools, served to the Hermes engines over MCP (streamable HTTP, JSON answers only).
@@ -69,6 +71,10 @@ async function callTool(botId: string | null, rawName: string, args: any): Promi
 
     const own = toolMap.get(name);
     if (own) {
+      if (autonomyDecision(getAutonomy(db, botId), name) === 'ask') {
+        const answer = await requestApproval({ userId, botId }, { key: name, title: own.label }, args, rowSeq);
+        if (answer !== 'allow') return text(answer === 'deny' ? DECLINED : SKIPPED);
+      }
       const r = await own.impl(args, ctx);
       if (r.endTurn) markSilent(botId);
       noteToolOutcome(botId, rowSeq, { status: 'done', summary: r.summary });

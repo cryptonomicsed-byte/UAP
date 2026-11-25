@@ -4,7 +4,7 @@
  * Rakazo: templates, computers, spaces
  * Codync: agent roster and bring-your-own model
  * OpenMausBot: team/workforce surface
- * Bot HQ: Hermes stays the engine, not a second shell
+ * dusk bot: capability list only. Its license forbids copying source.
  */
 import { useEffect, useState } from 'react';
 import { ComputerScreen } from './ComputerViewer';
@@ -20,7 +20,10 @@ export type WorkspaceSurface =
   | 'schedule'
   | 'vault'
   | 'models'
-  | 'workforce';
+  | 'workforce'
+  | 'memory'
+  | 'skills'
+  | 'polyglot';
 
 const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'chat', label: 'Chat', hint: 'Talk to the selected agent' },
@@ -32,6 +35,9 @@ const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'vault', label: 'Vault', hint: 'What is configured, not the secrets' },
   { id: 'models', label: 'Models', hint: 'Bring your own model' },
   { id: 'workforce', label: 'Workforce', hint: 'Install or spawn a SID' },
+  { id: 'memory', label: 'Memory', hint: 'Notes you can read' },
+  { id: 'skills', label: 'Skills', hint: 'Instructions, not grants' },
+  { id: 'polyglot', label: 'Stack', hint: 'Which language owns which job' },
 ];
 
 export function WorkspaceRail({
@@ -72,6 +78,10 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
   const [routines, setRoutines] = useState<{ id: string; name?: string; cron?: string }[]>([]);
   const [note, setNote] = useState<string | null>(null);
   const [vault, setVault] = useState<string>('Checking providers…');
+  const [memories, setMemories] = useState<{ id: string; text: string }[]>([]);
+  const [skills, setSkills] = useState<{ id: string; name?: string; title?: string }[]>([]);
+  const [pillars, setPillars] = useState<{ niche: string; language: string; owns: string; present: boolean }[]>([]);
+  const [autonomy, setAutonomyMode] = useState('ask');
 
   useEffect(() => {
     if (surface !== 'templates' && surface !== 'workforce') return;
@@ -95,6 +105,38 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
       .then((r) => r.json())
       .then((j) => setRoutines(j.routines ?? []))
       .catch(() => setRoutines([]));
+  }, [surface, bot?.id]);
+
+  useEffect(() => {
+    if (surface !== 'memory' || !bot) return;
+    fetch(`/api/bots/${bot.id}/memories`, { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setMemories(j.memories ?? []))
+      .catch(() => setMemories([]));
+  }, [surface, bot?.id]);
+
+  useEffect(() => {
+    if (surface !== 'skills' || !bot) return;
+    fetch(`/api/bots/${bot.id}/skills`, { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setSkills(j.skills ?? []))
+      .catch(() => setSkills([]));
+  }, [surface, bot?.id]);
+
+  useEffect(() => {
+    if (surface !== 'polyglot') return;
+    fetch('/api/v6/polyglot', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setPillars(j.pillars ?? []))
+      .catch(() => setPillars([]));
+  }, [surface]);
+
+  useEffect(() => {
+    if (!bot || (surface !== 'workforce' && surface !== 'models')) return;
+    fetch(`/api/v6/bots/${bot.id}/autonomy`, { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setAutonomyMode(j.mode || 'ask'))
+      .catch(() => setAutonomyMode('ask'));
   }, [surface, bot?.id]);
 
   useEffect(() => {
@@ -203,7 +245,53 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
           <h1>Models</h1>
           <p>Bring your own model. A template does not include a provider key.</p>
         </header>
-        <div className="ws-stage__body">{bot ? <EngineSettings /> : <p className="ws-lead">Select an agent first.</p>}</div>
+        <div className="ws-stage__body">{bot ? <EngineSettings bot={bot} /> : <p className="ws-lead">Select an agent first.</p>}</div>
+      </section>
+    );
+  }
+
+  if (surface === 'memory') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Memory</h1>
+          <p>{bot ? `Notes ${bot.name} keeps. You can read them here. They are not grants.` : 'Select an agent.'}</p>
+        </header>
+        <ul className="ws-list">
+          {memories.length === 0 && <li className="ws-empty">No notes yet.</li>}
+          {memories.map((row) => <li key={row.id}>{row.text}</li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'skills') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Skills</h1>
+          <p>A skill is an instruction. It does not authorize a tool.</p>
+        </header>
+        <ul className="ws-list">
+          {skills.length === 0 && <li className="ws-empty">No skills on this agent.</li>}
+          {skills.map((row) => <li key={row.id}><strong>{row.name || row.title || row.id}</strong></li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'polyglot') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Stack</h1>
+          <p>One language owns each job. A missing binary is shown as absent. dusk bot source is not copied: its license is noncommercial.</p>
+        </header>
+        <ul className="ws-list">
+          {pillars.map((row) => (
+            <li key={row.niche}><strong>{row.language}</strong><span>{row.niche} · {row.present ? 'present' : 'absent'} · {row.owns}</span></li>
+          ))}
+        </ul>
       </section>
     );
   }
@@ -228,7 +316,7 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
     <section className="ws-stage">
       <header className="ws-stage__head">
         <h1>{surface === 'workforce' ? 'Workforce' : 'Templates'}</h1>
-        <p>Install makes a full agent. Spawn makes a child under {bot?.name || 'the selected agent'}. Neither copies a grant.</p>
+        <p>Install makes a full agent. Spawn makes a child under {bot?.name || 'the selected agent'}. Autonomy is {autonomy}: risky tools ask unless you set act.</p>
       </header>
       {note && <p className="ws-note" role="status">{note}</p>}
       {gallery}
