@@ -11,6 +11,7 @@ import { conversationThread } from './hermes-adapter.js';
 import { activityFor, appToolName, humanizeSlug, policyFor } from './tools.js';
 import { classifyFailure, sanitizeDetail } from '../lib/failure.js';
 import { recordTurnFailure } from '../lib/agent-fallback.js';
+import { recordAndCheckChannelCap } from '../lib/channel-caps.js';
 
 /**
  * A turn: one message handed to the bot's Hermes engine and streamed back into the conversation.
@@ -37,6 +38,20 @@ const aborts = new Map<string, AbortController>();
 export function enqueue(botId: string, trigger: Trigger) {
   // A new message from the user supersedes whatever is waiting for their approval.
   if (trigger.type === 'user') expireApprovals(botId);
+  // Storm cap: this bot's own conversation is the cap unit until a real multi-bot "channel"
+  // entity exists. Only gates NEW turn starts, never an in-flight one, and never blocks a
+  // system trigger (those are internal, not a user/bot message flood).
+  if (trigger.type !== 'system') {
+    const cap = recordAndCheckChannelCap(db, botId);
+    if (!cap.allowed) {
+      appendRow(botId, 'notice', {
+        type: 'notice', tone: 'error',
+        text: `Too many messages in a short time (${cap.countInWindow} in the last minute). Wait ${Math.ceil(cap.retryAfterMs / 1000)}s before this bot starts another turn.`,
+        code: 'channel_rate_limited', retryable: true,
+      });
+      return;
+    }
+  }
   const prev = queues.get(botId) ?? Promise.resolve();
   const next = prev.then(() => runTurn(botId, trigger)).catch((e) => console.error('[agent] turn failed', botId, e));
   queues.set(botId, next);

@@ -344,6 +344,9 @@ CREATE TABLE IF NOT EXISTS standing_grants (
 );` },
   { id: 13, name: 'bot-theme', sql: `
 CREATE TABLE IF NOT EXISTS bot_theme (bot_id TEXT PRIMARY KEY, css TEXT NOT NULL, updated_at INTEGER NOT NULL);` },
+  { id: 14, name: 'channel-turn-events', sql: `
+CREATE TABLE IF NOT EXISTS channel_turn_events (channel_id TEXT NOT NULL, at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS channel_turn_events_channel ON channel_turn_events(channel_id, at);` },
 ];
 
 export class SqliteMigrationError extends Error {
