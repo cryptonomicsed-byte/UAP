@@ -37,7 +37,8 @@
     "v6:evidence:verify": "node --import tsx scripts/v6-evidence-map.mjs --apply --verify",
     "blueprint:extract": "node scripts/extract-blueprint-checklist.mjs",
     "blueprint:verify": "node scripts/verify-tracking.mjs",
-    "blueprint:tracking": "node scripts/extract-blueprint-checklist.mjs && node scripts/verify-tracking.mjs && node scripts/merge-tracking.mjs"
+    "blueprint:tracking": "node scripts/extract-blueprint-checklist.mjs && node scripts/verify-tracking.mjs && node scripts/merge-tracking.mjs",
+    "docs:tools": "node --import tsx scripts/generate-tool-docs.mjs"
   },
   "engines": {
     "node": ">=22"

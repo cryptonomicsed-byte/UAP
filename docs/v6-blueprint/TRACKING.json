@@ -1188,6 +1188,12 @@
       "file": "tests/channel-cap-wiring.test.mjs",
       "test": "enqueue() gates new turns on the channel cap",
       "note": "server/src/lib/channel-caps.ts (sliding-window sqlite cap, migration 14) wired into agent/loop.ts enqueue() \u2014 the single real choke point every user and bot-to-bot trigger passes through. Denies new turn starts past 20/min per bot with a visible retry-after notice; never caps an internal system trigger. 12/12 tests green (channel-caps + wiring + team-package-import)."
+    },
+    "MAUS-G-10": {
+      "commit": "PENDING",
+      "file": "tests/tool-docs.test.mjs",
+      "test": "every registered tool gets a doc entry with a real effect/risk",
+      "note": "server/src/lib/tool-docs.ts generates docs/architecture/TOOL-REFERENCE.md (219 lines, 24 tools) straight from the kernel's real classification (policy/tool-intents.ts effect+risk, autonomy.ts RISKY set, lib/failure.ts error taxonomy) \u2014 not hand-typed prose. Exposed at GET /api/v6/tool-docs. 4/4 tests green."
     }
   }
 }

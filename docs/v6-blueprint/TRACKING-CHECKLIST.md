@@ -9,7 +9,7 @@ A box is checked only when TRACKING.json has a real entry for its id AND
 cited test string is actually present in it. No keyword matching against the
 blueprint text, no inference, no self-grading without a citation that was verified.
 
-**237 / 1610 checked, each with a cited commit + test/file.**
+**238 / 1610 checked, each with a cited commit + test/file.**
 
 ## 7.1 A. Base and rights (10/10)
 
@@ -422,7 +422,7 @@ blueprint text, no inference, no self-grading without a citation that was verifi
 - [x] **MAUS-F-11** Add per-channel rate/usage caps and prevent a message storm from launching unlimited paid agents. — _ab83c91 tests/channel-cap-wiring.test.mjs (`enqueue() gates new turns on the channel cap`): server/src/lib/channel-caps.ts (sliding-window sqlite cap, migration 14) wired into agent/loop.ts enqueue() — the single real choke point every user and bot-to-bot trigger passes through. Denies new turn starts past 20/min per bot with a visible retry-after notice; never caps an internal system trigger. 12/12 tests green (channel-caps + wiring + team-package-import)._
 - [ ] **MAUS-F-12** Provide UI unread, searchable transcript, archive and restore behavior grounded in persistent server state.
 
-## 18.G — Team-control MCP server and external agent orchestration (0/12)
+## 18.G — Team-control MCP server and external agent orchestration (1/12)
 
 - [ ] **MAUS-G-01** Inspect the OpenMaus stdio MCP server and document the precise bounded tools currently available.
 - [ ] **MAUS-G-02** Define a new authenticated MCP service facade for listing permitted bots, rooms, tasks and compact transcript pages.
@@ -433,7 +433,7 @@ blueprint text, no inference, no self-grading without a citation that was verifi
 - [ ] **MAUS-G-07** Test transcript search pagination without cross-tenant data leakage or unbounded logs.
 - [ ] **MAUS-G-08** Provide a typed `team.deploy` tool that stages import, shows requested grants, and waits for required human approval.
 - [ ] **MAUS-G-09** Log MCP events with redacted payload and stable correlation ID for each external client invocation.
-- [ ] **MAUS-G-10** Add safe static documentation of tool effects, budgets, error families and idempotency expectations.
+- [x] **MAUS-G-10** Add safe static documentation of tool effects, budgets, error families and idempotency expectations. — _PENDING tests/tool-docs.test.mjs (`every registered tool gets a doc entry with a real effect/risk`): server/src/lib/tool-docs.ts generates docs/architecture/TOOL-REFERENCE.md (219 lines, 24 tools) straight from the kernel's real classification (policy/tool-intents.ts effect+risk, autonomy.ts RISKY set, lib/failure.ts error taxonomy) — not hand-typed prose. Exposed at GET /api/v6/tool-docs. 4/4 tests green._
 - [ ] **MAUS-G-11** Test an external agent that possesses only read scope cannot call worker control or deployment operations.
 - [ ] **MAUS-G-12** Support protocol version upgrades with contract fixtures, compatibility windows, deprecation and rollback.
 

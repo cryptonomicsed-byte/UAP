@@ -34,6 +34,7 @@ import { acceptBuild, dispatchSpecialists, packReport, type TaskEvidence } from 
 import { createTicket, listTickets, updateTicket, commentTicket } from './lib/ticket-board.js';
 import { getFallbackChain, setFallbackChain, nextStep, loginResting, switchBack, handoverLedger } from './lib/agent-fallback.js';
 import { getBotTheme, setBotTheme } from './lib/theme-sanitize.js';
+import { generateToolDocs } from './lib/tool-docs.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -472,6 +473,7 @@ v6Api.post('/bots/:id/theme', async (c) => {
   const tokens = setBotTheme(db, c.req.param('id'), body.css ?? '');
   return c.json({ tokens, selector: `.sid-theme-${c.req.param('id')}` });
 });
+v6Api.get('/tool-docs', (c) => c.json({ tools: generateToolDocs() }));
 v6Api.get('/sources', (c) => c.json({ sources: SOURCE_RIGHTS, duskbot: duskbotBlocked() }));
 v6Api.get('/polyglot', (c) => c.json({ pillars: polyglotMap() }));
 v6Api.get('/bots/:id/autonomy', (c) => c.json({ mode: getAutonomy(db, c.req.param('id')) }));
