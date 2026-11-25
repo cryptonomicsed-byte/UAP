@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useConfigUI } from '../../configStore';
 import { useStore } from '../../store';
 import { Glyph } from './glyphs';
+import { useSpotlight } from '../../lib/useSpotlight';
 import './ui';
 
 type Status = 'todo' | 'in_progress' | 'in_review' | 'blocked' | 'done' | 'wont_do';
@@ -31,6 +32,23 @@ function useTickets() {
     return () => { alive = false; };
   }, [rev]);
   return { tickets, error, reload: () => setRev((r) => r + 1) };
+}
+
+function BoardCard({ t, owner, otherCols, busy, onMove }: {
+  t: Ticket; owner: { name: string } | undefined; otherCols: { id: Status; label: string }[]; busy: string | null; onMove: (id: string, s: Status) => void;
+}) {
+  const spot = useSpotlight<HTMLDivElement>();
+  return (
+    <div ref={spot.ref} onPointerMove={spot.onPointerMove} onPointerLeave={spot.onPointerLeave} className="board-card spotlight">
+      <div className="board-card__title">{t.title}</div>
+      {owner && <div className="board-card__owner">{owner.name}</div>}
+      <div className="board-card__row">
+        {otherCols.slice(0, 3).map((c) => (
+          <button key={c.id} type="button" className="link-btn link-btn--small" disabled={busy === t.id} onClick={() => onMove(t.id, c.id)}>{c.label}</button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /** Operate surface — a Kanban-shaped board, action affordances first, no hero. */
@@ -72,17 +90,7 @@ export function BoardView() {
                 <div className="board-col__cards">
                   {tickets.filter((t) => t.status === col.id).map((t) => {
                     const owner = t.ownerBotId ? byId.get(t.ownerBotId) : undefined;
-                    return (
-                      <div key={t.id} className="board-card">
-                        <div className="board-card__title">{t.title}</div>
-                        {owner && <div className="board-card__owner">{owner.name}</div>}
-                        <div className="board-card__row">
-                          {COLUMNS.filter((c) => c.id !== col.id).slice(0, 3).map((c) => (
-                            <button key={c.id} type="button" className="link-btn link-btn--small" disabled={busy === t.id} onClick={() => move(t.id, c.id)}>{c.label}</button>
-                          ))}
-                        </div>
-                      </div>
-                    );
+                    return <BoardCard key={t.id} t={t} owner={owner} otherCols={COLUMNS.filter((c) => c.id !== col.id)} busy={busy} onMove={move} />;
                   })}
                   {tickets.filter((t) => t.status === col.id).length === 0 && <div className="board-col__empty">Empty</div>}
                 </div>

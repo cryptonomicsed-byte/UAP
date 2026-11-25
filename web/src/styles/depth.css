@@ -48,7 +48,14 @@
 .board-col__count { background: var(--color-bg-tertiary); border-radius: 999px; padding: 0 7px; font-weight: 500; }
 .board-col__cards { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 8px; }
 .board-col__empty { font-size: 12px; color: var(--color-text-tertiary); padding: 8px 2px; }
-.board-card { background: var(--color-bg-pane); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--radius-md); padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.board-card { background: var(--color-bg-pane); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--radius-md); padding: 10px; display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden; }
+/* ---------- cursor-follow spotlight (useSpotlight hook sets --mx/--my/--spot-o) ---------- */
+.spotlight::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
+  opacity: var(--spot-o, 0); transition: opacity 200ms ease-out;
+  background: radial-gradient(circle 140px at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 70%);
+}
+.spotlight > * { position: relative; z-index: 1; }
 .board-card__title { font-size: 13px; color: var(--color-ink); font-weight: 500; }
 .board-card__owner { font-size: 11px; color: var(--color-text-tertiary); }
 .board-card__row { display: flex; flex-wrap: wrap; gap: 4px; }

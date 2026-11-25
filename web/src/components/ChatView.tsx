@@ -11,6 +11,7 @@ import { Menu } from './Menu';
 import { Transcript } from './Transcript';
 import { VoiceCallBar } from './VoiceCallBar';
 import { endCall, isCallActive, startCall, useVoice } from '../voice/call';
+import { useMagnetic } from '../lib/useMagnetic';
 
 export function ChatView(props: {
   navOpen?: boolean;
@@ -29,6 +30,9 @@ export function ChatView(props: {
   const rows = useMemo(() => sortedRows(transcript), [transcript]);
   const inCall = useVoice((s) => isCallActive(s) && !!bot && s.botId === bot.id);
   const voiceOk = isProviderConfigured(providers, 'xai');
+  const computerMag = useMagnetic<HTMLButtonElement>();
+  const voiceMag = useMagnetic<HTMLButtonElement>();
+  const agentMag = useMagnetic<HTMLButtonElement>();
 
   if (!bot) {
     return (
@@ -59,7 +63,7 @@ export function ChatView(props: {
 
   return (
     <main className="chat" style={botVars(bot.avatarColor)}>
-      <header className="chat__header">
+      <header className="chat__header glass-grain">
         <button
           type="button"
           className="icon-btn icon-btn--bordered shell__nav-toggle"
@@ -90,29 +94,38 @@ export function ChatView(props: {
         </span>
         <div className="chat__header-right">
           <button
+            ref={computerMag.ref}
+            onPointerMove={computerMag.onPointerMove}
+            onPointerLeave={computerMag.onPointerLeave}
             type="button"
-            className="chat__quick"
+            className="chat__quick magnetic"
             onClick={() => set({ viewerOpen: true, viewerMode: 'watch', viewerHint: null })}
             title="Open agent computer"
           >
-            Computer
+            <span>Computer</span>
           </button>
           <button
+            ref={voiceMag.ref}
+            onPointerMove={voiceMag.onPointerMove}
+            onPointerLeave={voiceMag.onPointerLeave}
             type="button"
-            className={`chat__quick${inCall ? ' is-on' : ''}`}
+            className={`chat__quick magnetic${inCall ? ' is-on' : ''}`}
             onClick={() => void toggleVoice()}
             title={voiceOk ? (inCall ? 'End voice call' : 'Start voice call') : 'Voice needs XAI_API_KEY'}
             disabled={voiceBusy}
           >
-            {inCall ? 'End call' : 'Voice'}
+            <span>{inCall ? 'End call' : 'Voice'}</span>
           </button>
           <button
+            ref={agentMag.ref}
+            onPointerMove={agentMag.onPointerMove}
+            onPointerLeave={agentMag.onPointerLeave}
             type="button"
-            className={`chat__quick${detailsOpen ? ' is-on' : ''}`}
+            className={`chat__quick magnetic${detailsOpen ? ' is-on' : ''}`}
             onClick={() => set({ detailsOpen: !detailsOpen })}
             title={detailsOpen ? 'Hide agent panel' : 'Show agent panel'}
           >
-            Agent
+            <span>Agent</span>
           </button>
         </div>
       </header>

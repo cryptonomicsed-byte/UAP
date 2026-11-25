@@ -15,6 +15,7 @@ import './styles/voice.css';
 import './styles/mobile.css';
 import './styles/workspace.css';
 import './styles/depth.css';
+import './styles/glass.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
