@@ -13,6 +13,7 @@ import { SearchModal } from './components/modals/SearchModal';
 import { ConfigLayer } from './components/config/ConfigLayer';
 import { TasksView } from './components/config/TasksView';
 import { DeployBadge } from './components/DeployBadge';
+import { WorkspaceRail, WorkspaceStage, type WorkspaceSurface } from './components/WorkspaceRail';
 import { useConfigUI } from './configStore';
 
 function Shell() {
@@ -24,6 +25,7 @@ function Shell() {
   const view = useConfigUI((s) => s.view);
   const set = useStore((s) => s.set);
   const [navOpen, setNavOpen] = useState(false);
+  const [surface, setSurface] = useState<WorkspaceSurface>('chat');
 
   useEffect(() => {
     const st = useStore.getState();
@@ -80,16 +82,18 @@ function Shell() {
         showDetails ? 'has-details' : '',
         navOpen ? 'is-nav-open' : '',
         showDetails ? 'is-details-sheet' : '',
+        'has-rail',
       ].filter(Boolean).join(' ')}
     >
       <button type="button" className="shell__scrim" aria-label="Close panel" onClick={closeOverlays} />
-      <Sidebar onNavigate={() => setNavOpen(false)} />
-      {view === 'tasks' ? <TasksView /> : (
+      <WorkspaceRail surface={surface} onChange={setSurface} />
+      {(surface === 'chat' || surface === 'roster') && <Sidebar onNavigate={() => setNavOpen(false)} />}
+      {surface === 'chat' && view === 'tasks' ? <TasksView /> : surface === 'chat' ? (
         <ChatView
           navOpen={navOpen}
           onToggleNav={() => setNavOpen((v) => !v)}
         />
-      )}
+      ) : surface !== 'roster' ? <WorkspaceStage surface={surface} /> : <WorkspaceStage surface="roster" />}
       {showDetails && <DetailsPanel />}
       {modal === 'create' && <CreateBotModal />}
       {modal === 'group' && <CreateGroupModal />}

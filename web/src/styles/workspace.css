@@ -1,0 +1,88 @@
+.app.has-rail { padding-left: 0; }
+.ws-rail {
+  width: 76px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 8px;
+  background: #102226;
+  color: #e7f2f3;
+  border-right: 1px solid #1c3a3f;
+}
+.ws-rail__mark {
+  height: 36px;
+  margin: 0 6px 10px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #176c78;
+  font-weight: 700;
+}
+.ws-rail__item {
+  min-height: 52px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+}
+.ws-rail__item.is-on { background: #1c3a3f; }
+.ws-rail__glyph { font-size: 13px; font-weight: 700; }
+.ws-rail__label { font-size: 10px; letter-spacing: 0.02em; }
+.ws-stage {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  background: var(--color-bg-pane);
+  padding: 28px 32px 48px;
+}
+.ws-stage__head h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.04em; }
+.ws-stage__head p { margin: 0 0 16px; max-width: 62ch; color: var(--color-text-secondary); }
+.ws-lead, .ws-note { max-width: 68ch; }
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.ws-card {
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 14px;
+  padding: 16px;
+  background: #fff;
+}
+.ws-card__family { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); }
+.ws-card h2 { margin: 0 0 8px; font-size: 18px; }
+.ws-card p { margin: 0 0 14px; color: var(--color-text-secondary); font-size: 13px; }
+.ws-card__actions { display: flex; gap: 8px; }
+.ws-btn {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 9px;
+  border: 0;
+  background: #176c78;
+  color: #fff;
+  cursor: pointer;
+}
+.ws-btn--ghost { background: transparent; color: #176c78; border: 1px solid #176c78; }
+.ws-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.ws-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.ws-list li, .ws-empty {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: 12px;
+}
+.ws-stage__computer { max-width: 980px; }
+@media (max-width: 900px) {
+  .ws-rail { width: 64px; }
+  .ws-rail__label { display: none; }
+  .ws-stage { padding: 18px 14px 32px; }
+}
