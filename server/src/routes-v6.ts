@@ -24,6 +24,7 @@ import { createFactoryJob, smithersBuild, skillforgeAttachPack, reaEvaluate, ass
 import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
 import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-templates.js';
 import { materializeSidBot } from './lib/sid-bots.js';
+import { birthAndRegister, getOmokodaBirth, OmokodaBirthError } from './lib/omokoda-birth.js';
 import { listMcpServers, addMcpServer, removeMcpServer, setMcpServerEnabled, McpConnectorError } from './lib/mcp-connectors.js';
 import { ensureNostrIdentity } from './lib/nostr-identity.js';
 import { startNostrListener, stopNostrListener, isListening, pendingCalls } from './lib/nostr-signaling.js';
@@ -497,6 +498,27 @@ v6Api.post('/sid/materialize', requireUser, async (c) => {
     const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
     return c.json({ error: err.message, code: err.code }, 400);
   }
+});
+
+v6Api.post('/sid/omokoda/birth', requireUser, async (c) => {
+  const user = c.get('user');
+  const body = await c.req.json<{ name?: string; bio?: string; register?: boolean }>().catch(() => ({} as { name?: string; bio?: string; register?: boolean }));
+  if (!body.name) return c.json({ error: 'name required', code: 'name' }, 400);
+  try {
+    const born = await birthAndRegister(db, { userId: user.id, name: body.name, bio: body.bio, register: body.register });
+    return c.json(born);
+  } catch (error) {
+    if (error instanceof OmokodaBirthError) {
+      const status = error.code === 'name' ? 400 : error.code === 'kernel-unreachable' ? 503 : 502;
+      return c.json({ error: error.message, code: error.code, kernelAgentId: error.kernelAgentId }, status);
+    }
+    return c.json({ error: 'birth failed', code: 'failed' }, 500);
+  }
+});
+
+v6Api.get('/sid/omokoda/birth/:botId', requireUser, (c) => {
+  const row = getOmokodaBirth(db, c.req.param('botId'));
+  return row ? c.json(row) : c.json({ error: 'not an Omokoda birth' }, 404);
 });
 
 v6Api.get('/bots/:id/mcp-servers', requireUser, (c) => c.json({ servers: listMcpServers(db, c.req.param('id')) }));
