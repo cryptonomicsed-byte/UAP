@@ -22,8 +22,8 @@
   width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0;
   background: var(--color-text-tertiary); opacity: 0.55;
 }
-.op-dot.is-ok { background: #3ecf8e; opacity: 1; box-shadow: 0 0 0 2px rgba(62, 207, 142, 0.18); }
-.op-dot.is-off { background: #f5a524; opacity: 0.9; }
+.op-dot.is-ok { background: var(--color-success); opacity: 1; box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-success) 18%, transparent); }
+.op-dot.is-off { background: var(--color-warn); opacity: 0.9; }
 
 .segmented--wrap { flex-wrap: wrap; gap: 4px; }
 .segmented--wrap > button { flex: 1 1 auto; min-width: 64px; }
@@ -32,13 +32,13 @@
 .chat__quick {
   height: 32px; padding: 0 10px; border-radius: 8px;
   border: 0.5px solid var(--color-border-tertiary);
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-tertiary);
   color: var(--color-text-secondary);
   font-size: 12px; font-weight: 500; letter-spacing: 0.02em;
   display: inline-flex; align-items: center; gap: 6px;
 }
 .chat__quick:hover { color: var(--color-ink); background: var(--color-bg-tertiary); }
 .chat__quick.is-on {
-  border-color: color-mix(in srgb, var(--color-accent, #6c8cff) 40%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
   color: var(--color-ink);
 }
