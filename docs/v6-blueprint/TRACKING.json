@@ -6,6 +6,1176 @@
       "file": "tests/contrast.test.mjs",
       "test": "theme: body text clears",
       "note": "Real WCAG contrast math (scripts/contrast.mjs) gates tokens.css against 7:1 body / 4.5:1 small-status / 3:1 non-text in both themes, plus a universal :focus-visible check. Caught and fixed a real failing token (--color-text-tertiary light 3.97:1 -> 4.79:1) on first run."
+    },
+    "V6-01-01": {
+      "commit": "8034b0a",
+      "file": "docs/implementation/STATUS.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run audit:rights` exited 0."
+    },
+    "V6-01-02": {
+      "commit": "8034b0a",
+      "file": "scripts/audit-branding.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run audit:branding` exited 0."
+    },
+    "V6-01-03": {
+      "commit": "8034b0a",
+      "file": "scripts/reproducible-build.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/reproducible-build.test.mjs` exited 0."
+    },
+    "V6-01-04": {
+      "commit": "8034b0a",
+      "file": "server/src/agent/hermes-adapter.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs` exited 0."
+    },
+    "V6-01-05": {
+      "commit": "8034b0a",
+      "file": "docs/implementation/STATUS.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: docs/implementation/STATUS.md, docs/implementation/source-inventory.md."
+    },
+    "V6-01-06": {
+      "commit": "8034b0a",
+      "file": "docs/architecture/ARCHITECTURE-FREEZE.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: docs/architecture/ARCHITECTURE-FREEZE.md, crates/agentos-policy, elixir/agentos_worker."
+    },
+    "V6-01-07": {
+      "commit": "8034b0a",
+      "file": "docs/rights/",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run audit:rights` exited 0."
+    },
+    "V6-01-08": {
+      "commit": "8034b0a",
+      "file": "docs/DESIGN.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run typecheck -w web` exited 0."
+    },
+    "V6-01-09": {
+      "commit": "8034b0a",
+      "file": "docs/architecture/FORK-STRATEGY.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: docs/architecture/FORK-STRATEGY.md."
+    },
+    "V6-01-10": {
+      "commit": "8034b0a",
+      "file": "tests/idle-service/",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:idle` exited 0."
+    },
+    "V6-02-01": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/candidates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-02": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/normalize.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-03": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/classify.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-04": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/access.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-05": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/pin.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-06": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/license.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-07": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/quarantine.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-quarantine.test.mjs` exited 0."
+    },
+    "V6-02-08": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/trust.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-trust.test.mjs` exited 0."
+    },
+    "V6-02-09": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/reaudit.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-reaudit.test.mjs` exited 0."
+    },
+    "V6-02-10": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/tenant-policy.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-02-11": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/ingest.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/source-registry.test.mjs` exited 0."
+    },
+    "V6-03-01": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/role-template.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/role-template.test.mjs` exited 0."
+    },
+    "V6-03-02": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/persona-parser.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/persona-parser.test.mjs` exited 0."
+    },
+    "V6-03-03": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/persona-parser.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/roles/persona-parser.ts, docs/architecture/ROLE-TEMPLATES.md."
+    },
+    "V6-03-04": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/role-review.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/role-review.test.mjs` exited 0."
+    },
+    "V6-03-05": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/role-review.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/role-review.test.mjs` exited 0."
+    },
+    "V6-03-06": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/builtin-roster.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/roles/builtin-roster.ts, docs/architecture/ROLE-ROSTER.md."
+    },
+    "V6-03-07": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/role-template.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/role-template.test.mjs` exited 0."
+    },
+    "V6-03-08": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/builtin-roster.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/roles/builtin-roster.ts, docs/architecture/ROLE-REVIEW.md."
+    },
+    "V6-03-09": {
+      "commit": "8034b0a",
+      "file": "server/src/roles/role-review.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/role-review.test.mjs` exited 0."
+    },
+    "V6-03-10": {
+      "commit": "8034b0a",
+      "file": "server/src/agent/hermes-adapter.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/agent/hermes-adapter.ts, server/src/agent/prompt.ts."
+    },
+    "V6-04-01": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/sid-legacy.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/sid-legacy.test.mjs` exited 0."
+    },
+    "V6-04-02": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/sid.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/identity/sid.ts, docs/architecture/SID-AUTHORITY.md."
+    },
+    "V6-04-03": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/sid-authority.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/sid-credential.test.mjs` exited 0."
+    },
+    "V6-04-04": {
+      "commit": "8034b0a",
+      "file": "server/src/storage/postgres/identity-schema.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/storage/postgres/identity-schema.ts, docs/architecture/SID-AUTHORITY.md."
+    },
+    "V6-04-05": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/issuer.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/sid-credential.test.mjs` exited 0."
+    },
+    "V6-04-06": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/sid-authority.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/identity/sid-authority.ts."
+    },
+    "V6-04-07": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/lifecycle.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/identity/lifecycle.ts, docs/architecture/SID-LIFECYCLE.md."
+    },
+    "V6-04-08": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/lifecycle.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs` exited 0."
+    },
+    "V6-04-09": {
+      "commit": "8034b0a",
+      "file": "server/src/identity/sid.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/identity/sid.ts, docs/architecture/SID-LIFECYCLE.md."
+    },
+    "V6-04-10": {
+      "commit": "8034b0a",
+      "file": "server/src/privacy/deletion.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/privacy/deletion.ts, docs/architecture/PRIVACY-DELETION.md."
+    },
+    "V6-05-01": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/intent.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-02": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/kernel.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-03": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/lease.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-04": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/budget.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-05": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/kernel.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-06": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/kernel.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-07": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/approval.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-05-08": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/src/kernel.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: crates/agentos-policy/src/kernel.rs, docs/architecture/POLICY-KERNEL.md."
+    },
+    "V6-05-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `REQUIRE_ALL=1 bash scripts/portable-lease-check.sh` exited 0."
+    },
+    "V6-05-10": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy/tests/dispatch.rs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-06-01": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/application.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-02": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/task_worker.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-03": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/queue/postgres.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-04": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/staging/concurrency.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:staging` exited 0."
+    },
+    "V6-06-05": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/task_worker.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-06": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/lifecycle.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-07": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/test/agentos_worker/lifecycle_test.exs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-08": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/test/agentos_worker/teardown_test.exs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-09": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/lib/agentos_worker/lifecycle.ex",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-10": {
+      "commit": "8034b0a",
+      "file": "docs/architecture/WORKER-LIFECYCLE.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-06-11": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker/test/agentos_worker/staging/concurrency_test.exs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:staging` exited 0."
+    },
+    "V6-06-12": {
+      "commit": "8034b0a",
+      "file": "server/src/idle.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:idle` exited 0."
+    },
+    "V6-07-01": {
+      "commit": "8034b0a",
+      "file": "docs/v6-blueprint/HERMES-ADAPTER-MAPPING.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs` exited 0."
+    },
+    "V6-07-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/mcp.ts, server/src/composio.ts, server/src/agent/tools.ts."
+    },
+    "V6-07-03": {
+      "commit": "8034b0a",
+      "file": "server/src/policy/tool-authority.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/policy-tool-authority.test.mjs` exited 0."
+    },
+    "V6-07-04": {
+      "commit": "8034b0a",
+      "file": "server/src/agent/skill-context.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/agent/skill-context.ts."
+    },
+    "V6-07-05": {
+      "commit": "8034b0a",
+      "file": "server/src/agent/skill-context.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/agent/skill-context.ts, server/src/sources/quarantine.ts."
+    },
+    "V6-07-06": {
+      "commit": "8034b0a",
+      "file": "server/src/policy/tool-intents.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/policy/tool-intents.ts, docs/architecture/TOOL-AUTHORIZATION.md."
+    },
+    "V6-07-07": {
+      "commit": "8034b0a",
+      "file": "tests/hermes-adapter-lifecycle.test.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/hermes-adapter-lifecycle.test.mjs` exited 0."
+    },
+    "V6-07-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/computer.ts, server/src/box.ts."
+    },
+    "V6-07-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/auth.ts, server/src/deployment.ts."
+    },
+    "V6-07-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/failure.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/failure.ts, web/src/lib/notices.ts."
+    },
+    "V6-08-01": {
+      "commit": "8034b0a",
+      "file": "docs/architecture/CONTRACTS.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-08-02": {
+      "commit": "8034b0a",
+      "file": "crates/agentos-policy",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `cargo test -p agentos-policy --locked` exited 0."
+    },
+    "V6-08-03": {
+      "commit": "8034b0a",
+      "file": "elixir/agentos_worker",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:elixir` exited 0."
+    },
+    "V6-08-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/language-gates.ts, server/src/lib/language-conformance.ts."
+    },
+    "V6-08-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, verifiers/go, server/src/lib/language-gates.ts."
+    },
+    "V6-08-06": {
+      "commit": "8034b0a",
+      "file": "scripts/verify-lease.py",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: scripts/verify-lease.py, server/src/lib/language-gates.ts."
+    },
+    "V6-08-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/language-gates.ts."
+    },
+    "V6-08-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-conformance.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/language-conformance.test.mjs` exited 0."
+    },
+    "V6-08-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, docs/architecture/CONTRACTS.md, fixtures/."
+    },
+    "V6-08-10": {
+      "commit": "8034b0a",
+      "file": "tests/idle-service/",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:idle` exited 0."
+    },
+    "V6-09-01": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/index.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/index.ts, server/src/skillforge/registry.ts."
+    },
+    "V6-09-02": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/loader.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/loader.ts."
+    },
+    "V6-09-03": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/registry.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/registry.ts."
+    },
+    "V6-09-04": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/review-queue.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/review-queue.ts."
+    },
+    "V6-09-05": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/review-queue.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/review-queue.ts."
+    },
+    "V6-09-06": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/drain.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/skillforge-drain.test.mjs` exited 0."
+    },
+    "V6-09-07": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/drain.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/drain.ts."
+    },
+    "V6-09-08": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/registry.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/skillforge/registry.ts."
+    },
+    "V6-09-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/skillforge/types.ts."
+    },
+    "V6-09-10": {
+      "commit": "8034b0a",
+      "file": "server/src/skillforge/drain.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/skillforge-drain.test.mjs` exited 0."
+    },
+    "V6-10-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/design-gates.test.mjs` exited 0."
+    },
+    "V6-10-02": {
+      "commit": "8034b0a",
+      "file": "docs/DESIGN.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run audit:design` exited 0."
+    },
+    "V6-10-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-gates.ts."
+    },
+    "V6-10-04": {
+      "commit": "8034b0a",
+      "file": "tests/ui-qa-harness.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/ui-qa-harness.mjs` exited 0."
+    },
+    "V6-10-05": {
+      "commit": "8034b0a",
+      "file": "tests/ui-qa-harness.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: tests/ui-qa-harness.mjs."
+    },
+    "V6-10-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-critique.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/design-critique.test.mjs` exited 0."
+    },
+    "V6-10-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-critique.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-critique.ts."
+    },
+    "V6-10-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-gates.ts."
+    },
+    "V6-10-10": {
+      "commit": "8034b0a",
+      "file": "web/src/styles/",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: web/src/styles/, docs/DESIGN.md."
+    },
+    "V6-10-11": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-critique.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-critique.ts."
+    },
+    "V6-10-12": {
+      "commit": "8034b0a",
+      "file": "docs/DESIGN.md",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: docs/DESIGN.md, web/src/components/SignIn.tsx."
+    },
+    "V6-11-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/language-gates.test.mjs` exited 0."
+    },
+    "V6-11-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-gates.ts."
+    },
+    "V6-11-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-gates.ts."
+    },
+    "V6-11-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-gates.ts."
+    },
+    "V6-11-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-gates.ts."
+    },
+    "V6-11-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-gates.ts."
+    },
+    "V6-11-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-gates.ts."
+    },
+    "V6-11-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-routing.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/language-routing.test.mjs` exited 0."
+    },
+    "V6-11-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-routing.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/language-routing.ts."
+    },
+    "V6-11-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/language-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/language-gates.test.mjs` exited 0."
+    },
+    "V6-12-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/chain-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/chain-gates.test.mjs` exited 0."
+    },
+    "V6-12-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/chain-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/chain-gates.ts."
+    },
+    "V6-12-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/chain-gates.ts."
+    },
+    "V6-12-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/chain-gates.ts."
+    },
+    "V6-12-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/deploy-evidence.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/deploy-evidence.ts."
+    },
+    "V6-12-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/chain-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/chain-gates.ts."
+    },
+    "V6-12-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/chain-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/chain-gates.test.mjs` exited 0."
+    },
+    "V6-12-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/deploy-evidence.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/deploy-evidence.test.mjs` exited 0."
+    },
+    "V6-12-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/deploy-evidence.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/deploy-evidence.ts."
+    },
+    "V6-12-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/deploy-evidence.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/deploy-evidence.ts."
+    },
+    "V6-13-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/research-gates.test.mjs` exited 0."
+    },
+    "V6-13-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-13-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-13-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-13-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/patient-consent.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/patient-consent.test.mjs` exited 0."
+    },
+    "V6-13-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/research-gates.ts."
+    },
+    "V6-13-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/research-gates.ts."
+    },
+    "V6-13-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-13-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-13-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/patient-consent.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/patient-consent.ts."
+    },
+    "V6-14-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/npc-world.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/npc-world.test.mjs` exited 0."
+    },
+    "V6-14-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/npc-world.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/npc-world.ts."
+    },
+    "V6-14-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/npc-world.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/npc-world.ts."
+    },
+    "V6-14-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/npc-world.ts."
+    },
+    "V6-14-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/npc-world.ts."
+    },
+    "V6-14-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs."
+    },
+    "V6-14-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/world-policy.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/world-policy.test.mjs` exited 0."
+    },
+    "V6-14-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/npc-world.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/npc-world.ts."
+    },
+    "V6-14-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/world-policy.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/world-policy.ts."
+    },
+    "V6-14-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/world-policy.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/world-policy.ts."
+    },
+    "V6-15-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/media-rights.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/media-rights.test.mjs` exited 0."
+    },
+    "V6-15-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/media-rights.ts."
+    },
+    "V6-15-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/media-rights.ts."
+    },
+    "V6-15-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/media-rights.ts."
+    },
+    "V6-15-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/media-rights.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/media-rights.ts."
+    },
+    "V6-15-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs."
+    },
+    "V6-15-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/media-rights.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/media-rights.ts."
+    },
+    "V6-15-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/media-rights.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/media-rights.ts."
+    },
+    "V6-15-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/media-rights.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/media-rights.ts."
+    },
+    "V6-15-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/media-rights.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/media-rights.ts."
+    },
+    "V6-16-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/factory-pipeline.test.mjs` exited 0."
+    },
+    "V6-16-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts."
+    },
+    "V6-16-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/factory-pipeline.ts."
+    },
+    "V6-16-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts."
+    },
+    "V6-16-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts, server/src/skillforge/."
+    },
+    "V6-16-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts."
+    },
+    "V6-16-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/factory-pipeline.ts."
+    },
+    "V6-16-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/reference-app.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/reference-app.test.mjs` exited 0."
+    },
+    "V6-16-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/reference-app.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/reference-app.ts."
+    },
+    "V6-16-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/ops-security.test.mjs` exited 0."
+    },
+    "V6-17-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/marketplace.test.mjs` exited 0."
+    },
+    "V6-17-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-17-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-17-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-17-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-17-06": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/marketplace.ts."
+    },
+    "V6-17-07": {
+      "commit": "8034b0a",
+      "file": "web/src/",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: web/src/, tests/ui-qa-harness.mjs."
+    },
+    "V6-17-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/identity/lifecycle.ts, server/src/privacy/deletion.ts."
+    },
+    "V6-17-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-17-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-18-01": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/ops-security.test.mjs` exited 0."
+    },
+    "V6-18-02": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/ops-security.ts."
+    },
+    "V6-18-03": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/ops-security.ts, server/src/sources/quarantine.ts."
+    },
+    "V6-18-04": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/ops-security.ts."
+    },
+    "V6-18-05": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/ops-security.ts."
+    },
+    "V6-18-06": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/reaudit.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/sources/reaudit.ts, server/src/sources/trust.ts."
+    },
+    "V6-18-07": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/ops-security.ts."
+    },
+    "V6-18-08": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/ops-security.ts."
+    },
+    "V6-18-09": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/ops-security.ts, server/src/lib/final-signoff.ts."
+    },
+    "V6-18-10": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/final-signoff.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/final-signoff.test.mjs` exited 0."
+    },
+    "V6-E2E-001": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `node --import tsx --test tests/e2e-suites.test.mjs` exited 0."
+    },
+    "V6-E2E-002": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-003": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-004": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-005": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-006": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-007": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-008": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-009": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-010": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-011": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-012": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-013": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-014": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-015": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-016": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-017": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts."
+    },
+    "V6-E2E-018": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts, docs/DESIGN.md."
+    },
+    "V6-E2E-019": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-critique.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-critique.ts."
+    },
+    "V6-E2E-020": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-gates.ts."
+    },
+    "V6-E2E-021": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, tests/ui-qa-harness.mjs."
+    },
+    "V6-E2E-022": {
+      "commit": "8034b0a",
+      "file": "tests/ui-qa-harness.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: tests/ui-qa-harness.mjs."
+    },
+    "V6-E2E-023": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/design-critique.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/design-critique.ts."
+    },
+    "V6-E2E-024": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/design-critique.ts."
+    },
+    "V6-E2E-025": {
+      "commit": "8034b0a",
+      "file": "scripts/audit-rights.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run audit:rights` exited 0."
+    },
+    "V6-E2E-026": {
+      "commit": "8034b0a",
+      "file": "scripts/portable-lease-check.sh",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `REQUIRE_ALL=1 bash scripts/portable-lease-check.sh` exited 0."
+    },
+    "V6-E2E-027": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, verifiers/go, crates/agentos-policy."
+    },
+    "V6-E2E-028": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/language-gates.ts."
+    },
+    "V6-E2E-029": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/language-gates.ts, crates/agentos-policy."
+    },
+    "V6-E2E-030": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/language-gates.ts."
+    },
+    "V6-E2E-031": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/chain-gates.ts."
+    },
+    "V6-E2E-032": {
+      "commit": "8034b0a",
+      "file": "tests/idle-service/",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): command `npm run test:idle` exited 0."
+    },
+    "V6-E2E-033": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/e2e-suites.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/e2e-suites.ts, server/src/lib/chain-gates.ts."
+    },
+    "V6-E2E-034": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/deploy-evidence.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/deploy-evidence.ts."
+    },
+    "V6-E2E-035": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-E2E-036": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/research-gates.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/research-gates.ts."
+    },
+    "V6-E2E-037": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/media-rights.ts."
+    },
+    "V6-E2E-038": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/npc-world.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/npc-world.ts."
+    },
+    "V6-E2E-039": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/world-policy.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/world-policy.ts."
+    },
+    "V6-E2E-040": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/patient-consent.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/patient-consent.ts."
+    },
+    "V6-E2E-041": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts."
+    },
+    "V6-E2E-042": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts, server/src/skillforge/."
+    },
+    "V6-E2E-043": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/factory-pipeline.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/factory-pipeline.ts, server/src/lib/deploy-evidence.ts."
+    },
+    "V6-E2E-044": {
+      "commit": "8034b0a",
+      "file": "server/src/idle.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/idle.ts, web/src/."
+    },
+    "V6-E2E-045": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts."
+    },
+    "V6-E2E-046": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/v6-residual.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/v6-residual.ts, tests/v6-residual.test.mjs, server/src/lib/ops-security.ts, elixir/agentos_worker."
+    },
+    "V6-E2E-047": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/marketplace.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/marketplace.ts, server/src/lib/reference-app.ts."
+    },
+    "V6-E2E-048": {
+      "commit": "8034b0a",
+      "file": "scripts/audit-rights.mjs",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: scripts/audit-rights.mjs, scripts/audit-branding.mjs."
+    },
+    "V6-E2E-049": {
+      "commit": "8034b0a",
+      "file": "server/src/sources/trust.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/sources/trust.ts, server/src/sources/reaudit.ts."
+    },
+    "V6-E2E-050": {
+      "commit": "8034b0a",
+      "file": "server/src/lib/ops-security.ts",
+      "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/ops-security.ts."
     }
   }
 }
