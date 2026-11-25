@@ -12,6 +12,7 @@ import { CreateGroupModal } from './components/modals/CreateGroupModal';
 import { SearchModal } from './components/modals/SearchModal';
 import { ConfigLayer } from './components/config/ConfigLayer';
 import { TasksView } from './components/config/TasksView';
+import { BoardView } from './components/config/BoardView';
 import { DeployBadge } from './components/DeployBadge';
 import { useConfigUI } from './configStore';
 
@@ -84,7 +85,7 @@ function Shell() {
     >
       <button type="button" className="shell__scrim" aria-label="Close panel" onClick={closeOverlays} />
       <Sidebar onNavigate={() => setNavOpen(false)} />
-      {view === 'tasks' ? <TasksView /> : (
+      {view === 'tasks' ? <TasksView /> : view === 'board' ? <BoardView /> : (
         <ChatView
           navOpen={navOpen}
           onToggleNav={() => setNavOpen((v) => !v)}

@@ -1,0 +1,54 @@
+/* Depth and motion. Real elevation (layered shadows), not haze. Blur only where something
+ * genuinely floats over something else: modals, the mobile detail sheet, the nav scrim.
+ * Motion marks a state change; nothing loops or decorates. prefers-reduced-motion is honored. */
+
+:root {
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.06), 0 1px 1px rgba(0,0,0,0.04);
+  --elevation-2: 0 4px 10px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.08);
+  --elevation-3: 0 14px 28px rgba(0,0,0,0.16), 0 4px 10px rgba(0,0,0,0.10);
+  --ease-pop: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur-med: 220ms;
+}
+:root[data-theme='dark'] {
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.30), 0 1px 1px rgba(0,0,0,0.20);
+  --elevation-2: 0 4px 10px rgba(0,0,0,0.42), 0 1px 3px rgba(0,0,0,0.30);
+  --elevation-3: 0 18px 32px rgba(0,0,0,0.55), 0 4px 10px rgba(0,0,0,0.40);
+}
+
+/* Real overlays only — things that actually float above the stack. */
+.modal-scrim, .app.is-nav-open .shell__scrim, .app.is-details-sheet .shell__scrim, .app.is-details-sheet .details {
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+}
+.modal, .panel-card, .board-card, .desk__block { box-shadow: var(--elevation-1); }
+.panel-card:hover, .board-card:hover { box-shadow: var(--elevation-2); }
+.modal { box-shadow: var(--elevation-3); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .modal, .details, .board-card { animation: pop-in var(--dur-med) var(--ease-pop); }
+  @keyframes pop-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: none; } }
+  .status-dot.is-working { animation: pulse-work 1.6s ease-in-out infinite; }
+  @keyframes pulse-work { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 55%, transparent); } 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 0%, transparent); } }
+  .btn, .chat__quick, .board-card, .pinned__tile, .bot-row { transition: transform var(--dur-fast) var(--ease-pop), box-shadow var(--dur-fast) var(--ease-pop); }
+  .btn:active, .chat__quick:active { transform: scale(0.97); }
+  .board-card:hover { transform: translateY(-1px); }
+  .toggle__knob { transition: transform var(--dur-fast) var(--ease-pop); }
+}
+
+/* ---------- board ---------- */
+.board-view { overflow: hidden; }
+.tasks-view__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.board-new { display: flex; gap: 6px; }
+.board-new .text-input { width: 220px; }
+.board-scroll { flex: 1 1 0; min-height: 0; overflow-x: auto; padding: 16px; }
+.board-columns { display: flex; gap: 14px; height: 100%; min-width: max-content; }
+.board-col { display: flex; flex-direction: column; width: 220px; flex-shrink: 0; gap: 8px; }
+.board-col__head { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-tertiary); padding: 0 2px; }
+.board-col__count { background: var(--color-bg-tertiary); border-radius: 999px; padding: 0 7px; font-weight: 500; }
+.board-col__cards { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 8px; }
+.board-col__empty { font-size: 12px; color: var(--color-text-tertiary); padding: 8px 2px; }
+.board-card { background: var(--color-bg-pane); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--radius-md); padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.board-card__title { font-size: 13px; color: var(--color-ink); font-weight: 500; }
+.board-card__owner { font-size: 11px; color: var(--color-text-tertiary); }
+.board-card__row { display: flex; flex-wrap: wrap; gap: 4px; }

@@ -31,6 +31,8 @@ import { boardSnapshot } from './lib/board.js';
 import { liveSnapshot } from './lib/live.js';
 import { domainSurface } from './lib/domain-surface.js';
 import { acceptBuild, dispatchSpecialists, packReport, type TaskEvidence } from './lib/engineering-pack.js';
+import { createTicket, listTickets, updateTicket, commentTicket } from './lib/ticket-board.js';
+import { getFallbackChain, setFallbackChain, nextStep, loginResting, switchBack, handoverLedger } from './lib/agent-fallback.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -425,6 +427,43 @@ v6Api.post('/smithers/dispatch', async (c) => {
 v6Api.post('/smithers/accept', async (c) => {
   const body = await c.req.json<TaskEvidence>().catch(() => ({} as TaskEvidence));
   return c.json(acceptBuild(body));
+});
+v6Api.get('/tickets', requireUser, (c) => c.json({ tickets: listTickets(db, c.get('user').id) }));
+v6Api.post('/tickets', requireUser, async (c) => {
+  const body = await c.req.json<{ title?: string; description?: string; ownerBotId?: string | null; priority?: 'low' | 'normal' | 'high' }>().catch(() => ({} as { title?: string }));
+  if (!body.title) return c.json({ error: 'title required' }, 400);
+  return c.json({ ticket: createTicket(db, c.get('user').id, body as { title: string; description?: string; ownerBotId?: string | null; priority?: 'low' | 'normal' | 'high' }) });
+});
+v6Api.patch('/tickets/:id', requireUser, async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const ticket = updateTicket(db, c.get('user').id, c.req.param('id'), body);
+  if (!ticket) return c.json({ error: 'not found' }, 404);
+  return c.json({ ticket });
+});
+v6Api.post('/tickets/:id/comments', requireUser, async (c) => {
+  const body = await c.req.json<{ author?: string; text?: string }>().catch(() => ({} as { author?: string; text?: string }));
+  if (!body.text) return c.json({ error: 'text required' }, 400);
+  const ticket = commentTicket(db, c.get('user').id, c.req.param('id'), body.author ?? 'you', body.text);
+  if (!ticket) return c.json({ error: 'not found' }, 404);
+  return c.json({ ticket });
+});
+v6Api.get('/bots/:id/fallback', (c) => {
+  const botId = c.req.param('id');
+  const chain = getFallbackChain(db, botId);
+  const next = nextStep(db, botId);
+  return c.json({ chain, active: next ? { ...next.step, index: next.index } : null, ledger: handoverLedger(db, botId) });
+});
+v6Api.post('/bots/:id/fallback', async (c) => {
+  const body = await c.req.json<{ steps?: { agent: string; model: string; loginKey: string }[] }>().catch(() => ({} as { steps?: { agent: string; model: string; loginKey: string }[] }));
+  if (!Array.isArray(body.steps)) return c.json({ error: 'steps required' }, 400);
+  try { setFallbackChain(db, c.req.param('id'), body.steps); } catch (e: any) { return c.json({ error: e.message }, 400); }
+  return c.json({ chain: getFallbackChain(db, c.req.param('id')) });
+});
+v6Api.post('/bots/:id/fallback/switch-back', async (c) => {
+  const body = await c.req.json<{ loginKey?: string }>().catch(() => ({} as { loginKey?: string }));
+  if (!body.loginKey) return c.json({ error: 'loginKey required' }, 400);
+  switchBack(db, body.loginKey);
+  return c.json({ chain: getFallbackChain(db, c.req.param('id')) });
 });
 v6Api.get('/sources', (c) => c.json({ sources: SOURCE_RIGHTS, duskbot: duskbotBlocked() }));
 v6Api.get('/polyglot', (c) => c.json({ pillars: polyglotMap() }));

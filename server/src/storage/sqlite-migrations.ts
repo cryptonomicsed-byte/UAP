@@ -321,6 +321,27 @@ CREATE TABLE IF NOT EXISTS workforce_workers (
   created_at INTEGER NOT NULL,
   terminated_at INTEGER
 );` },
+  { id: 12, name: 'tickets-and-fallback-and-grants', sql: `
+CREATE TABLE IF NOT EXISTS tickets (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+  owner_bot_id TEXT, status TEXT NOT NULL DEFAULT 'todo', priority TEXT NOT NULL DEFAULT 'normal',
+  comments TEXT NOT NULL DEFAULT '[]', created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS tickets_user ON tickets(user_id);
+CREATE TABLE IF NOT EXISTS agent_fallback_chain (
+  bot_id TEXT NOT NULL, step INTEGER NOT NULL, agent TEXT NOT NULL, model TEXT NOT NULL, login_key TEXT NOT NULL,
+  PRIMARY KEY (bot_id, step)
+);
+CREATE TABLE IF NOT EXISTS agent_login_rest (
+  login_key TEXT PRIMARY KEY, reason TEXT NOT NULL, until INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS agent_fallback_ledger (
+  bot_id TEXT NOT NULL, kind TEXT NOT NULL, detail TEXT NOT NULL, at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS standing_grants (
+  bot_id TEXT NOT NULL, server_id TEXT NOT NULL, tool_name TEXT NOT NULL, config_hash TEXT NOT NULL, created_at INTEGER NOT NULL,
+  PRIMARY KEY (bot_id, server_id, tool_name)
+);` },
 ];
 
 export class SqliteMigrationError extends Error {

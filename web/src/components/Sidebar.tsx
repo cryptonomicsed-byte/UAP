@@ -1,6 +1,7 @@
 import { memo, useCallback, useState } from 'react';
 import { useConfigUI } from '../configStore';
 import { TasksIsland } from './config/TasksView';
+import { BoardIsland } from './config/BoardView';
 import type { Bot } from '@shared/types';
 import { BotAvatarFor } from '../avatar/BotAvatar';
 import { displayName, useStore } from '../store';
@@ -99,6 +100,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
 
       <div className="sidebar__scroll">
         <TasksIsland />
+        <BoardIsland />
         {primary && (
           <div className="pinned">
             <button type="button" className={`pinned__tile${selectedBotId === primary.id ? ' is-selected' : ''}`} onClick={() => selectBot(primary.id)} title={displayName(primary)}>

@@ -1,10 +1,12 @@
 /**
  * Turn a SID template into a bot the workspace can see.
  * A sub-agent is a new SID with parent set. It does not copy the parent's grants.
+ * Its autonomy level flows down from the parent (only ever rises — duskbot's pattern).
  */
 import type Database from 'better-sqlite3';
 import { newId } from '../lib/ids.js';
 import { SidTemplateError, SidTemplateRuntime, SID_TEMPLATES, superviseSpawn } from '../lib/sid-templates.js';
+import { delegateAutonomy } from '../lib/autonomy.js';
 
 export interface MaterializedSid {
   botId: string;
@@ -69,6 +71,7 @@ export function materializeSidBot(db: Database.Database, input: { userId: string
     now,
     now,
   );
+  if (parentBotId) delegateAutonomy(db, botId, parentBotId);
   return {
     botId,
     sid: minted.sid,
