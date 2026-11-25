@@ -9,6 +9,7 @@ import { env } from './env.js';
 import { requireProvider, isProviderConfigured } from './providers.js';
 import { LOCAL_VOICES } from './lib/free-runtime.js';
 import { synthesizeLocal, LocalTtsError } from './lib/local-tts.js';
+import { transcribeLocal, LocalSttError } from './lib/local-stt.js';
 import { newId } from './lib/ids.js';
 import type { AuthVars } from './lib/auth.js';
 import { appendRow, emitBot, getBotRow, getLive, listRoutines, listTasks, updateRow } from './store.js';
@@ -507,6 +508,15 @@ voiceApi.post('/stt', async (c) => {
   if (!file || typeof file === 'string') return c.json({ error: 'file required' }, 400);
   if (file.size > 25 * 1024 * 1024) return c.json({ error: 'recording too long' }, 413);
   if (file.size < 200) return c.json({ text: '' });
+  if (!isProviderConfigured('xai')) {
+    try {
+      const text = transcribeLocal(Buffer.from(await file.arrayBuffer()));
+      return c.json({ text });
+    } catch (error) {
+      console.warn('[voice] local stt failed', error instanceof LocalSttError ? error.message : error);
+      return c.json({ error: 'Transcription unavailable' }, 502);
+    }
+  }
   const out = new FormData();
   out.append('model', STT_MODEL);
   const lang = String(form?.get('language') ?? '');
