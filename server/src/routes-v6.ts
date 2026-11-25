@@ -26,6 +26,7 @@ import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-
 import { materializeSidBot } from './lib/sid-bots.js';
 import { listMcpServers, addMcpServer, removeMcpServer, setMcpServerEnabled, McpConnectorError } from './lib/mcp-connectors.js';
 import { ensureNostrIdentity } from './lib/nostr-identity.js';
+import { startNostrListener, stopNostrListener, isListening, pendingCalls } from './lib/nostr-signaling.js';
 import { polyglotMap } from './lib/polyglot-map.js';
 import { SOURCE_RIGHTS, duskbotBlocked } from './lib/source-rights.js';
 import { autonomyDecision, getAutonomy, setAutonomy, type Autonomy } from './lib/autonomy.js';
@@ -535,5 +536,21 @@ v6Api.get('/bots/:id/nostr-identity', requireUser, (c) => {
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
   }
+});
+
+v6Api.post('/bots/:id/nostr-listen', requireUser, (c) => {
+  const botId = c.req.param('id');
+  const started = startNostrListener(db, botId);
+  return c.json({ listening: isListening(botId), started });
+});
+
+v6Api.post('/bots/:id/nostr-listen/stop', requireUser, (c) => {
+  const stopped = stopNostrListener(c.req.param('id'));
+  return c.json({ listening: isListening(c.req.param('id')), stopped });
+});
+
+v6Api.get('/bots/:id/calls', requireUser, (c) => {
+  const botId = c.req.param('id');
+  return c.json({ listening: isListening(botId), calls: pendingCalls(db, botId) });
 });
 

@@ -365,6 +365,12 @@ CREATE TABLE IF NOT EXISTS nostr_identities (
   bot_id TEXT PRIMARY KEY, npub TEXT NOT NULL UNIQUE, pubkey_hex TEXT NOT NULL,
   nsec_path TEXT NOT NULL, created_at INTEGER NOT NULL
 );` },
+  { id: 18, name: 'incoming-calls', sql: `
+CREATE TABLE IF NOT EXISTS incoming_calls (
+  id TEXT PRIMARY KEY, bot_id TEXT NOT NULL, call_id TEXT NOT NULL, from_pubkey TEXT,
+  sdp TEXT, status TEXT NOT NULL DEFAULT 'ringing', created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS incoming_calls_bot ON incoming_calls(bot_id, status);` },
 ];
 
 export class SqliteMigrationError extends Error {
