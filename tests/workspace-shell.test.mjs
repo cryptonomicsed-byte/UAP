@@ -9,7 +9,8 @@ test('workspace rail absorbs the five layout surfaces', () => {
   for (const id of ['chat', 'templates', 'computer', 'board', 'market', 'live', 'design', 'domain', 'operator']) {
     assert.match(rail, new RegExp(`id: '${id}'`));
   }
-  assert.match(app, /WorkspaceRail/);
+  assert.match(app, /SurfaceBar/);
+  assert.doesNotMatch(app, /<WorkspaceRail/);
   assert.match(app, /WorkspaceStage/);
   assert.match(css, /workspace.css/);
   assert.match(rail, /Nod:/);

@@ -52,6 +52,49 @@ const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'operator', label: 'Ops', hint: 'Providers and tool availability' },
 ];
 
+const GROUPS: { id: string; label: string; ids: WorkspaceSurface[] }[] = [
+  { id: 'talk', label: 'Talk', ids: ['chat', 'roster'] },
+  { id: 'desk', label: 'Desk', ids: ['computer', 'apps', 'models', 'vault'] },
+  { id: 'work', label: 'Work', ids: ['templates', 'workforce', 'memory', 'skills', 'schedule'] },
+  { id: 'watch', label: 'Watch', ids: ['board', 'live', 'market', 'design', 'domain', 'polyglot', 'operator'] },
+];
+
+export function SurfaceBar({
+  surface,
+  onChange,
+}: {
+  surface: WorkspaceSurface;
+  onChange: (id: WorkspaceSurface) => void;
+}) {
+  const group = GROUPS.find((row) => row.ids.includes(surface)) ?? GROUPS[0];
+  return (
+    <div className="surface-bar">
+      <div className="surface-bar__groups" role="tablist" aria-label="Workspace">
+        {GROUPS.map((row) => (
+          <button
+            key={row.id}
+            type="button"
+            role="tab"
+            aria-selected={row.id === group.id}
+            className={row.id === group.id ? 'is-on' : ''}
+            onClick={() => onChange(row.ids[0])}
+          >{row.label}</button>
+        ))}
+      </div>
+      <div className="surface-bar__items">
+        {group.ids.map((id) => {
+          const item = ITEMS.find((row) => row.id === id);
+          return (
+            <button key={id} type="button" className={surface === id ? 'is-on' : ''} onClick={() => onChange(id)}>
+              {item?.label ?? id}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function WorkspaceRail({
   surface,
   onChange,
