@@ -19,7 +19,14 @@
 }
 .surface-bar__groups button.is-on { background: var(--color-primary); color: var(--color-on-primary); border-color: transparent; }
 .surface-bar__items button.is-on { background: var(--color-bg-tertiary); color: var(--color-ink); }
-.ws-rail { display: none; }
+.desk { display: flex; flex-direction: column; gap: 18px; padding: 4px 2px 24px; }
+.desk__block h3 { margin: 0 0 6px; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.desk__block p, .desk__state { margin: 0 0 8px; color: var(--color-text-secondary); font-size: 13px; }
+.desk__list { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.desk__list li { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.desk__list small { display: block; color: var(--color-text-tertiary); }
+.desk__row { display: flex; gap: 6px; align-items: center; }
+.desk__row .text-input { flex: 1; min-width: 0; }
 .ws-stage {
   flex: 1;
   min-width: 0;

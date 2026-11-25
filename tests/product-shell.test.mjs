@@ -23,11 +23,11 @@ test('main imports operate + mobile + config css', () => {
   assert.match(main, /config\.css/);
 });
 
-test('DetailsPanel defaults to Operate tab', () => {
+test('DetailsPanel defaults to the agent desk', () => {
   const src = readFileSync(path.join(root, 'web/src/components/DetailsPanel.tsx'), 'utf8');
   assert.match(src, /useState<'operate' \| 'activity'/);
-  assert.match(src, /OperateRail/);
-  assert.match(src, />Operate</);
+  assert.match(src, /AgentDesk/);
+  assert.match(src, />Desk</);
 });
 
 test('ChatView exposes Computer Voice Agent quick actions', () => {

@@ -17,7 +17,7 @@ import { useConfigUI } from '../configStore';
 import { Glyph } from './config/glyphs';
 import { LibraryTab } from './config/LibraryTab';
 import { BotTasks } from './config/TasksView';
-import { OperateRail } from './OperateRail';
+import { AgentDesk } from './AgentDesk';
 
 // Other files import this from here; it lives in lib/computer so the viewer can use it too.
 export { computerStatusText };
@@ -100,7 +100,7 @@ export function DetailsPanel() {
         )}
         <div className="details__tabs">
           <div className="segmented segmented--wrap">
-            <button type="button" className={tab === 'operate' ? 'is-active' : ''} onClick={() => setTab('operate')}>Operate</button>
+            <button type="button" className={tab === 'operate' ? 'is-active' : ''} onClick={() => setTab('operate')}>Desk</button>
             <button type="button" className={tab === 'activity' ? 'is-active' : ''} onClick={() => setTab('activity')}>Activity</button>
             <button type="button" className={tab === 'tasks' ? 'is-active' : ''} onClick={() => setTab('tasks')}>Tasks</button>
             <button type="button" className={tab === 'library' ? 'is-active' : ''} onClick={() => setTab('library')}>Library</button>
@@ -108,7 +108,7 @@ export function DetailsPanel() {
         </div>
         {tab === 'operate' ? (
           <div className="details__sections">
-            <OperateRail />
+            <AgentDesk bot={bot} />
           </div>
         ) : tab === 'activity' ? (
           <div className="details__sections">
