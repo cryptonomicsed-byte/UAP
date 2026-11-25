@@ -21,6 +21,7 @@ import { SOURCE_RIGHTS } from '../lib/source-rights.js';
 import { addMemory, listMemories } from '../engine-memory.js';
 import { boardSnapshot } from '../lib/board.js';
 import { liveSnapshot } from '../lib/live.js';
+import { domainSurface } from '../lib/domain-surface.js';
 
 export interface ToolCtx {
   userId: string;
@@ -398,6 +399,14 @@ const ALL_TOOLS: ToolDef[] = [
       if (!memory) return { output: 'Could not save a note. This agent may have no home.' };
       return { output: JSON.stringify({ id: memory.id, text: memory.text }), summary: 'Note saved' };
     },
+  },
+  {
+    name: 'list_domain',
+    description: 'Read chain templates, research roles, media roles, NPC SID policy, and language packs. No signer and no approval is included.',
+    parameters: obj({}),
+    activity: 'working',
+    label: 'Reading domain gates',
+    impl: async () => ({ output: JSON.stringify(domainSurface()) }),
   },
   {
     name: 'list_live',

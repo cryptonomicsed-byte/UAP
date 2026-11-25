@@ -6,7 +6,7 @@ test('workspace rail absorbs the five layout surfaces', () => {
   const rail = readFileSync(new URL('../web/src/components/WorkspaceRail.tsx', import.meta.url), 'utf8');
   const app = readFileSync(new URL('../web/src/App.tsx', import.meta.url), 'utf8');
   const css = readFileSync(new URL('../web/src/main.tsx', import.meta.url), 'utf8');
-  for (const id of ['chat', 'templates', 'computer', 'apps', 'schedule', 'vault', 'models', 'workforce', 'memory', 'skills', 'polyglot', 'board', 'market', 'live']) {
+  for (const id of ['chat', 'templates', 'computer', 'board', 'market', 'live', 'design', 'domain', 'operator']) {
     assert.match(rail, new RegExp(`id: '${id}'`));
   }
   assert.match(app, /WorkspaceRail/);

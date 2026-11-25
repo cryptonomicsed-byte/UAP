@@ -26,7 +26,10 @@ export type WorkspaceSurface =
   | 'polyglot'
   | 'board'
   | 'market'
-  | 'live';
+  | 'live'
+  | 'design'
+  | 'domain'
+  | 'operator';
 
 const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'chat', label: 'Chat', hint: 'Talk to the selected agent' },
@@ -44,6 +47,9 @@ const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'board', label: 'Board', hint: 'Tasks and SID identity' },
   { id: 'market', label: 'Market', hint: 'Templates you can install, and trial roles you cannot' },
   { id: 'live', label: 'Live', hint: 'Turns and approvals, not message text' },
+  { id: 'design', label: 'Design', hint: 'Design gate findings, including failures' },
+  { id: 'domain', label: 'Domain', hint: 'Chain, research, media, NPC, languages' },
+  { id: 'operator', label: 'Ops', hint: 'Providers and tool availability' },
 ];
 
 export function WorkspaceRail({
@@ -91,6 +97,9 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
   const [roles, setRoles] = useState<{ id: string; title: string; family: string; state: string; riskClass: string }[]>([]);
   const [family, setFamily] = useState('all');
   const [live, setLive] = useState<{ pending: { bot_id: string; state: string }[]; approvals: { id: string; tool: string; status: string }[]; recent: { bot_id: string; kind: string }[]; note?: string }>({ pending: [], approvals: [], recent: [] });
+  const [design, setDesign] = useState<{ ok?: boolean; nogo?: boolean; findings: { code: string; severity: string; message: string }[] }>({ findings: [] });
+  const [domain, setDomain] = useState<{ chain: { family: string; signer: boolean }[]; research: { id: string; title: string; riskClass: string }[]; media: { id: string; title: string }[]; languages: { id: string; title: string }[]; npc: Record<string, boolean> }>({ chain: [], research: [], media: [], languages: [], npc: {} });
+  const [ops, setOps] = useState<{ providers: Record<string, { status: string }>; computer?: { localBox?: boolean }; tools: number }>({ providers: {}, tools: 0 });
   const [autonomy, setAutonomyMode] = useState('ask');
 
   useEffect(() => {
@@ -155,6 +164,30 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
       .then((r) => r.json())
       .then((j) => setLive({ pending: j.pending ?? [], approvals: j.approvals ?? [], recent: j.recent ?? [], note: j.note }))
       .catch(() => setNote('Live view unavailable'));
+  }, [surface]);
+
+  useEffect(() => {
+    if (surface !== 'design') return;
+    fetch('/api/v6/design/gates', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setDesign({ ok: j.ok, nogo: j.nogo, findings: j.findings ?? [] }))
+      .catch(() => setNote('Design gates unavailable'));
+  }, [surface]);
+
+  useEffect(() => {
+    if (surface !== 'domain') return;
+    fetch('/api/v6/domain', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setDomain({ chain: j.chain ?? [], research: j.research ?? [], media: j.media ?? [], languages: j.languages ?? [], npc: j.npc ?? {} }))
+      .catch(() => setNote('Domain catalog unavailable'));
+  }, [surface]);
+
+  useEffect(() => {
+    if (surface !== 'operator') return;
+    fetch('/api/v6/operate-surface', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setOps({ providers: j.providers ?? {}, computer: j.computer, tools: j.mcp?.activeCount ?? 0 }))
+      .catch(() => setNote('Operator surface unavailable'));
   }, [surface]);
 
   useEffect(() => {
@@ -324,6 +357,56 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
         <ul className="ws-list">
           {skills.length === 0 && <li className="ws-empty">No skills on this agent.</li>}
           {skills.map((row) => <li key={row.id}><strong>{row.name || row.title || row.id}</strong></li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'design') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Design</h1>
+          <p>{design.nogo ? 'Release is no-go.' : design.ok ? 'Gates passed.' : 'Gate result pending.'} A missing persona is a finding, not a pass.</p>
+        </header>
+        <ul className="ws-list">
+          {design.findings.length === 0 && <li className="ws-empty">No findings returned.</li>}
+          {design.findings.map((row) => <li key={row.code + row.message}><strong>{row.severity}</strong><span>{row.message}</span></li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'domain') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Domain</h1>
+          <p>Chain templates have no signer. Research and media roles do not approve a claim by being listed. A decorative NPC does not get a SID.</p>
+        </header>
+        <h2>Chain</h2>
+        <ul className="ws-list">{domain.chain.map((row) => <li key={row.family}><strong>{row.family}</strong><span>{row.signer ? 'signer' : 'no signer'}</span></li>)}</ul>
+        <h2>Research</h2>
+        <ul className="ws-list">{domain.research.map((row) => <li key={row.id}><strong>{row.title}</strong><span>{row.riskClass}</span></li>)}</ul>
+        <h2>Media</h2>
+        <ul className="ws-list">{domain.media.map((row) => <li key={row.id}><strong>{row.title}</strong></li>)}</ul>
+        <h2>NPC SID</h2>
+        <ul className="ws-list">{Object.entries(domain.npc).map(([kind, allowed]) => <li key={kind}><strong>{kind}</strong><span>{allowed ? 'may hold a SID' : 'no SID'}</span></li>)}</ul>
+        <h2>Languages</h2>
+        <ul className="ws-list">{domain.languages.map((row) => <li key={row.id}><strong>{row.title}</strong><span>{row.id}</span></li>)}</ul>
+      </section>
+    );
+  }
+
+  if (surface === 'operator') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Operator</h1>
+          <p>Local desk is {ops.computer?.localBox ? 'on' : 'off'}. {ops.tools} tools are active. A configured provider is not a verified one.</p>
+        </header>
+        <ul className="ws-list">
+          {Object.entries(ops.providers).map(([name, row]) => <li key={name}><strong>{name}</strong><span>{row.status}</span></li>)}
         </ul>
       </section>
     );
