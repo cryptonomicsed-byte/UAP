@@ -252,6 +252,37 @@ const ALL_TOOLS: ToolDef[] = [
     },
   },
   {
+    name: 'create_skill',
+    description: "Add a new skill to yourself: a written instruction you will follow from now on, in every future conversation (it is injected into your own prompt). Use this when the user teaches you something, corrects a mistake you should not repeat, or asks you to remember a procedure — not for one-off facts that belong in a normal reply. `body` should be the actual instruction text, written as a rule, not a story.",
+    parameters: obj({ name: { type: 'string', description: 'Short name, e.g. "Always cc finance on invoices"' }, body: { type: 'string', description: 'The instruction itself, as text you will follow.' }, description: { type: 'string', description: 'One line on when this applies.' } }, ['name', 'body']),
+    activity: 'working',
+    label: 'Learning a new skill',
+    impl: async (a, ctx) => {
+      const name = String(a.name ?? '').trim().slice(0, 120);
+      const body = String(a.body ?? '').trim().slice(0, 20_000);
+      if (!name || !body) return { output: 'Need both a name and the instruction text to learn a skill.' };
+      const existingCount = (db.prepare('SELECT COUNT(*) as c FROM skills WHERE bot_id=?').get(ctx.botId) as { c: number }).c;
+      if (existingCount >= 100) return { output: "You already have 100 skills — ask the user to remove one in Settings before adding another." };
+      const id = newId('skl');
+      db.prepare('INSERT INTO skills(id,bot_id,name,body,description,created_at,updated_at) VALUES (?,?,?,?,?,?,?)')
+        .run(id, ctx.botId, name, body, String(a.description ?? '').trim().slice(0, 300), now(), now());
+      appendRow(ctx.botId, 'event', { type: 'event', event: 'skill-created', text: `Learned a new skill: ${name}`, ref: id });
+      hub.emit(ctx.userId, { type: 'skills', botId: ctx.botId });
+      return { output: JSON.stringify({ ok: true, skill_id: id }), summary: `Learned: ${name}` };
+    },
+  },
+  {
+    name: 'list_skills',
+    description: 'List the skills you have already learned, so you do not add a duplicate.',
+    parameters: obj({}),
+    activity: 'working',
+    label: 'Checking skills',
+    impl: async (_a, ctx) => {
+      const rows = db.prepare('SELECT id, name, description FROM skills WHERE bot_id=? ORDER BY created_at').all(ctx.botId);
+      return { output: JSON.stringify(rows) };
+    },
+  },
+  {
     name: 'create_task',
     description: 'Track a piece of work the user asked for as a task (use one per request when asked for several things at once).',
     parameters: obj({ title: { type: 'string' } }, ['title']),

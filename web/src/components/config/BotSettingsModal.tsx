@@ -31,6 +31,7 @@ export function BotSettingsModal() {
   const bot = useStore((s) => s.bots.find((b) => b.id === target?.botId));
   const routines = useStore((s) => (target ? s.routines[target.botId] : undefined));
   const memVersion = useVersion(`memories:${target?.botId ?? ''}`);
+  const skillsVersion = useVersion(`skills:${target?.botId ?? ''}`);
   const [data, setData] = useState<BotSettingsBundle | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const onClose = useCallback(() => close(), [close]);
@@ -40,7 +41,7 @@ export function BotSettingsModal() {
     configApi.settings(target.botId).then((d) => { setData(d); setLoadError(null); }).catch((e) => setLoadError(e.message));
   }, [target?.botId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { reload(); }, [reload, memVersion]);
+  useEffect(() => { reload(); }, [reload, memVersion, skillsVersion]);
   useEffect(() => { if (target) useStore.getState().loadRoutines(target.botId).catch(() => {}); }, [target?.botId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Bot deleted while open (or bad id): close.

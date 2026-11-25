@@ -95,7 +95,8 @@ export function AgentDesk({ bot }: { bot: Bot }) {
     if (!res.ok) { setError(body.error || 'The agent was not minted.'); return; }
     setError(null);
     await useStore.getState().loadBots().catch(() => {});
-    setError(`Minted ${body.sid}. It is in the roster. It has no grants.`);
+    const packNote = body.packsInstalled?.length ? ` · ${body.packsInstalled.length} pack skill(s) installed` : '';
+    setError(`Minted ${body.sid}. It is in the roster. It has no grants.${packNote}`);
   }
 
   async function saveTheme(css: string) {

@@ -125,7 +125,7 @@ export type CardBody =
 
 export interface EventBody {
   type: 'event';
-  event: 'routine-created' | 'routine-updated' | 'routine-run' | 'task-changed' | 'bot-message' | 'conversation-cleared' | 'computer' | 'voice-call';
+  event: 'routine-created' | 'routine-updated' | 'routine-run' | 'task-changed' | 'bot-message' | 'conversation-cleared' | 'computer' | 'voice-call' | 'skill-created';
   text: string;
   ref?: string;
   /** voice-call only: the call record (set on the end-of-call row). */
@@ -238,5 +238,6 @@ export type ServerEvent =
   | { type: 'routines'; botId: string }
   | { type: 'tasks'; botId: string }
   | { type: 'memories'; botId: string }
+  | { type: 'skills'; botId: string }
   | { type: 'connections' }
   | { type: 'ping' };

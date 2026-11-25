@@ -15,6 +15,7 @@ const RISKY = new Set([
   'send_to_bot',
   'create_routine',
   'create_group',
+  'create_skill',
 ]);
 
 export function ensureAutonomySchema(db: Database.Database) {

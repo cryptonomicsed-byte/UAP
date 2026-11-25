@@ -8,7 +8,7 @@ import { TOOLS } from '../agent/tools.js';
 import { classifyTool, type EffectClass, type RiskTier } from '../policy/tool-intents.js';
 
 const RISKY_TOOLS = new Set([
-  'spawn_sid_subagent', 'install_sid_template', 'save_file', 'send_to_bot', 'create_routine', 'create_group',
+  'spawn_sid_subagent', 'install_sid_template', 'save_file', 'send_to_bot', 'create_routine', 'create_group', 'create_skill',
 ]);
 
 export interface ToolDoc {

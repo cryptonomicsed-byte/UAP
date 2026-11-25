@@ -176,6 +176,7 @@ export const useStore = create<State>((set, get) => ({
         return;
       case 'tasks':
       case 'memories':
+      case 'skills':
         // Picked up by configStore.ts (Tasks view, Library/Tasks tabs, bot settings).
         window.dispatchEvent(new CustomEvent('uap:event', { detail: ev }));
         return;

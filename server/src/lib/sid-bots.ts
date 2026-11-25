@@ -7,6 +7,7 @@ import type Database from 'better-sqlite3';
 import { newId } from '../lib/ids.js';
 import { SidTemplateError, SidTemplateRuntime, SID_TEMPLATES, superviseSpawn } from '../lib/sid-templates.js';
 import { delegateAutonomy } from '../lib/autonomy.js';
+import { installPacksForSpecialists } from '../lib/pack-install.js';
 
 export interface MaterializedSid {
   botId: string;
@@ -16,6 +17,7 @@ export interface MaterializedSid {
   parentBotId: string | null;
   template: string;
   supervised: { backend: 'elixir' | 'unavailable'; lines: string[] };
+  packsInstalled: string[];
 }
 
 function templateOf(slug: string) {
@@ -72,6 +74,7 @@ export function materializeSidBot(db: Database.Database, input: { userId: string
     now,
   );
   if (parentBotId) delegateAutonomy(db, botId, parentBotId);
+  const packs = installPacksForSpecialists(db, botId, template.specialistIds);
   return {
     botId,
     sid: minted.sid,
@@ -80,5 +83,6 @@ export function materializeSidBot(db: Database.Database, input: { userId: string
     parentBotId,
     template: template.slug,
     supervised: superviseSpawn(minted.sid, minted.parentSid),
+    packsInstalled: packs.installedSkillIds,
   };
 }

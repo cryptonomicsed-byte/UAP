@@ -32,6 +32,10 @@ export interface SidTemplate {
   riskClass: 'low' | 'medium' | 'high';
   capabilities: string[];
   grants: [];
+  /** Which engineering-pack specialists (lib/engineering-pack.ts SPECIALISTS ids) this persona
+   *  actually installs as real skills at birth. Deliberately conservative: a template gets a
+   *  specialist only when there is a genuinely close match, never padded to look complete. */
+  specialistIds: string[];
 }
 
 export const FEATURE_SOURCES: FeatureSource[] = [
@@ -44,12 +48,14 @@ export const FEATURE_SOURCES: FeatureSource[] = [
 ];
 
 export const SID_TEMPLATES: SidTemplate[] = [
-  { slug: 'anti-slop-reviewer', family: 'design', title: 'Anti-slop reviewer', source: { repo: 'miqdadbadjuber/anti-slop', sha: '7f6a03df2931c12cb244dc4ab14ee4866b0ac2ba', take: 'review gate, not a running agent' }, riskClass: 'low', capabilities: ['review-prose', 'review-ui'], grants: [] },
-  { slug: 'blockchain-coder', family: 'chain', title: 'Blockchain coder', source: { repo: '0xlayerghost/solidity-agent-kit', sha: '4f7b4c61a9f386f0f57d92bbeae5034146010a69', take: 'review and test methodology; no signing key' }, riskClass: 'high', capabilities: ['review-contract', 'foundry-test'], grants: [] },
-  { slug: 'game-dev', family: 'game', title: 'Game developer', source: { repo: 'LISK819129/OpenNPC', sha: 'e4c736ba7450746b040a8d7ead94aa04cce6d16d', take: 'NPC dialogue patterns; no host control' }, riskClass: 'medium', capabilities: ['npc-dialogue', 'scene-plan'], grants: [] },
-  { slug: 'video-creator', family: 'video', title: 'Video creator', source: { repo: 'remotion-dev/skills', sha: 'a3f4098a2afd0e13f6a6f8c8760e275f75457ea9', take: 'timeline conventions; no silent paid render' }, riskClass: 'medium', capabilities: ['timeline', 'storyboard'], grants: [] },
-  { slug: 'nod-operator', family: 'computer', title: 'Nod operator', source: FEATURE_SOURCES[0], riskClass: 'high', capabilities: ['computer-preview', 'approval-required'], grants: [] },
-  { slug: 'rakazo-delegator', family: 'delegation', title: 'Rakazo delegator', source: FEATURE_SOURCES[3], riskClass: 'medium', capabilities: ['spawn-subagent', 'isolated-memory'], grants: [] },
+  { slug: 'anti-slop-reviewer', family: 'design', title: 'Anti-slop reviewer', source: { repo: 'miqdadbadjuber/anti-slop', sha: '7f6a03df2931c12cb244dc4ab14ee4866b0ac2ba', take: 'review gate, not a running agent' }, riskClass: 'low', capabilities: ['review-prose', 'review-ui'], grants: [], specialistIds: ['review', 'qa'] },
+  { slug: 'blockchain-coder', family: 'chain', title: 'Blockchain coder', source: { repo: '0xlayerghost/solidity-agent-kit', sha: '4f7b4c61a9f386f0f57d92bbeae5034146010a69', take: 'review and test methodology; no signing key' }, riskClass: 'high', capabilities: ['review-contract', 'foundry-test'], grants: [], specialistIds: ['move'] },
+  { slug: 'game-dev', family: 'game', title: 'Game developer', source: { repo: 'LISK819129/OpenNPC', sha: 'e4c736ba7450746b040a8d7ead94aa04cce6d16d', take: 'NPC dialogue patterns; no host control' }, riskClass: 'medium', capabilities: ['npc-dialogue', 'scene-plan'], grants: [], specialistIds: [] },
+  { slug: 'video-creator', family: 'video', title: 'Video creator', source: { repo: 'remotion-dev/skills', sha: 'a3f4098a2afd0e13f6a6f8c8760e275f75457ea9', take: 'timeline conventions; no silent paid render' }, riskClass: 'medium', capabilities: ['timeline', 'storyboard'], grants: [], specialistIds: ['motion'] },
+  { slug: 'nod-operator', family: 'computer', title: 'Nod operator', source: FEATURE_SOURCES[0], riskClass: 'high', capabilities: ['computer-preview', 'approval-required'], grants: [], specialistIds: ['qa'] },
+  { slug: 'rakazo-delegator', family: 'delegation', title: 'Rakazo delegator', source: FEATURE_SOURCES[3], riskClass: 'medium', capabilities: ['spawn-subagent', 'isolated-memory'], grants: [], specialistIds: ['architect'] },
+  { slug: 'coding-agent', family: 'engineering', title: 'Coding agent', source: { repo: 'obra/superpowers', sha: '22f0b463e7a5e579904dd6211a520321035526f7', take: 'plan, TDD, debug, review methodology; general-purpose engineering persona' }, riskClass: 'medium', capabilities: ['review-code', 'write-code'], grants: [], specialistIds: ['architect', 'rust', 'python', 'go'] },
+  { slug: 'security-agent', family: 'security', title: 'Security agent', source: { repo: 'dkneeland/agentic-guardrails', sha: '043e56682b902cfcd991b58b51eda0675f1617b9', take: 'independent cleanup/review methodology; no dedicated security-audit pack is license-cleared yet, so this installs review/qa specialists only' }, riskClass: 'high', capabilities: ['review-code', 'review-contract'], grants: [], specialistIds: ['review', 'qa'] },
 ];
 
 export interface MintedAgent {

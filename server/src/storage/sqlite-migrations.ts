@@ -347,6 +347,12 @@ CREATE TABLE IF NOT EXISTS bot_theme (bot_id TEXT PRIMARY KEY, css TEXT NOT NULL
   { id: 14, name: 'channel-turn-events', sql: `
 CREATE TABLE IF NOT EXISTS channel_turn_events (channel_id TEXT NOT NULL, at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS channel_turn_events_channel ON channel_turn_events(channel_id, at);` },
+  { id: 15, name: 'pack-installs', sql: `
+CREATE TABLE IF NOT EXISTS pack_installs (
+  id TEXT PRIMARY KEY, bot_id TEXT NOT NULL, repo TEXT NOT NULL, sha TEXT NOT NULL,
+  specialist_id TEXT NOT NULL, skill_id TEXT NOT NULL, created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS pack_installs_bot ON pack_installs(bot_id);` },
 ];
 
 export class SqliteMigrationError extends Error {

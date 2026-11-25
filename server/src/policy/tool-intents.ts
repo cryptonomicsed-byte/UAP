@@ -36,6 +36,8 @@ export interface ToolClass {
 const TOOL_CLASSES: Record<string, ToolClass> = {
   list_routines: { effect: 'read', risk: 'low' },
   list_event_triggers: { effect: 'read', risk: 'low' },
+  list_skills: { effect: 'read', risk: 'low' },
+  create_skill: { effect: 'write', risk: 'medium' },
   x_search: { effect: 'compute', risk: 'medium' },
   save_file: { effect: 'write', risk: 'medium' },
   create_task: { effect: 'write', risk: 'medium' },
