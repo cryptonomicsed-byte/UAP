@@ -41,6 +41,11 @@ export const env = {
   xaiModel: process.env.XAI_MODEL ?? 'grok-4.7',
   composioKey: secret('COMPOSIO_API_KEY', false),
   orgoKey: secret('ORGO_API_KEY', false),
+  /** Real SMTP mailbox for the agents' own email (mail.spacemail.com, SSL). Password only,
+   *  via SPACEMAIL_SMTP_PASS or SPACEMAIL_SMTP_PASS_FILE -- never required at boot, since not
+   *  every deployment has this mailbox; sendEmail() checks isEmailConfigured() first. */
+  spacemailUser: process.env.SPACEMAIL_SMTP_USER ?? 'uap@omokoda.space',
+  spacemailPass: secret('SPACEMAIL_SMTP_PASS', false),
   sessionSecret: req('SESSION_SECRET'),
   devLogin: process.env.DEV_LOGIN === '1',
   dbPath: process.env.DB_PATH ?? defaultDatabasePath(),

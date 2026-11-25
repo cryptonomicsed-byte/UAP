@@ -15,6 +15,7 @@ import { Cron } from 'croner';
 import { toolFailure, toolUnreachable } from '../lib/failure.js';
 import { SID_TEMPLATES } from '../lib/sid-templates.js';
 import { materializeSidBot } from '../lib/sid-bots.js';
+import { isEmailConfigured, sendEmail } from '../lib/email.js';
 import { getAutonomy, setAutonomy, type Autonomy } from '../lib/autonomy.js';
 import { polyglotMap } from '../lib/polyglot-map.js';
 import { SOURCE_RIGHTS } from '../lib/source-rights.js';
@@ -249,6 +250,22 @@ const ALL_TOOLS: ToolDef[] = [
       db.prepare('DELETE FROM routines WHERE id=? AND bot_id=?').run(a.routine_id, ctx.botId);
       hub.emit(ctx.userId, { type: 'routines', botId: ctx.botId });
       return { output: 'Deleted.' };
+    },
+  },
+  {
+    name: 'send_email',
+    description: `Send a real email from the team's own address (uap@omokoda.space). This is a real, irreversible send -- use it only when the user actually asked for an email to go out.`,
+    parameters: obj({ to: { type: 'string', description: 'Recipient email address.' }, subject: { type: 'string' }, text: { type: 'string', description: 'Plain text body.' } }, ['to', 'subject', 'text']),
+    activity: 'working',
+    label: 'Sending an email',
+    impl: async (a) => {
+      if (!isEmailConfigured()) return { output: 'Email is not configured on this server yet (no mailbox password set).' };
+      try {
+        const result = await sendEmail({ to: String(a.to), subject: String(a.subject), text: String(a.text) });
+        return { output: JSON.stringify({ ok: true, messageId: result.messageId }), summary: `Emailed ${a.to}` };
+      } catch (error: any) {
+        return { output: `Email failed to send: ${error.message}` };
+      }
     },
   },
   {
