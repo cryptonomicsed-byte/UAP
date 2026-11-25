@@ -4,6 +4,12 @@ import { localVncPort } from './local-vnc.js';
 
 /** Displays the desk already names: default :99, screen-100 :100, screen-101 :101. */
 export const LOCAL_DISPLAYS = [99, 100, 101];
+export const LOCAL_SCREEN_IDS = ['default', 'screen-100', 'screen-101'] as const;
+
+export function localScreenIdFor(index: number): string | null {
+  if (index === 99) return 'default';
+  return LOCAL_DISPLAYS.includes(index) ? `screen-${index}` : null;
+}
 
 const LOG = '/opt/hq/logs';
 
@@ -12,8 +18,17 @@ function displayUp(n: number): boolean {
   return r.status === 0;
 }
 
-function portUp(port: number): boolean {
-  const r = spawnSync('bash', ['-c', `timeout 1 bash -c 'echo >/dev/tcp/127.0.0.1/${port}'`], { timeout: 3000 });
+function bannerOk(port: number): boolean {
+  const r = spawnSync('python3', ['-c', `import socket,sys
+s=socket.socket(); s.settimeout(1.5)
+try:
+    s.connect(('127.0.0.1', ${port}))
+    data=s.recv(12)
+except Exception:
+    data=b''
+finally:
+    s.close()
+sys.exit(0 if data.startswith(b'RFB ') else 1)`], { timeout: 3000 });
   return r.status === 0;
 }
 
@@ -52,7 +67,8 @@ export function ensureLocalDisplays(): { up: number[]; started: string[]; errors
     }
     up.push(n);
     const port = localVncPort(n === 99 ? 'default' : `screen-${n}`);
-    if (fs.existsSync('/usr/bin/x11vnc') && !portUp(port)) {
+    if (fs.existsSync('/usr/bin/x11vnc') && !bannerOk(port)) {
+      spawnSync('fuser', ['-k', `${port}/tcp`]);
       spawnDetached('x11vnc', [
         '-display', `:${n}`,
         '-rfbport', String(port),
@@ -60,9 +76,9 @@ export function ensureLocalDisplays(): { up: number[]; started: string[]; errors
         '-nopw',
         '-shared',
         '-forever',
-        '-noxdamage',
         '-wait', '100',
         '-defer', '30',
+        '-noxrecord',
         ], `x11vnc-${n}`);
       started.push(`x11vnc:${port}`);
     } else if (!fs.existsSync('/usr/bin/x11vnc')) {

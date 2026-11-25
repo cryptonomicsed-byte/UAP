@@ -19,6 +19,7 @@ import { getAutonomy, setAutonomy, type Autonomy } from '../lib/autonomy.js';
 import { polyglotMap } from '../lib/polyglot-map.js';
 import { SOURCE_RIGHTS } from '../lib/source-rights.js';
 import { addMemory, listMemories } from '../engine-memory.js';
+import { boardSnapshot } from '../lib/board.js';
 
 export interface ToolCtx {
   userId: string;
@@ -396,6 +397,14 @@ const ALL_TOOLS: ToolDef[] = [
       if (!memory) return { output: 'Could not save a note. This agent may have no home.' };
       return { output: JSON.stringify({ id: memory.id, text: memory.text }), summary: 'Note saved' };
     },
+  },
+  {
+    name: 'list_board',
+    description: 'Read the task board, SID identities, and which local screens exist. An empty board is empty, not a running worker.',
+    parameters: obj({}),
+    activity: 'working',
+    label: 'Reading the board',
+    impl: async () => ({ output: JSON.stringify(boardSnapshot(db)) }),
   },
   {
     name: 'list_workspace',

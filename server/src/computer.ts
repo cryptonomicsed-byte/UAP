@@ -1,6 +1,7 @@
 import { db, now } from './db.js';
 import { env } from './env.js';
 import { requireOrgoComputer, ProviderUnavailableError } from './providers.js';
+import { LOCAL_SCREEN_IDS } from './lib/local-desktop.js';
 import { selectRuntime } from './lib/free-runtime.js';
 import { hub } from './lib/hub.js';
 import { orgo, OrgoError, type OrgoScreen } from './orgo.js';
@@ -267,17 +268,19 @@ export async function forgetBotFiles(botId: string): Promise<void> {
 }
 
 function leaseLocal(userId: string, botId: string): BotScreen {
+  const allowed = new Set<string>(LOCAL_SCREEN_IDS);
   const mine = db.prepare('SELECT screen_id, width, height FROM screens WHERE bot_id=?').get(botId) as any;
-  if (mine) {
+  if (mine && allowed.has(mine.screen_id)) {
     db.prepare('UPDATE screens SET last_used_at=? WHERE bot_id=?').run(now(), botId);
     return { computerId: 'local', screenId: mine.screen_id, width: mine.width ?? 1280, height: mine.height ?? 800 };
   }
+  if (mine) db.prepare('DELETE FROM screens WHERE bot_id=?').run(botId);
   const taken = new Set((db.prepare('SELECT screen_id FROM screens').all() as any[]).map((r) => r.screen_id as string));
   let screenId = 'default';
   if (!isPrimaryEngine(botId)) {
-    const n = [100, 101, 102].find((i) => !taken.has(`screen-${i}`));
-    if (n === undefined) throw new Error(`Every local screen is in use (${MAX_SCREENS} at most). Remove a bot to free one.`);
-    screenId = `screen-${n}`;
+    const next = LOCAL_SCREEN_IDS.find((id) => id !== 'default' && !taken.has(id));
+    if (!next) throw new Error(`Every local screen is in use (${LOCAL_SCREEN_IDS.length} at most). Remove a bot to free one.`);
+    screenId = next;
   }
   db.prepare('INSERT OR REPLACE INTO screens(bot_id,user_id,screen_id,last_used_at,width,height) VALUES (?,?,?,?,?,?)').run(botId, userId, screenId, now(), 1280, 800);
   hub.emit(userId, { type: 'computer', state: computerState(userId) });

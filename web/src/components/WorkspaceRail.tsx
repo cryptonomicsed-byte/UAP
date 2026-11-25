@@ -23,7 +23,8 @@ export type WorkspaceSurface =
   | 'workforce'
   | 'memory'
   | 'skills'
-  | 'polyglot';
+  | 'polyglot'
+  | 'board';
 
 const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'chat', label: 'Chat', hint: 'Talk to the selected agent' },
@@ -38,6 +39,7 @@ const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'memory', label: 'Memory', hint: 'Notes you can read' },
   { id: 'skills', label: 'Skills', hint: 'Instructions, not grants' },
   { id: 'polyglot', label: 'Stack', hint: 'Which language owns which job' },
+  { id: 'board', label: 'Board', hint: 'Tasks and SID identity' },
 ];
 
 export function WorkspaceRail({
@@ -81,6 +83,7 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
   const [memories, setMemories] = useState<{ id: string; text: string }[]>([]);
   const [skills, setSkills] = useState<{ id: string; name?: string; title?: string }[]>([]);
   const [pillars, setPillars] = useState<{ niche: string; language: string; owns: string; present: boolean }[]>([]);
+  const [board, setBoard] = useState<{ tasks: { task_id: string; status: string; intent: string }[]; identities: { sid: string; template_slug: string; kind: string; status: string; parent_sid: string | null }[]; screens: { bot_id: string; screen_id: string }[] }>({ tasks: [], identities: [], screens: [] });
   const [autonomy, setAutonomyMode] = useState('ask');
 
   useEffect(() => {
@@ -122,6 +125,14 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
       .then((j) => setSkills(j.skills ?? []))
       .catch(() => setSkills([]));
   }, [surface, bot?.id]);
+
+  useEffect(() => {
+    if (surface !== 'board') return;
+    fetch('/api/v6/board', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setBoard({ tasks: j.tasks ?? [], identities: j.identities ?? [], screens: j.screens ?? [] }))
+      .catch(() => setNote('Board unavailable'));
+  }, [surface]);
 
   useEffect(() => {
     if (surface !== 'polyglot') return;
@@ -290,6 +301,32 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
         <ul className="ws-list">
           {skills.length === 0 && <li className="ws-empty">No skills on this agent.</li>}
           {skills.map((row) => <li key={row.id}><strong>{row.name || row.title || row.id}</strong></li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'board') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Board</h1>
+          <p>Tasks and SID identity. An empty list means nothing is running. A worker is not an always-on life.</p>
+        </header>
+        <h2>Tasks</h2>
+        <ul className="ws-list">
+          {board.tasks.length === 0 && <li className="ws-empty">No tasks.</li>}
+          {board.tasks.map((row) => <li key={row.task_id}><strong>{row.status}</strong><span>{row.intent}</span></li>)}
+        </ul>
+        <h2>Identities</h2>
+        <ul className="ws-list">
+          {board.identities.length === 0 && <li className="ws-empty">No SID minted yet.</li>}
+          {board.identities.map((row) => <li key={row.sid}><strong>{row.template_slug}</strong><span>{row.kind} · {row.status} · {row.parent_sid || 'no parent'}</span></li>)}
+        </ul>
+        <h2>Screens</h2>
+        <ul className="ws-list">
+          {board.screens.length === 0 && <li className="ws-empty">No screen leased.</li>}
+          {board.screens.map((row) => <li key={row.bot_id}><strong>{row.screen_id}</strong><span>{row.bot_id}</span></li>)}
         </ul>
       </section>
     );
