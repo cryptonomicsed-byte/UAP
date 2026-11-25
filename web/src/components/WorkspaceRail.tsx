@@ -261,6 +261,21 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
           {memories.length === 0 && <li className="ws-empty">No notes yet.</li>}
           {memories.map((row) => <li key={row.id}>{row.text}</li>)}
         </ul>
+        {bot && (
+          <form className="ws-card__actions" onSubmit={(event) => {
+            event.preventDefault();
+            const input = (event.currentTarget.elements.namedItem('note') as HTMLInputElement);
+            const text = input.value.trim();
+            if (!text) return;
+            fetch(`/api/bots/${bot.id}/memories`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
+              .then((r) => r.json())
+              .then((j) => { if (j.memory) { setMemories((rows) => [...rows, j.memory]); input.value = ''; } else setNote(j.error || 'Could not save'); })
+              .catch(() => setNote('Could not save'));
+          }}>
+            <input name="note" className="text-input" placeholder="Add a note the agent and you can both read" aria-label="New note" />
+            <button type="submit" className="ws-btn">Save</button>
+          </form>
+        )}
       </section>
     );
   }
@@ -317,6 +332,18 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
       <header className="ws-stage__head">
         <h1>{surface === 'workforce' ? 'Workforce' : 'Templates'}</h1>
         <p>Install makes a full agent. Spawn makes a child under {bot?.name || 'the selected agent'}. Autonomy is {autonomy}: risky tools ask unless you set act.</p>
+        {bot && (
+          <div className="ws-card__actions">
+            {(['ask', 'draft', 'act'] as const).map((mode) => (
+              <button key={mode} type="button" className={mode === autonomy ? 'ws-btn' : 'ws-btn ws-btn--ghost'} onClick={() => {
+                fetch(`/api/v6/bots/${bot.id}/autonomy`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode }) })
+                  .then((r) => r.json())
+                  .then((j) => setAutonomyMode(j.mode || mode))
+                  .catch(() => setNote('Could not set autonomy'));
+              }}>{mode}</button>
+            ))}
+          </div>
+        )}
       </header>
       {note && <p className="ws-note" role="status">{note}</p>}
       {gallery}

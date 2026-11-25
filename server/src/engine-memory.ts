@@ -45,6 +45,21 @@ export function memoryBot(id: string): string | null {
   return parts.length === 4 && parts[0] === 'mem' ? parts[1] : null;
 }
 
+export function addMemory(botId: string, text: string): Memory | null {
+  const home = engineHome(botId);
+  if (!home) return null;
+  const clean = text.trim().slice(0, 2000);
+  if (!clean) return null;
+  const f = FILES[1];
+  const dir = path.join(home, 'memories');
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, f.file);
+  const { entries } = read(file);
+  if (!entries.includes(clean)) entries.push(clean);
+  fs.writeFileSync(file, entries.join(SEP) + '\n');
+  return { id: idFor(botId, f.key, clean), botId, text: clean, createdAt: Date.now(), source: f.source };
+}
+
 export function deleteMemory(id: string): boolean {
   const botId = memoryBot(id);
   const home = botId ? engineHome(botId) : null;

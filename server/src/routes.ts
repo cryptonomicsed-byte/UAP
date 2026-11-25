@@ -14,7 +14,7 @@ import { allLive, appendRow, clearConversation, emitBot, getBot, getBotRow, getR
 import { enqueue, interrupt, resolveApproval } from './agent/loop.js';
 import { computerState, ensureComputer, forgetBotFiles, readyScreen, refreshComputer, releaseScreen } from './computer.js';
 import { assignEngine, provisionEngine, removeEngine, syncPersona } from './engine.js';
-import { deleteMemory, listMemories, memoryBot } from './engine-memory.js';
+import { deleteMemory, listMemories, memoryBot, addMemory } from './engine-memory.js';
 import { removeMemoryFromIndex, searchMemory, syncMemoryIndex } from './search/memory-index.js';
 import { getDeletionRequest, listDeletionRequests, PrivacyDeletionError, requestDeletion, runDeletion, verifyDeletionReceipt } from './privacy/deletion.js';
 import { buildRoleTemplate, RoleTemplateError } from './roles/role-template.js';
@@ -465,6 +465,16 @@ api.get('/bots/:id/memories', (c) => {
   if (!query) return c.json({ memories });
   const ids = new Set(searchMemory(b.id, query));
   return c.json({ memories: memories.filter((memory) => ids.has(memory.id)) });
+});
+
+api.post('/bots/:id/memories', async (c) => {
+  const b = ownBot(c.get('user').id, c.req.param('id'));
+  if (!b) return c.json({ error: 'not found' }, 404);
+  const body = await c.req.json<{ text?: string }>().catch(() => ({ text: undefined as string | undefined }));
+  const memory = addMemory(b.id, String(body.text ?? ''));
+  if (!memory) return c.json({ error: 'note required, or this agent has no home' }, 400);
+  syncMemoryIndex(b.id, listMemories(b.id));
+  return c.json({ memory });
 });
 
 api.delete('/memories/:id', (c) => {

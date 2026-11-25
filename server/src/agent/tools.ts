@@ -15,6 +15,10 @@ import { Cron } from 'croner';
 import { toolFailure, toolUnreachable } from '../lib/failure.js';
 import { SID_TEMPLATES } from '../lib/sid-templates.js';
 import { materializeSidBot } from '../lib/sid-bots.js';
+import { getAutonomy, setAutonomy, type Autonomy } from '../lib/autonomy.js';
+import { polyglotMap } from '../lib/polyglot-map.js';
+import { SOURCE_RIGHTS } from '../lib/source-rights.js';
+import { addMemory, listMemories } from '../engine-memory.js';
 
 export interface ToolCtx {
   userId: string;
@@ -368,6 +372,45 @@ const ALL_TOOLS: ToolDef[] = [
       const made = materializeSidBot(db, { userId: ctx.userId, template: String(a.template), parentBotId: ctx.botId });
       return { output: JSON.stringify({ ok: true, botId: made.botId, sid: made.sid, parentSid: made.parentSid, grants: [] }), summary: `Spawned ${a.template}` };
     },
+  },
+  {
+    name: 'set_autonomy',
+    description: 'Set how much this bot may do alone. ask is the default. act lets risky tools run without a card. draft may save a file but still asks before sending or spawning.',
+    parameters: obj({ mode: { type: 'string', enum: ['ask', 'draft', 'act'] } }, ['mode']),
+    activity: 'working',
+    label: 'Setting autonomy',
+    impl: async (a, ctx) => {
+      const mode = String(a.mode) as Autonomy;
+      if (mode !== 'ask' && mode !== 'draft' && mode !== 'act') return { output: 'mode must be ask, draft, or act' };
+      return { output: JSON.stringify({ mode: setAutonomy(db, ctx.botId, mode) }), summary: `Autonomy ${mode}` };
+    },
+  },
+  {
+    name: 'remember',
+    description: 'Save a note the owner can read and delete. A note is not a grant and not a secret store.',
+    parameters: obj({ text: { type: 'string' } }, ['text']),
+    activity: 'working',
+    label: 'Saving a note',
+    impl: async (a, ctx) => {
+      const memory = addMemory(ctx.botId, String(a.text ?? ''));
+      if (!memory) return { output: 'Could not save a note. This agent may have no home.' };
+      return { output: JSON.stringify({ id: memory.id, text: memory.text }), summary: 'Note saved' };
+    },
+  },
+  {
+    name: 'list_workspace',
+    description: 'Read this bot autonomy, its notes, the language map, and which upstream repos were not vendored.',
+    parameters: obj({}),
+    activity: 'working',
+    label: 'Reading the workspace',
+    impl: async (_a, ctx) => ({
+      output: JSON.stringify({
+        autonomy: getAutonomy(db, ctx.botId),
+        memories: listMemories(ctx.botId).slice(0, 20).map((row) => ({ id: row.id, text: row.text })),
+        pillars: polyglotMap(),
+        sources: SOURCE_RIGHTS.map((row) => ({ repo: row.repo, license: row.license, vendored: row.vendored })),
+      }),
+    }),
   },
 ];
 
