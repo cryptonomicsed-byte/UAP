@@ -2,19 +2,22 @@
  * Liquid-glass pass. Patterns adapted (not copied) from real source studied locally:
  *  - Codync (apps/android/design/Glass.kt): a coherent glass system — vibrancy (blur+saturate),
  *    a thin bright rim highlight, a soft lifted shadow, and a press-swell for interactive glass.
- *  - Codync (apps/desktop/.../sidebar-header.css): a native CSS scroll-timeline frost — the header
- *    blurs in as content scrolls under it, with zero JavaScript (animation-timeline: scroll()).
  *  - Rakazo (apps/web/.../chat-top-fade.css) + Codync (chat-controls.css composer-fade): a masked
  *    backdrop-blur fade so content passes under a floating bar/dock with no hard edge.
  *  - Codync (chat-controls.css .mac-chat-button): a "magnetic" icon that leans a few px toward the
  *    cursor on hover — ported to JS below (useMagnetic) since CSS alone can't read pointer position.
  *
+ * A scroll-timeline-linked frost header (Codync's sidebar-header.css pattern — CSS
+ * animation-timeline tied to scroll position) was tried here, shipped, and caused a real
+ * visible bug while scrolling in production — removed rather than chased further, since it
+ * was a progressive-enhancement nice-to-have, not load-bearing. Everything below is the
+ * static (always-the-same, scroll-independent) glass look only.
+ *
  * Scope, deliberately: glass is for CHROME that floats over content (header, composer dock, jump
  * button, sidebar titlebar, modals) — never for the content itself (bubbles, transcript body, board
  * cards stay opaque). That is also how the real sources use it: iOS/macOS liquid glass is a bar
  * material, not a content material. Every blur is gated by prefers-reduced-transparency; every
- * animation by prefers-reduced-motion; the scroll-linked frost is a progressive enhancement behind
- * @supports, with a static (non-scroll-linked) glass look as the always-correct baseline.
+ * animation by prefers-reduced-motion.
  */
 
 :root {
@@ -44,50 +47,19 @@
   .glass { background: var(--color-bg-pane); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
-/* ---------- chat header: glass bar, scroll-linked frost behind it ---------- */
-.chat { timeline-scope: --transcript-scroll; }
-.transcript { scroll-timeline: --transcript-scroll block; }
+/* ---------- chat header: glass bar ---------- */
+/* A scroll-timeline-linked frost (CSS animation-timeline: scroll()) was tried here and caused
+ * a visible bug while scrolling in production — removed rather than chased, since it was a
+ * progressive-enhancement nice-to-have, not load-bearing. The static glass look below is the
+ * same baseline that was already the tested fallback, so nothing is lost but the risk. */
 .chat__header {
   background: var(--glass-tint-strong);
-  backdrop-filter: blur(14px) saturate(1.4);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
   border-bottom: 0.5px solid var(--color-border-tertiary);
 }
-@supports (animation-timeline: scroll()) {
-  .chat__header { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom-color: transparent; }
-  .chat__header::after {
-    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background: var(--glass-tint-strong);
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    opacity: 0;
-    animation: header-frost-in linear both;
-    animation-timeline: --transcript-scroll;
-    animation-range: 0 32px;
-  }
-}
-@keyframes header-frost-in { to { opacity: 1; } }
 @media (prefers-reduced-transparency: reduce) {
-  .chat__header, .chat__header::after { background: var(--color-bg-pane); backdrop-filter: none; -webkit-backdrop-filter: none; opacity: 1; }
-}
-
-/* ---------- sidebar titlebar: same treatment, scroll-linked to the roster ---------- */
-.sidebar:not(.is-collapsed) { timeline-scope: --roster-scroll; }
-.sidebar__scroll { scroll-timeline: --roster-scroll block; }
-@supports (animation-timeline: scroll()) {
-  .sidebar__titlebar::after {
-    content: ''; position: absolute; inset: 0 0 -18px; z-index: -1; pointer-events: none;
-    background: var(--glass-tint-strong);
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent);
-    mask-image: linear-gradient(to bottom, black 65%, transparent);
-    opacity: 0;
-    animation: header-frost-in linear both;
-    animation-timeline: --roster-scroll;
-    animation-range: 0 24px;
-  }
+  .chat__header { background: var(--color-bg-pane); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
 
 /* ---------- jump-to-latest + sidebar islands: glass pills ---------- */

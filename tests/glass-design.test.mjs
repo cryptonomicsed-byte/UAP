@@ -49,11 +49,11 @@ test('every unconditional, time-driven animation in glass.css sits inside a redu
   assert.deepEqual(timeDriven.map((m) => m[1].trim()), [], 'a time-driven (non-scroll-linked) animation exists outside the reduced-motion gate');
 });
 
-test('scroll-linked frost is a progressive enhancement behind @supports, not the only path', () => {
-  assert.match(css, /@supports \(animation-timeline: scroll\(\)\)/);
-  // The non-@supports baseline for .chat__header must still set a real (non-transparent-by-default) background.
-  const baseline = css.slice(0, css.indexOf('@supports (animation-timeline: scroll())'));
-  assert.match(baseline, /\.chat__header\s*\{[^}]*background:\s*var\(--glass-tint-strong\)/s);
+test('scroll-timeline frost was removed after a real scroll bug — only the static baseline remains', () => {
+  const codeOnly = css.replace(/\/\*[\s\S]*?\*\//g, ''); // strip comments; this checks real CSS, not prose about history
+  assert.doesNotMatch(codeOnly, /animation-timeline/, 'scroll-timeline frost was removed on purpose; it must not come back silently');
+  assert.doesNotMatch(codeOnly, /timeline-scope/);
+  assert.match(codeOnly, /\.chat__header\s*\{[^}]*background:\s*var\(--glass-tint-strong\)/s);
 });
 
 test('glass surfaces are chrome-only: no transcript/bubble/board-card selector gets a blur', () => {
