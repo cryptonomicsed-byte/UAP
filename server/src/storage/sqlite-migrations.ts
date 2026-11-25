@@ -360,6 +360,11 @@ CREATE TABLE IF NOT EXISTS bot_mcp_servers (
   created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS bot_mcp_servers_bot ON bot_mcp_servers(bot_id);` },
+  { id: 17, name: 'nostr-identities', sql: `
+CREATE TABLE IF NOT EXISTS nostr_identities (
+  bot_id TEXT PRIMARY KEY, npub TEXT NOT NULL UNIQUE, pubkey_hex TEXT NOT NULL,
+  nsec_path TEXT NOT NULL, created_at INTEGER NOT NULL
+);` },
 ];
 
 export class SqliteMigrationError extends Error {

@@ -8,6 +8,7 @@ import { newId } from '../lib/ids.js';
 import { SidTemplateError, SidTemplateRuntime, SID_TEMPLATES, superviseSpawn } from '../lib/sid-templates.js';
 import { delegateAutonomy } from '../lib/autonomy.js';
 import { installPacksForSpecialists } from '../lib/pack-install.js';
+import { ensureNostrIdentity } from '../lib/nostr-identity.js';
 
 export interface MaterializedSid {
   botId: string;
@@ -18,6 +19,7 @@ export interface MaterializedSid {
   template: string;
   supervised: { backend: 'elixir' | 'unavailable'; lines: string[] };
   packsInstalled: string[];
+  npub: string | null;
 }
 
 function templateOf(slug: string) {
@@ -75,6 +77,12 @@ export function materializeSidBot(db: Database.Database, input: { userId: string
   );
   if (parentBotId) delegateAutonomy(db, botId, parentBotId);
   const packs = installPacksForSpecialists(db, botId, template.specialistIds);
+  let npub: string | null = null;
+  try {
+    npub = ensureNostrIdentity(db, botId, new URL(`../../../data/nostr-secrets/${botId}`, import.meta.url).pathname).npub;
+  } catch (e) {
+    console.warn(`[sid] no Nostr identity minted for ${botId}: ${(e as Error).message}`);
+  }
   return {
     botId,
     sid: minted.sid,
@@ -84,5 +92,6 @@ export function materializeSidBot(db: Database.Database, input: { userId: string
     template: template.slug,
     supervised: superviseSpawn(minted.sid, minted.parentSid),
     packsInstalled: packs.installedSkillIds,
+    npub,
   };
 }

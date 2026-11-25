@@ -25,6 +25,7 @@ import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
 import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-templates.js';
 import { materializeSidBot } from './lib/sid-bots.js';
 import { listMcpServers, addMcpServer, removeMcpServer, setMcpServerEnabled, McpConnectorError } from './lib/mcp-connectors.js';
+import { ensureNostrIdentity } from './lib/nostr-identity.js';
 import { polyglotMap } from './lib/polyglot-map.js';
 import { SOURCE_RIGHTS, duskbotBlocked } from './lib/source-rights.js';
 import { autonomyDecision, getAutonomy, setAutonomy, type Autonomy } from './lib/autonomy.js';
@@ -524,5 +525,15 @@ v6Api.delete('/bots/:id/mcp-servers/:serverId', requireUser, (c) => {
   const ok = removeMcpServer(db, c.req.param('id'), c.req.param('serverId'));
   if (!ok) return c.json({ error: 'not found' }, 404);
   return c.json({ ok: true, servers: listMcpServers(db, c.req.param('id')) });
+});
+
+v6Api.get('/bots/:id/nostr-identity', requireUser, (c) => {
+  const botId = c.req.param('id');
+  try {
+    const identity = ensureNostrIdentity(db, botId, new URL(`../../data/nostr-secrets/${botId}`, import.meta.url).pathname);
+    return c.json({ npub: identity.npub, mintedAt: identity.created_at });
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500);
+  }
 });
 

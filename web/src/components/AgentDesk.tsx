@@ -21,6 +21,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [mcpServers, setMcpServers] = useState<McpServer[]>([]);
+  const [npub, setNpub] = useState<string | null>(null);
   const [pending, setPending] = useState<number | null>(null);
   const [pack, setPack] = useState('Engineering pack not loaded');
   const [themeCss, setThemeCss] = useState('');
@@ -49,6 +50,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
       const theme = await fetch(`/api/v6/bots/${bot.id}/theme`, { credentials: 'include' }).then((r) => r.json());
       setThemeCss(theme.css ?? '');
       setThemeTokens(theme.tokens ?? {});
+      fetch(`/api/v6/bots/${bot.id}/nostr-identity`, { credentials: 'include' }).then((r) => r.json()).then((d) => setNpub(d.npub ?? null)).catch(() => {});
       setPhase('ready');
     } catch {
       setPhase('error');
@@ -169,6 +171,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
             <button type="button" className="btn btn--sm" onClick={() => useConfigUI.getState().openBotSettings(bot.id)}>Set a model</button>
           </>
         )}
+        <p className="desk__state">Nostr identity (the real, callable address — a numberless agent-phone rooted on the live relay, not a phone number): {npub ? <code>{npub}</code> : 'minting…'}</p>
       </section>
       <section className="desk__block">
         <h3>Autonomy</h3>
