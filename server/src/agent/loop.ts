@@ -10,6 +10,7 @@ import { instructionsFor } from './prompt.js';
 import { conversationThread } from './hermes-adapter.js';
 import { activityFor, appToolName, humanizeSlug, policyFor } from './tools.js';
 import { classifyFailure, sanitizeDetail } from '../lib/failure.js';
+import { recordTurnFailure } from '../lib/agent-fallback.js';
 
 /**
  * A turn: one message handed to the bot's Hermes engine and streamed back into the conversation.
@@ -510,6 +511,15 @@ async function runTurn(botId: string, trigger: Trigger) {
       const view = classifyFailure(e);
       appendRow(botId, 'notice', { type: 'notice', text: view.text, tone: 'error', code: view.code, retryable: view.retryable });
       console.error('[agent]', botId, view.code, sanitizeDetail(e?.message) ?? '');
+      // Observable only: rests the configured login for a bot that has a fallback chain set up.
+      // Never switches models itself and is a no-op for a bot with no chain configured.
+      const rested = recordTurnFailure(db, botId, view.code);
+      if (rested) {
+        appendRow(botId, 'notice', {
+          type: 'notice', tone: 'info',
+          text: rested.nextAgent ? `${rested.restedLogin} is resting (${rested.reason}). Next in its chain: ${rested.nextAgent}.` : `${rested.restedLogin} is resting (${rested.reason}). No other agent left in its chain.`,
+        });
+      }
     }
   } finally {
     closeMessage();

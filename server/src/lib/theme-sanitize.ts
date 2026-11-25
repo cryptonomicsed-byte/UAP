@@ -54,3 +54,26 @@ export function renderThemeCss(tokens: Record<string, string>, selector: string)
   const body = Object.entries(tokens).map(([k, v]) => `  ${k}: ${v};`).join('\n');
   return `${selector} {\n${body}\n}`;
 }
+
+/** Per-bot theme storage. The raw CSS is kept for editing; only sanitized tokens are ever
+ *  applied to the page, and only as inline custom-property values — never innerHTML or an
+ *  adopted stylesheet, so there is no injection surface even if sanitization had a gap. */
+export function ensureBotThemeSchema(db: import('better-sqlite3').Database) {
+  db.exec(`CREATE TABLE IF NOT EXISTS bot_theme (bot_id TEXT PRIMARY KEY, css TEXT NOT NULL, updated_at INTEGER NOT NULL)`);
+}
+
+export function setBotTheme(db: import('better-sqlite3').Database, botId: string, css: string): Record<string, string> {
+  ensureBotThemeSchema(db);
+  const bounded = css.slice(0, 4000);
+  db.prepare(`INSERT INTO bot_theme(bot_id, css, updated_at) VALUES (?,?,?) ON CONFLICT(bot_id) DO UPDATE SET css=excluded.css, updated_at=excluded.updated_at`)
+    .run(botId, bounded, Date.now());
+  return sanitizeThemeTokens(bounded, `.sid-theme-${botId}`);
+}
+
+export function getBotTheme(db: import('better-sqlite3').Database, botId: string): { css: string; tokens: Record<string, string> } {
+  ensureBotThemeSchema(db);
+  const row = db.prepare('SELECT css FROM bot_theme WHERE bot_id=?').get(botId) as { css: string } | undefined;
+  const css = row?.css ?? '';
+  return { css, tokens: sanitizeThemeTokens(css, `.sid-theme-${botId}`) };
+}
+

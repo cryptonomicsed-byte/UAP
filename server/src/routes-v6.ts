@@ -33,6 +33,7 @@ import { domainSurface } from './lib/domain-surface.js';
 import { acceptBuild, dispatchSpecialists, packReport, type TaskEvidence } from './lib/engineering-pack.js';
 import { createTicket, listTickets, updateTicket, commentTicket } from './lib/ticket-board.js';
 import { getFallbackChain, setFallbackChain, nextStep, loginResting, switchBack, handoverLedger } from './lib/agent-fallback.js';
+import { getBotTheme, setBotTheme } from './lib/theme-sanitize.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -464,6 +465,12 @@ v6Api.post('/bots/:id/fallback/switch-back', async (c) => {
   if (!body.loginKey) return c.json({ error: 'loginKey required' }, 400);
   switchBack(db, body.loginKey);
   return c.json({ chain: getFallbackChain(db, c.req.param('id')) });
+});
+v6Api.get('/bots/:id/theme', (c) => c.json(getBotTheme(db, c.req.param('id'))));
+v6Api.post('/bots/:id/theme', async (c) => {
+  const body = await c.req.json<{ css?: string }>().catch(() => ({} as { css?: string }));
+  const tokens = setBotTheme(db, c.req.param('id'), body.css ?? '');
+  return c.json({ tokens, selector: `.sid-theme-${c.req.param('id')}` });
 });
 v6Api.get('/sources', (c) => c.json({ sources: SOURCE_RIGHTS, duskbot: duskbotBlocked() }));
 v6Api.get('/polyglot', (c) => c.json({ pillars: polyglotMap() }));

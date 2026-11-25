@@ -31,6 +31,35 @@ export function classifyFailure(message: string): FallbackReason {
   return 'rateLimited';
 }
 
+/** Map loop.ts's FailureCode (lib/failure.ts) onto a FallbackReason. No code here retries or
+ *  switches anything automatically — it only records that a configured login is degraded, so the
+ *  next /fallback status check is honest. A bot with no configured chain is entirely unaffected. */
+const LOOP_CODE_TO_REASON: Record<string, FallbackReason | undefined> = {
+  provider_rate_limited: 'rateLimited',
+  provider_billing: 'outOfCredits',
+  provider_auth: 'signedOut',
+  engine_auth: 'signedOut',
+  engine_unreachable: 'notStarting',
+  model_unavailable: 'modelMissing',
+  provider_unavailable: 'rateLimited',
+  timeout: 'rateLimited',
+};
+
+/** Called from the turn's failure handler. If the bot has a configured chain, rest the login
+ *  that was in use (the first one not already resting) and say so. No-op otherwise — this never
+ *  changes behavior for a bot nobody set a chain on. */
+export function recordTurnFailure(db: Database.Database, botId: string, loopFailureCode: string): { restedLogin: string; reason: FallbackReason; nextAgent: string | null } | null {
+  const chain = getFallbackChain(db, botId);
+  if (chain.length === 0) return null;
+  const reason = LOOP_CODE_TO_REASON[loopFailureCode];
+  if (!reason) return null;
+  const current = chain.find((s) => !loginResting(db, s.loginKey).resting);
+  if (!current) return null;
+  restLogin(db, current.loginKey, reason);
+  const after = nextStep(db, botId);
+  return { restedLogin: current.loginKey, reason, nextAgent: after ? after.step.agent : null };
+}
+
 export function ensureFallbackSchema(db: Database.Database) {
   db.exec(`CREATE TABLE IF NOT EXISTS agent_fallback_chain (
     bot_id TEXT NOT NULL, step INTEGER NOT NULL, agent TEXT NOT NULL, model TEXT NOT NULL, login_key TEXT NOT NULL,

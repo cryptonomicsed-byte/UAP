@@ -21,6 +21,8 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [pending, setPending] = useState<number | null>(null);
   const [pack, setPack] = useState('Engineering pack not loaded');
+  const [themeCss, setThemeCss] = useState('');
+  const [themeTokens, setThemeTokens] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -40,6 +42,9 @@ export function AgentDesk({ bot }: { bot: Bot }) {
       setPending(Array.isArray(live.pending) ? live.pending.length : 0);
       const packRes = await fetch('/api/v6/engineering-pack', { credentials: 'include' }).then((r) => r.json());
       setPack(`${packRes.count} sources pinned, ${packRes.installed} installed. A finished prompt is not a release.`);
+      const theme = await fetch(`/api/v6/bots/${bot.id}/theme`, { credentials: 'include' }).then((r) => r.json());
+      setThemeCss(theme.css ?? '');
+      setThemeTokens(theme.tokens ?? {});
       setPhase('ready');
     } catch {
       setPhase('error');
@@ -93,11 +98,25 @@ export function AgentDesk({ bot }: { bot: Bot }) {
     setError(`Minted ${body.sid}. It is in the roster. It has no grants.`);
   }
 
+  async function saveTheme(css: string) {
+    setBusy('theme');
+    setError(null);
+    const res = await fetch(`/api/v6/bots/${bot.id}/theme`, {
+      method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ css }),
+    });
+    const body = await res.json().catch(() => ({}));
+    setBusy(null);
+    if (!res.ok) { setError('The theme was not saved.'); return; }
+    setThemeCss(css);
+    setThemeTokens(body.tokens ?? {});
+  }
+
   if (phase === 'loading') return <p className="desk__state">Loading {bot.name}'s desk…</p>;
   if (phase === 'error') return <p className="desk__state" role="alert">{error} <button type="button" className="link-btn" onClick={() => load()}>Retry</button></p>;
 
   return (
-    <div className="desk">
+    <div className={`desk sid-theme-${bot.id}`} style={themeTokens as React.CSSProperties}>
       {error && <p className="desk__state" role="status">{error}</p>}
       <section className="desk__block">
         <h3>Model</h3>
@@ -142,6 +161,15 @@ export function AgentDesk({ bot }: { bot: Bot }) {
             ))}
           </ul>
         )}
+      </section>
+      <section className="desk__block">
+        <h3>Appearance</h3>
+        <p className="desk__state">A per-agent accent, not a theme for the whole app. Set custom properties only — <code>--color-primary</code>, <code>--radius-md</code>, and similar. Anything that could load something (url(), @import) is dropped before it is saved.</p>
+        <form className="desk__row" onSubmit={(event) => { event.preventDefault(); const input = event.currentTarget.elements.namedItem('css') as HTMLTextAreaElement; saveTheme(input.value); }}>
+          <textarea name="css" className="text-input desk__theme-input" defaultValue={themeCss} aria-label="Agent accent CSS" placeholder={`.sid-theme-${bot.id} { --color-primary: teal; }`} />
+          <button type="submit" className="btn btn--sm" disabled={busy === 'theme'}>Save</button>
+        </form>
+        {Object.keys(themeTokens).length > 0 && <p className="desk__state">{Object.keys(themeTokens).length} token{Object.keys(themeTokens).length === 1 ? '' : 's'} applied to this desk.</p>}
       </section>
     </div>
   );
