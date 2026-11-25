@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react';
 import type { Bot } from '@shared/types';
 import { useStore } from '../store';
+import { useConfigUI } from '../configStore';
 
 type Template = { slug: string; title: string; family: string };
 type Note = { id: string; text: string };
@@ -98,6 +99,15 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   return (
     <div className="desk">
       {error && <p className="desk__state" role="status">{error}</p>}
+      <section className="desk__block">
+        <h3>Model</h3>
+        {bot.model ? <p>{bot.model}</p> : (
+          <>
+            <p>No model is set. A turn will not run.</p>
+            <button type="button" className="btn btn--sm" onClick={() => useConfigUI.getState().openBotSettings(bot.id)}>Set a model</button>
+          </>
+        )}
+      </section>
       <section className="desk__block">
         <h3>Autonomy</h3>
         <p>{pending === 0 ? 'No turn is in flight.' : `${pending} turn${pending === 1 ? '' : 's'} in flight.`} {pack}</p>

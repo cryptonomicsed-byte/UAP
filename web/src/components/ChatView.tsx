@@ -33,7 +33,10 @@ export function ChatView(props: {
   if (!bot) {
     return (
       <main className="chat chat--empty">
-        <div className="empty-chat"><div className="empty-chat__sub">No Bot selected.</div></div>
+        <div className="empty-chat">
+          <div className="empty-chat__sub">No agent selected.</div>
+          <button type="button" className="btn btn--sm" onClick={() => useStore.getState().setModal('create')}>New agent</button>
+        </div>
       </main>
     );
   }
@@ -56,9 +59,6 @@ export function ChatView(props: {
 
   return (
     <main className="chat" style={botVars(bot.avatarColor)}>
-      <Transcript bot={bot} rows={rows} live={live} loaded={!!transcript?.loaded} />
-      <VoiceCallBar />
-      <Composer bot={bot} running={!!live?.isRunning} />
       <header className="chat__header">
         <button
           type="button"
@@ -116,6 +116,9 @@ export function ChatView(props: {
           </button>
         </div>
       </header>
+      <Transcript bot={bot} rows={rows} live={live} loaded={!!transcript?.loaded} />
+      <VoiceCallBar />
+      <Composer bot={bot} running={!!live?.isRunning} />
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>
   );
