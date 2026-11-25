@@ -29,9 +29,85 @@ import { runRoutine, scheduleRoutine, unscheduleRoutine } from './routines.js';
 import { deleteEventTrigger } from './triggers.js';
 import { dispatchRoomMessage } from './agent/rooms.js';
 import { voiceApi } from './voice.js';
+import { ensurePublicCallToken, regeneratePublicCallToken, botIdForPublicToken, publicCallUrl, qrCodeDataUrl } from './lib/public-call.js';
+import { synthesizeLocalPcm, LocalTtsError } from './lib/local-tts.js';
+import { transcribeLocal, LocalSttError } from './lib/local-stt.js';
 import type { AvatarColor, AvatarShape, Toolkit } from './types.js';
 
 export const api = new Hono<AuthVars>();
+
+// ---------- public call (QR code) ----------
+// A link anyone can open with no UAP account, like HelixMain's /call/<slug> orb pattern.
+// Always the real local TTS/STT stack, regardless of this server's own xAI config, so the
+// scanned experience never silently depends on a paid key being present.
+const PUBLIC_SAMPLE_RATE = 24000;
+
+api.get('/bots/:id/public-call', requireUser, async (c) => {
+  const b = ownBot(c.get('user').id, c.req.param('id'));
+  if (!b) return c.json({ error: 'not found' }, 404);
+  const token = ensurePublicCallToken(db, b.id);
+  const url = publicCallUrl(token, new URL(c.req.url).origin);
+  return c.json({ token, url, qr: await qrCodeDataUrl(url) });
+});
+
+api.post('/bots/:id/public-call/regenerate', requireUser, async (c) => {
+  const b = ownBot(c.get('user').id, c.req.param('id'));
+  if (!b) return c.json({ error: 'not found' }, 404);
+  const token = regeneratePublicCallToken(db, b.id);
+  const url = publicCallUrl(token, new URL(c.req.url).origin);
+  return c.json({ token, url, qr: await qrCodeDataUrl(url) });
+});
+
+api.get('/public-call/:token', (c) => {
+  const bot = botIdForPublicToken(db, c.req.param('token'));
+  if (!bot) return c.json({ error: 'This call link is no longer valid.' }, 404);
+  return c.json({ botName: bot.name, avatarColor: bot.avatarColor, avatarShape: bot.avatarShape });
+});
+
+api.post('/public-call/:token/turn', async (c) => {
+  const bot = botIdForPublicToken(db, c.req.param('token'));
+  if (!bot) return c.json({ error: 'This call link is no longer valid.' }, 404);
+  const { text } = await c.req.json<{ text: string }>().catch(() => ({ text: '' }));
+  if (!text?.trim()) return c.json({ error: 'empty' }, 400);
+  const sentRow = appendRow(bot.id, 'message', { type: 'message', role: 'user', text: text.trim().slice(0, 4000) });
+  enqueue(bot.id, { type: 'user', text: text.trim() });
+  const deadline = Date.now() + 25_000;
+  while (Date.now() < deadline) {
+    const rows = listRows(bot.id, { limit: 20 });
+    const reply = rows.find((r) => r.seq > sentRow.seq && r.body.type === 'message' && r.body.role === 'assistant' && !r.body.streaming);
+    if (reply && reply.body.type === 'message') return c.json({ text: reply.body.text });
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  return c.json({ error: 'No reply yet -- still thinking.' }, 202);
+});
+
+api.post('/public-call/:token/stt', async (c) => {
+  if (!botIdForPublicToken(db, c.req.param('token'))) return c.json({ error: 'This call link is no longer valid.' }, 404);
+  const form = await c.req.formData().catch(() => null);
+  const file = form?.get('file');
+  if (!file || typeof file === 'string') return c.json({ error: 'file required' }, 400);
+  if (file.size > 25 * 1024 * 1024) return c.json({ error: 'recording too long' }, 413);
+  if (file.size < 200) return c.json({ text: '' });
+  try {
+    return c.json({ text: transcribeLocal(Buffer.from(await file.arrayBuffer())) });
+  } catch (error) {
+    console.warn('[public-call] stt failed', error instanceof LocalSttError ? error.message : error);
+    return c.json({ error: 'Transcription unavailable' }, 502);
+  }
+});
+
+api.post('/public-call/:token/tts', async (c) => {
+  if (!botIdForPublicToken(db, c.req.param('token'))) return c.json({ error: 'This call link is no longer valid.' }, 404);
+  const { text } = await c.req.json<{ text: string }>().catch(() => ({ text: '' }));
+  if (!text?.trim()) return c.json({ error: 'empty' }, 400);
+  try {
+    const pcm = synthesizeLocalPcm(text.slice(0, 1600), 'local-default', 1, PUBLIC_SAMPLE_RATE);
+    return c.body(new Uint8Array(pcm), 200, { 'Content-Type': `audio/pcm;rate=${PUBLIC_SAMPLE_RATE}`, 'Cache-Control': 'no-store' });
+  } catch (error) {
+    console.warn('[public-call] tts failed', error instanceof LocalTtsError ? error.message : error);
+    return c.json({ error: 'Voice unavailable' }, 502);
+  }
+});
 
 function deployStatus() {
   const root = path.resolve(process.cwd(), '..');

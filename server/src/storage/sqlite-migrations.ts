@@ -371,6 +371,9 @@ CREATE TABLE IF NOT EXISTS incoming_calls (
   sdp TEXT, status TEXT NOT NULL DEFAULT 'ringing', created_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS incoming_calls_bot ON incoming_calls(bot_id, status);` },
+  { id: 19, name: 'public-call-token', sql: `
+ALTER TABLE bots ADD COLUMN public_call_token TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS bots_public_call_token ON bots(public_call_token);` },
 ];
 
 export class SqliteMigrationError extends Error {

@@ -24,6 +24,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   const [npub, setNpub] = useState<string | null>(null);
   const [calls, setCalls] = useState<{ id: string; from_pubkey: string | null; created_at: number }[]>([]);
   const [listening, setListening] = useState(false);
+  const [qr, setQr] = useState<{ token: string; url: string; qr: string } | null>(null);
   const [pending, setPending] = useState<number | null>(null);
   const [pack, setPack] = useState('Engineering pack not loaded');
   const [themeCss, setThemeCss] = useState('');
@@ -173,6 +174,26 @@ export function AgentDesk({ bot }: { bot: Bot }) {
     }
   }
 
+  async function loadQr() {
+    setBusy('qr');
+    try {
+      const r = await fetch(`/api/bots/${bot.id}/public-call`, { credentials: 'include' }).then((r2) => r2.json());
+      setQr(r);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function regenerateQr() {
+    setBusy('qr');
+    try {
+      const r = await fetch(`/api/bots/${bot.id}/public-call/regenerate`, { method: 'POST', credentials: 'include' }).then((r2) => r2.json());
+      setQr(r);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className={`desk sid-theme-${bot.id}`} style={themeTokens as React.CSSProperties}>
       {error && <p className="desk__state" role="status">{error}</p>}
@@ -219,6 +240,23 @@ export function AgentDesk({ bot }: { bot: Bot }) {
               </li>
             ))}
           </ul>
+        )}
+      </section>
+      <section className="desk__block">
+        <h3>Scan to talk</h3>
+        <p className="desk__state">
+          A QR code anyone can scan to talk to {bot.name} with no UAP account — same pattern as the
+          HelixMain /call/&lt;slug&gt; orb pages. Runs on this server's own free local voice stack,
+          not the paid provider.
+        </p>
+        {qr ? (
+          <>
+            <img src={qr.qr} alt={`QR code to call ${bot.name}`} width={180} height={180} style={{ borderRadius: 8 }} />
+            <p className="desk__state"><code>{qr.url}</code></p>
+            <button type="button" className="btn btn--sm" disabled={busy === 'qr'} onClick={() => void regenerateQr()}>Regenerate link</button>
+          </>
+        ) : (
+          <button type="button" className="btn btn--sm" disabled={busy === 'qr'} onClick={() => void loadQr()}>Generate QR code</button>
         )}
       </section>
       <section className="desk__block">

@@ -1,0 +1,44 @@
+.public-call {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem 1.25rem;
+  background: #0b0b10;
+  color: #f2f2f6;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+}
+.public-call--state { font-size: 1.1rem; opacity: 0.8; }
+.public-call h1 { margin: 0; font-size: 1.6rem; }
+.public-call__transcript {
+  width: 100%;
+  max-width: 420px;
+  max-height: 40vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.public-call__line { margin: 0; padding: 0.5rem 0.8rem; border-radius: 10px; text-align: left; }
+.public-call__line--user { align-self: flex-end; background: #2a2a38; }
+.public-call__line--assistant { align-self: flex-start; background: #1b2a3a; }
+.public-call__error { color: #ff8a8a; font-size: 0.9rem; }
+.public-call__btn {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(145deg, #5b5bf0, #3636a8);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+}
+.public-call__btn--recording { background: linear-gradient(145deg, #f05b5b, #a83636); }
+.public-call__btn--thinking, .public-call__btn--speaking { opacity: 0.6; cursor: default; }
+.public-call__hint { font-size: 0.8rem; opacity: 0.55; max-width: 320px; }
