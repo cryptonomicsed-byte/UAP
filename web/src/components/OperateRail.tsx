@@ -32,6 +32,46 @@ function StatusDot({ ok }: { ok: boolean }) {
   return <span className={`op-dot${ok ? ' is-ok' : ' is-off'}`} aria-hidden />;
 }
 
+function SidTemplates({ botId }: { botId: string }) {
+  const [rows, setRows] = useState<{ slug: string; title: string; family: string }[]>([]);
+  const [note, setNote] = useState<string | null>(null);
+  useEffect(() => {
+    fetch('/api/v6/sid/templates', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setRows(j.templates ?? []))
+      .catch(() => setNote('Templates unavailable'));
+  }, []);
+  async function mint(slug: string, asChild: boolean) {
+    setNote(null);
+    const res = await fetch('/api/v6/sid/materialize', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ template: slug, parentBotId: asChild ? botId : undefined }),
+    });
+    const body = await res.json().catch(() => ({}));
+    setNote(res.ok ? `Minted ${body.sid}` : (body.error || `failed ${res.status}`));
+  }
+  return (
+    <section className="operate__section">
+      <div className="section-label">SID templates</div>
+      <div className="panel-card operate__card">
+        {rows.map((row) => (
+          <div key={row.slug} className="operate__row">
+            <span className="operate__row-text">
+              <span className="operate__row-title">{row.title}</span>
+              <span className="operate__row-sub">{row.family} · no grants</span>
+            </span>
+            <button type="button" className="link-btn link-btn--small" onClick={() => mint(row.slug, false)}>Install</button>
+            <button type="button" className="link-btn link-btn--small" onClick={() => mint(row.slug, true)}>Spawn</button>
+          </div>
+        ))}
+        {note && <div className="operate__note" role="status">{note}</div>}
+      </div>
+    </section>
+  );
+}
+
 export function OperateRail() {
   const bot = useSelectedBot();
   const providers = useStore((s) => s.providers);
@@ -121,6 +161,8 @@ export function OperateRail() {
           </div>
         </div>
       </section>
+
+      <SidTemplates botId={bot.id} />
 
       <section className="operate__section">
         <div className="section-label section-label--row">

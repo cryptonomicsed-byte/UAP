@@ -6,6 +6,7 @@ import { Hono } from 'hono';
 import path from 'node:path';
 import fs from 'node:fs';
 import type { AuthVars } from './lib/auth.js';
+import { requireUser } from './lib/auth.js';
 import { listLanguageGatePacks, runLanguageGatePack, acceptPackClaim, type LanguageId } from './lib/language-gates.js';
 import { listFiveTiers, createTenant, oneClickInstall, makeMarketplaceItem, meterCredits, TIERS, type TierId } from './lib/marketplace.js';
 import { evaluateDesignGates } from './lib/design-gates.js';
@@ -22,6 +23,7 @@ import { MEDIA_ROLES, createMediaAsset, reviewRights } from './lib/media-rights.
 import { createFactoryJob, smithersBuild, skillforgeAttachPack, reaEvaluate, assertFactoryPromoteAllowed } from './lib/factory-pipeline.js';
 import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
 import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-templates.js';
+import { materializeSidBot } from './lib/sid-bots.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -398,6 +400,19 @@ v6Api.post('/sid/spawn', async (c) => {
     const agent = sidTemplates().spawnSubAgent({ tenantId: body.tenantId || 'local', parentSid: body.parentSid, template: body.template });
     const supervised = superviseSpawn(agent.sid, agent.parentSid);
     return c.json({ agent, supervised });
+  } catch (error) {
+    const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
+    return c.json({ error: err.message, code: err.code }, 400);
+  }
+});
+
+v6Api.post('/sid/materialize', requireUser, async (c) => {
+  const user = c.get('user');
+  const body = await c.req.json<{ template?: string; parentBotId?: string }>().catch(() => ({ template: undefined as string | undefined, parentBotId: undefined as string | undefined }));
+  if (!body.template) return c.json({ error: 'template required' }, 400);
+  try {
+    const made = materializeSidBot(db, { userId: user.id, template: body.template, parentBotId: body.parentBotId });
+    return c.json(made);
   } catch (error) {
     const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
     return c.json({ error: err.message, code: err.code }, 400);

@@ -13,6 +13,8 @@ import { createRoom, postToRoom } from './rooms.js';
 import type { ActivityKind } from '../types.js';
 import { Cron } from 'croner';
 import { toolFailure, toolUnreachable } from '../lib/failure.js';
+import { SID_TEMPLATES } from '../lib/sid-templates.js';
+import { materializeSidBot } from '../lib/sid-bots.js';
 
 export interface ToolCtx {
   userId: string;
@@ -335,6 +337,36 @@ const ALL_TOOLS: ToolDef[] = [
       if (!info) return { output: `Unknown toolkit "${a.toolkit}". Use COMPOSIO_SEARCH_TOOLS to find the right toolkit slug.` };
       appendRow(ctx.botId, 'card', { type: 'card', card: 'connect', toolkit: info.slug, toolkitName: info.name, logo: info.logo, reason: a.reason, status: 'pending' });
       return { output: `Asked the user to connect ${info.name}. Stop here; you'll be told when it's connected.`, endTurn: true };
+    },
+  },
+  {
+    name: 'list_sid_templates',
+    description: 'List SID agent templates. A template is a birth recipe, not a grant. Use install_sid_template for a full teammate or spawn_sid_subagent for a child that reports back to you.',
+    parameters: obj({}),
+    activity: 'working',
+    label: 'Listing SID templates',
+    impl: async () => ({ output: JSON.stringify(SID_TEMPLATES.map((t) => ({ slug: t.slug, title: t.title, family: t.family, grants: t.grants }))) }),
+  },
+  {
+    name: 'install_sid_template',
+    description: 'Mint a full SID agent from a template and add it as a visible teammate. It starts with no grants.',
+    parameters: obj({ template: { type: 'string', description: 'Template slug, for example video-creator or blockchain-coder.' } }, ['template']),
+    activity: 'working',
+    label: 'Installing a SID agent',
+    impl: async (a, ctx) => {
+      const made = materializeSidBot(db, { userId: ctx.userId, template: String(a.template) });
+      return { output: JSON.stringify({ ok: true, botId: made.botId, sid: made.sid, kind: made.kind, grants: [] }), summary: `Installed ${a.template}` };
+    },
+  },
+  {
+    name: 'spawn_sid_subagent',
+    description: 'Spawn a sub-agent under your SID. The child gets a new SID and no inherited grants. It is hidden from the sidebar and should report back to you.',
+    parameters: obj({ template: { type: 'string' } }, ['template']),
+    activity: 'messaging_named',
+    label: 'Spawning a sub-agent',
+    impl: async (a, ctx) => {
+      const made = materializeSidBot(db, { userId: ctx.userId, template: String(a.template), parentBotId: ctx.botId });
+      return { output: JSON.stringify({ ok: true, botId: made.botId, sid: made.sid, parentSid: made.parentSid, grants: [] }), summary: `Spawned ${a.template}` };
     },
   },
 ];
