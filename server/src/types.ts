@@ -31,6 +31,10 @@ export interface Bot {
   /** Hermes engine: model id and provider for this bot; null = the engine's default. */
   model: string | null;
   provider: string | null;
+  /** BYOK model selection (settings UI): the user's own picked provider+model, distinct
+   *  from `model`/`provider` above which report what Hermes is ACTUALLY running. */
+  modelProvider: string | null;
+  modelId: string | null;
   generation: number;
   unread: number;
   lastPreview: string | null;

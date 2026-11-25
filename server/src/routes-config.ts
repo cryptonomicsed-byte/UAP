@@ -122,15 +122,21 @@ configApi.get('/bots/:id/engine', async (c) => {
   return c.json({ engine: await engineInfo(b.id) });
 });
 
-/** Model selection belongs to Hermes; this gateway has no global configuration-write endpoint. */
-configApi.patch('/bots/:id/engine', (c) => {
+/** Which model this bot's turns ask for. Empty values go back to the agent's own default.
+ *  Restored from this project's own MIT-licensed ancestor, nickvasilescu/bot-hq
+ *  (web/src/components/EngineSettings.tsx + server/src/routes-config.ts) -- this had been
+ *  disabled in favor of a 409 telling the user to edit Hermes directly, but bot-hq's actual
+ *  mechanism is simpler than that: the bot's own model/provider ride along in every turn's
+ *  request body (see agent/loop.ts), not a config.yaml rewrite. */
+configApi.patch('/bots/:id/engine', async (c) => {
   const b = ownBot(c.get('user').id, c.req.param('id'));
   if (!b) return c.json({ error: 'not found' }, 404);
-  return c.json({
-    error: 'Change the configured model and provider in Hermes, then refresh this panel.',
-    code: 'configuration_in_hermes',
-    configurationMode: 'in_hermes',
-  }, 409);
+  const p = await c.req.json<{ provider?: string | null; model?: string | null }>().catch(() => ({} as { provider?: string | null; model?: string | null }));
+  const clean = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, 120) : null);
+  if (p.provider !== undefined) db.prepare('UPDATE bots SET provider=?, updated_at=? WHERE id=?').run(clean(p.provider), now(), b.id);
+  if (p.model !== undefined) db.prepare('UPDATE bots SET model=?, updated_at=? WHERE id=?').run(clean(p.model), now(), b.id);
+  emitBot(b.id);
+  return c.json({ engine: await engineInfo(b.id) });
 });
 
 /**

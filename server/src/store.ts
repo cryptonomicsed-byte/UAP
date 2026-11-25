@@ -34,6 +34,8 @@ export function toBot(r: any): Bot {
     // Historical SQLite hints are not gateway configuration; EngineInfo reports live metadata.
     model: null,
     provider: null,
+    modelProvider: r.model_provider ?? null,
+    modelId: r.model_id ?? null,
     generation: r.generation,
     unread: r.unread,
     lastPreview: lastPreview ? lastPreview.slice(0, 140) : null,

@@ -7,6 +7,7 @@ import { displayFor } from './box.js';
 import { cdpUrlFor, screenFor } from './computer.js';
 import { db } from './db.js';
 import { mcpServersFor } from './lib/mcp-connectors.js';
+import { providerKeyFor } from './lib/provider-keys.js';
 import { deployment } from './deployment.js';
 import { env } from './env.js';
 import type { EngineInfo, EngineProvider } from './types.js';
@@ -187,6 +188,14 @@ const SHARED_ENV = [
 /** Parts of the primary agent's config a managed agent starts from, so it reaches the same models. */
 const SHARED_CONFIG = ['model', 'providers', 'custom_providers', 'auxiliary', 'fallback_model', 'fallback_providers'];
 
+/** Hermes provider id + credential env var for each catalog provider we support (see the
+ *  hermes-agent skill's providers-and-models reference). models.dev calls Gemini "google";
+ *  Hermes's own provider id for it is "gemini" -- this is the one place that gets translated. */
+const PROVIDER_ENV_VAR: Record<string, string> = {
+  anthropic: 'ANTHROPIC_API_KEY', openai: 'OPENAI_API_KEY', google: 'GOOGLE_API_KEY', xai: 'XAI_API_KEY', openrouter: 'OPENROUTER_API_KEY',
+};
+const HERMES_PROVIDER_ID: Record<string, string> = { google: 'gemini' };
+
 function soul(b: any): string {
   const owner = (db.prepare('SELECT name FROM users WHERE id=?').get(b.user_id) as any)?.name ?? 'the user';
   const role = b.label ? `, ${b.label}` : '';
@@ -261,6 +270,20 @@ async function writeHome(botId: string): Promise<{ home: string; key: string; di
     ...mcpServersFor(db, botId),
     hq: { url: `${env.mcpBaseUrl}/mcp/${botId}`, headers: { Authorization: `Bearer ${mcpToken(botId)}` }, timeout: 1800, connect_timeout: 30 },
   };
+  // BYOK model selection (settings UI): a provider+model the user picked for this bot,
+  // using a key the user pasted in -- never a literal key in config.yaml (secrets live in
+  // .env only, per Hermes's own hard invariant), so just the pickable provider/model id here.
+  let byokEnvKey: { name: string; value: string } | null = null;
+  if (b.model_provider && b.model_id) {
+    const realKey = providerKeyFor(db, b.user_id, b.model_provider);
+    if (realKey) {
+      cfg.model = { provider: HERMES_PROVIDER_ID[b.model_provider] ?? b.model_provider, default: b.model_id };
+      const envVar = PROVIDER_ENV_VAR[b.model_provider];
+      if (envVar) byokEnvKey = { name: envVar, value: realKey };
+    } else {
+      console.warn(`[engine] ${b.name}: model ${b.model_provider}/${b.model_id} selected but no API key saved for ${b.model_provider} -- leaving model config untouched`);
+    }
+  }
   writePrivate(cfgFile, YAML.stringify(cfg));
 
   // Mark newly provisioned homes without a model so retries keep reporting setup required.
@@ -294,6 +317,7 @@ async function writeHome(botId: string): Promise<{ home: string; key: string; di
   }
   Object.assign(vars, { API_SERVER_ENABLED: 'true', API_SERVER_KEY: key, API_SERVER_PORT: String(b.engine_port), API_SERVER_HOST: '127.0.0.1' });
   if (cdp) vars.BROWSER_CDP_URL = cdp; else delete vars.BROWSER_CDP_URL;
+  if (byokEnvKey) vars[byokEnvKey.name] = byokEnvKey.value;
   writePrivate(envFile, Object.entries(vars).map(([k, v]) => `${k}=${v}`).join('\n') + '\n');
 
   return { home, key, display, modelSetupRequired };

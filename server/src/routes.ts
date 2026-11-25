@@ -32,9 +32,40 @@ import { voiceApi } from './voice.js';
 import { ensurePublicCallToken, regeneratePublicCallToken, botIdForPublicToken, publicCallUrl, qrCodeDataUrl } from './lib/public-call.js';
 import { synthesizeLocalPcm, LocalTtsError } from './lib/local-tts.js';
 import { transcribeLocal, LocalSttError } from './lib/local-stt.js';
+import { modelCatalog } from './lib/model-catalog.js';
+import { setProviderKey, removeProviderKey, configuredProviders, ProviderKeyError } from './lib/provider-keys.js';
 import type { AvatarColor, AvatarShape, Toolkit } from './types.js';
 
 export const api = new Hono<AuthVars>();
+
+// ---------- BYOK model selection ----------
+
+api.get('/model-catalog', requireUser, async (c) => c.json(await modelCatalog()));
+
+api.get('/providers', requireUser, (c) => c.json({ configured: configuredProviders(db, c.get('user').id) }));
+
+api.post('/providers/:provider/key', requireUser, async (c) => {
+  const { apiKey } = await c.req.json<{ apiKey: string }>().catch(() => ({ apiKey: '' }));
+  try {
+    setProviderKey(db, c.get('user').id, c.req.param('provider'), apiKey ?? '');
+    return c.json({ configured: configuredProviders(db, c.get('user').id) });
+  } catch (error) {
+    return c.json({ error: error instanceof ProviderKeyError ? error.message : 'Could not save key' }, 400);
+  }
+});
+
+api.delete('/providers/:provider/key', requireUser, (c) => {
+  removeProviderKey(db, c.get('user').id, c.req.param('provider'));
+  return c.json({ configured: configuredProviders(db, c.get('user').id) });
+});
+
+api.post('/bots/:id/model', requireUser, async (c) => {
+  const b = ownBot(c.get('user').id, c.req.param('id'));
+  if (!b) return c.json({ error: 'not found' }, 404);
+  const { provider, modelId } = await c.req.json<{ provider: string | null; modelId: string | null }>().catch(() => ({ provider: null, modelId: null }));
+  db.prepare('UPDATE bots SET model_provider = ?, model_id = ? WHERE id = ?').run(provider || null, modelId || null, b.id);
+  return c.json({ ok: true });
+});
 
 // ---------- public call (QR code) ----------
 // A link anyone can open with no UAP account, like HelixMain's /call/<slug> orb pattern.

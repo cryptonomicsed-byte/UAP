@@ -374,6 +374,15 @@ CREATE INDEX IF NOT EXISTS incoming_calls_bot ON incoming_calls(bot_id, status);
   { id: 19, name: 'public-call-token', sql: `
 ALTER TABLE bots ADD COLUMN public_call_token TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS bots_public_call_token ON bots(public_call_token);` },
+  { id: 20, name: 'byok-model-selection', sql: `
+CREATE TABLE IF NOT EXISTS user_provider_keys (
+  user_id TEXT NOT NULL, provider TEXT NOT NULL, api_key TEXT NOT NULL, created_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, provider)
+);`,
+    columns: [
+      { table: 'bots', name: 'model_provider', definition: 'TEXT' },
+      { table: 'bots', name: 'model_id', definition: 'TEXT' },
+    ] },
 ];
 
 export class SqliteMigrationError extends Error {

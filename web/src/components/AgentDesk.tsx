@@ -25,6 +25,11 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   const [calls, setCalls] = useState<{ id: string; from_pubkey: string | null; created_at: number }[]>([]);
   const [listening, setListening] = useState(false);
   const [qr, setQr] = useState<{ token: string; url: string; qr: string } | null>(null);
+  const [catalog, setCatalog] = useState<{ id: string; name: string; models: { id: string; name: string }[] }[]>([]);
+  const [configuredProv, setConfiguredProv] = useState<Record<string, boolean>>({});
+  const [pickProvider, setPickProvider] = useState('');
+  const [pickModel, setPickModel] = useState('');
+  const [keyInput, setKeyInput] = useState('');
   const [pending, setPending] = useState<number | null>(null);
   const [pack, setPack] = useState('Engineering pack not loaded');
   const [themeCss, setThemeCss] = useState('');
@@ -55,6 +60,10 @@ export function AgentDesk({ bot }: { bot: Bot }) {
       setThemeTokens(theme.tokens ?? {});
       fetch(`/api/v6/bots/${bot.id}/nostr-identity`, { credentials: 'include' }).then((r) => r.json()).then((d) => setNpub(d.npub ?? null)).catch(() => {});
       fetch(`/api/v6/bots/${bot.id}/calls`, { credentials: 'include' }).then((r) => r.json()).then((d) => { setCalls(d.calls ?? []); setListening(!!d.listening); }).catch(() => {});
+      fetch(`/api/model-catalog`, { credentials: 'include' }).then((r) => r.json()).then((d) => setCatalog(d.providers ?? [])).catch(() => {});
+      fetch(`/api/providers`, { credentials: 'include' }).then((r) => r.json()).then((d) => setConfiguredProv(d.configured ?? {})).catch(() => {});
+      setPickProvider(bot.modelProvider ?? '');
+      setPickModel(bot.modelId ?? '');
       setPhase('ready');
     } catch {
       setPhase('error');
@@ -194,6 +203,37 @@ export function AgentDesk({ bot }: { bot: Bot }) {
     }
   }
 
+  async function saveProviderKey(provider: string) {
+    if (!keyInput.trim()) return;
+    setBusy('key');
+    try {
+      const r = await fetch(`/api/providers/${provider}/key`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey: keyInput }) }).then((r2) => r2.json());
+      if (r.configured) setConfiguredProv(r.configured);
+      setKeyInput('');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function removeProviderKey(provider: string) {
+    setBusy('key');
+    try {
+      const r = await fetch(`/api/providers/${provider}/key`, { method: 'DELETE', credentials: 'include' }).then((r2) => r2.json());
+      if (r.configured) setConfiguredProv(r.configured);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function useThisModel() {
+    setBusy('usemodel');
+    try {
+      await fetch(`/api/bots/${bot.id}/model`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: pickProvider || null, modelId: pickModel || null }) });
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className={`desk sid-theme-${bot.id}`} style={themeTokens as React.CSSProperties}>
       {error && <p className="desk__state" role="status">{error}</p>}
@@ -206,6 +246,40 @@ export function AgentDesk({ bot }: { bot: Bot }) {
           </>
         )}
         <p className="desk__state">Nostr identity (the real, callable address — a numberless agent-phone rooted on the live relay, not a phone number): {npub ? <code>{npub}</code> : 'minting…'}</p>
+      </section>
+      <section className="desk__block">
+        <h3>Model &amp; providers (BYOK)</h3>
+        <p className="desk__state">
+          Bring your own API key for OpenAI, Anthropic, Google, xAI, or OpenRouter. A key never
+          leaves this server and is never shown again once saved.
+        </p>
+        <div className="desk__row">
+          <select className="text-input" value={pickProvider} onChange={(e) => { setPickProvider(e.target.value); setPickModel(''); }}>
+            <option value="">— choose a provider —</option>
+            {catalog.map((p) => <option key={p.id} value={p.id}>{p.name}{configuredProv[p.id] ? ' ✓ key saved' : ''}</option>)}
+          </select>
+          {pickProvider && (
+            <select className="text-input" value={pickModel} onChange={(e) => setPickModel(e.target.value)}>
+              <option value="">— choose a model —</option>
+              {catalog.find((p) => p.id === pickProvider)?.models.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+          )}
+        </div>
+        {pickProvider && !configuredProv[pickProvider] && (
+          <div className="desk__row">
+            <input type="password" className="text-input" placeholder={`${catalog.find((p) => p.id === pickProvider)?.name ?? pickProvider} API key`} value={keyInput} onChange={(e) => setKeyInput(e.target.value)} />
+            <button type="button" className="btn btn--sm" disabled={busy === 'key' || !keyInput.trim()} onClick={() => void saveProviderKey(pickProvider)}>Save key</button>
+          </div>
+        )}
+        {pickProvider && configuredProv[pickProvider] && (
+          <button type="button" className="btn btn--sm btn--secondary" disabled={busy === 'key'} onClick={() => void removeProviderKey(pickProvider)}>Remove saved key for {catalog.find((p) => p.id === pickProvider)?.name ?? pickProvider}</button>
+        )}
+        {pickProvider && pickModel && configuredProv[pickProvider] && (
+          <button type="button" className="btn btn--sm" disabled={busy === 'usemodel'} onClick={() => void useThisModel()}>Use this model for {bot.name}</button>
+        )}
+        {bot.modelProvider && bot.modelId && (
+          <p className="desk__state">Currently set: <code>{bot.modelProvider}/{bot.modelId}</code> — applies the next time this agent's engine (re)starts.</p>
+        )}
       </section>
       <section className="desk__block">
         <h3>Autonomy</h3>

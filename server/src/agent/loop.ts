@@ -395,8 +395,10 @@ async function runTurn(botId: string, trigger: Trigger) {
       signal: ctrl.signal,
       headers: { 'content-type': 'application/json', accept: 'text/event-stream', ...(engine.key ? { authorization: `Bearer ${engine.key}` } : {}) },
       body: JSON.stringify({
-        // Resolve the real model/provider from Hermes configuration, never stale local hints.
-        model: 'hermes-agent',
+        // Restored per-bot model/provider switching (bot-hq's mechanism: ride along in the
+        // request, not a config.yaml rewrite). Empty values fall back to the engine's own default.
+        model: bot.model || 'hermes-agent',
+        ...(bot.provider ? { provider: bot.provider } : {}),
         input,
         instructions: await instructionsFor(userId, botId),
         // One engine-side thread per conversation, owned by the SID when the agent has one;
