@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "evidence": {
+    "V6-10-08": {
+      "commit": "5dbf319",
+      "file": "tests/contrast.test.mjs",
+      "test": "theme: body text clears",
+      "note": "Real WCAG contrast math (scripts/contrast.mjs) gates tokens.css against 7:1 body / 4.5:1 small-status / 3:1 non-text in both themes, plus a universal :focus-visible check. Caught and fixed a real failing token (--color-text-tertiary light 3.97:1 -> 4.79:1) on first run."
+    }
+  }
+}

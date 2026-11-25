@@ -1,0 +1,1193 @@
+{
+  "clear": [
+    {
+      "repo": "milind-soni/OpenMausBot",
+      "priority": "P0",
+      "adoption_type": "FOUNDATION",
+      "caution": "Hard license boundary: `enterprise/` and trademarks; full source/build/Hermes tool parity and hosted",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "nickvasilescu/bot-hq",
+      "priority": "P1",
+      "adoption_type": "REFERENCE",
+      "caution": "Superseded as preferred foundation by v6; validate actual reusable components.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "NousResearch/hermes-agent",
+      "priority": "P0",
+      "adoption_type": "REQUIRED RUNTIME",
+      "caution": "Do not equate model selection or agent tool decisions with authorization; verify exact integration a",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "n8n-io/nod",
+      "priority": "P1",
+      "adoption_type": "ADAPT SERVICES",
+      "caution": "One-owner assumptions and Pi-based runtime cannot be imported unchanged; adapt to Hermes and multi-t",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "cryptonomicsed-byte/sid",
+      "priority": "P0",
+      "adoption_type": "REQUIRED IDENTITY",
+      "caution": "Preserve signed sid/0.1 bytes; propose neutral sid/0.2 contract; identity is not a capability grant.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "cryptonomicsed-byte/card-protocol",
+      "priority": "P1",
+      "adoption_type": "PROTOCOL REFERENCE",
+      "caution": "Do not change existing business-card hashes or treat business information as agent authority.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "cryptonomicsed-byte/agency-agents",
+      "priority": "P0",
+      "adoption_type": "WORKFORCE CATALOG",
+      "caution": "Verify fork SHA, upstream lineage, license; Markdown personas are not running agents.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "msitarzewski/agency-agents",
+      "priority": "P1",
+      "adoption_type": "UPSTREAM REFERENCE",
+      "caution": "Do not duplicate roles; template imports need attribution, review and permission previews.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "msitarzewski/agency-agents-app",
+      "priority": "P1",
+      "adoption_type": "UX REFERENCE",
+      "caution": "Do not import its app wholesale or create a second agent manager.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "adamoutler/gemini-agency-agents",
+      "priority": "P1",
+      "adoption_type": "FORMAT REFERENCE",
+      "caution": "Not a required runtime, may duplicate existing persona content.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Arlandaren/proagents",
+      "priority": "P1",
+      "adoption_type": "PERSONA CANDIDATE",
+      "caution": "Do not blindly install hundreds of agents or treat claimed role counts as quality proof.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "storytold/craft-anything",
+      "priority": "P1",
+      "adoption_type": "FACTORY BUILD ADAPTER",
+      "caution": "Verify headless, legal, scale and build capabilities; not presumed a universal website copier.",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "morluto/rea",
+      "priority": "P1",
+      "adoption_type": "INVESTIGATION CANDIDATE",
+      "caution": "Exact REA lineage unresolved; do not claim this repo is the user-intended REA without confirmation.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "milind-soni/openmausbot-teams",
+      "priority": "P1",
+      "adoption_type": "TEAM FORMAT",
+      "caution": "Scan imports; never serialize credentials, live grants, private memory or SID signing keys.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "bugbasesecurity/pentest-copilot",
+      "priority": "P1",
+      "adoption_type": "SECURITY TOOL SERVICE",
+      "caution": "No broad admin MCP token, forbidden high-risk toggles, and no tests outside verified scope.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "bugbasesecurity/PayloadsAllTheThings",
+      "priority": "P1",
+      "adoption_type": "SECURITY KNOWLEDGE",
+      "caution": "Retrieved payload text is untrusted; never execute it by default.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "swisskyrepo/PayloadsAllTheThings",
+      "priority": "P1",
+      "adoption_type": "DATASET UPSTREAM",
+      "caution": "Not a second installed runtime.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "bugbasesecurity/cloud-attack-range",
+      "priority": "P1",
+      "adoption_type": "ISOLATED LAB",
+      "caution": "Cloud IAM, written target scope, strict quotas, TTL, spend ceiling and teardown proof mandatory.",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "nickvasilescu/parallax",
+      "priority": "P1",
+      "adoption_type": "CREATIVE CANDIDATE",
+      "caution": "Actual source providers, licenses and API must be audited; no claims of production capability before",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "agentsea/agentdesk",
+      "priority": "P1",
+      "adoption_type": "COMPUTER PROVIDER",
+      "caution": "Compare isolation, deployment, cost and supported platforms.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "trycua/cua",
+      "priority": "P1",
+      "adoption_type": "COMPUTER PROVIDER",
+      "caution": "Do not permit host control as an implicit consequence of having an SID.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "firecracker-microvm/firecracker",
+      "priority": "P1",
+      "adoption_type": "ISOLATION OPTION",
+      "caution": "Requires compatible Linux/KVM hosts and operations; not portable to every device.",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "microsoft/playwright",
+      "priority": "P1",
+      "adoption_type": "BROWSER PROVIDER",
+      "caution": "Persistent cookies and browsing state must be per-SID isolated and secured.",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "ComposioHQ/composio",
+      "priority": "P1",
+      "adoption_type": "CONNECTED-APP ADAPTER",
+      "caution": "Managed and OSS licensing/pricing/scope verification; platform authorizes tools separately.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "pipecat-ai/pipecat",
+      "priority": "P1",
+      "adoption_type": "VOICE ENGINE CANDIDATE",
+      "caution": "Verify actual provider support/latency and licensing.",
+      "license": "BSD-2-Clause",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "SYSTRAN/faster-whisper",
+      "priority": "P1",
+      "adoption_type": "LOCAL STT",
+      "caution": "Quality and CPU/GPU limits, model licenses and consent.",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "hexgrad/kokoro",
+      "priority": "P1",
+      "adoption_type": "LOCAL TTS",
+      "caution": "Review model voices and redistribution licenses.",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "agshinrajabov/no-slop-design",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "miqdadbadjuber/anti-slop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "soheilmomeniii/no-slop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Mo-Awadalla/anti-slop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "misbahsy/anti-ai-slop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "the-hooman-loop/anti-slop-kit",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "drunkrhin0/antislop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "jhuse25/anti-slop-design-skills",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "kjmagnan1s/anti-slop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "dkneeland/agentic-guardrails",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Nutlope/hallmark",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Leonxlnx/taste-skill",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "pbakaus/impeccable",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "greensock/gsap-skills",
+      "priority": "P1",
+      "adoption_type": "SKILL/REFERENCE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "frankxai/awesome-motion-design-agent-skills",
+      "priority": "P1",
+      "adoption_type": "SKILL/REFERENCE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "CC0-1.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "emilkowalski/skills",
+      "priority": "P1",
+      "adoption_type": "SKILL/REFERENCE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "LottieFiles/motion-design-skill",
+      "priority": "P1",
+      "adoption_type": "SKILL/REFERENCE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "thedaviddias/Front-End-Checklist",
+      "priority": "P0",
+      "adoption_type": "GATE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Moai-Team-LLC/agentic-product-standard",
+      "priority": "P0",
+      "adoption_type": "GATE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "andresdefi/cryptoskills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "0xlayerghost/solidity-agent-kit",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "mystic0xx/awesome-solidity-smart-contracts-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "DarkNavySecurity/web3-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "sanbir/solidity-auditor-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "pashov/skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "marchev/awesome-ai-web3-security",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "CC0-1.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "nuwrldnf8r/smart-contract-audit-skill",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "mrheyday/agentic-solidity-foundry-skill",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "NPC-Worldwide/npcsh",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "choosewhatulike/trainable-agents",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "agent-persona/personas-pipeline",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "jvanheerikhuize/Agent-Roles",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "wonsukchoi/domain-experts",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "tkr520521/ai-persona-skills",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "aivrar/ai-character-engine",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "ChiefGyk3D/department-of-internal-arguments",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "MengTo/Skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "abagames/agentic-gamedev-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "ThiagoFdaSLopes/game-dev-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "jammaru/jev-lab",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "ghsau/music-studio",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "owoevan-dev/music-skill",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "scenario-labs/skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "aipoch/medical-research-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "JuneYaooo/awesome-medical-ai-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "CC0-1.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "AQ-MedAI/MedResearcher-R1",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "rewrite-rs/skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "BSD-3-Clause",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "leonardomso/rust-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "morganlinton/BeautifulRust",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "huiali/rust-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "udapy/rust-agentic-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "po4yka/rust-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "BSD-3-Clause",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "full-stack-skills/rust-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Jeffallan/claude-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "georgeguimaraes/elixir-agent-tools",
+      "priority": "P0",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "JuliaGenAI/julia-agent-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Krastanov/JuliaLLMAgentSkills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Unlicense",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "MystenLabs/skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "mythicalhacker/go-mastery",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "spf13/go-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "saisudhir14/claude-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "samber/cc-skills-golang",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "madflojo/go-style-agent-skill",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "fgmacedo/agent-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "nWave-ai/nWave",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "jscraik/Agent-Skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "VoltAgent/awesome-agent-skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "sickn33/agentic-awesome-skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "obra/superpowers",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "mattpocock/skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "JackyST0/awesome-agent-skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "CC0-1.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Mindrally/skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "Apache-2.0",
+      "archived": false,
+      "private": false
+    }
+  ],
+  "restrictive": [
+    {
+      "repo": "OHF-Voice/piper1-gpl",
+      "priority": "P1",
+      "adoption_type": "LICENSED TTS OPTION",
+      "caution": "Keep optional and isolated if redistribution creates obligations.",
+      "license": "GPL-3.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "jiayaoqijia/cryptoskill",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "AGPL-3.0",
+      "archived": false,
+      "private": false
+    }
+  ],
+  "private_or_inaccessible": [],
+  "unknown": [
+    {
+      "repo": "cryptonomicsed-byte/helixmain",
+      "priority": "P1",
+      "adoption_type": "OPTIONAL BRIDGE",
+      "caution": "Separate business identity from agent SID and commercial platform accounts.",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "cryptonomicsed-byte/omokoda-smithers",
+      "priority": "P0",
+      "adoption_type": "FACTORY ORCHESTRATION",
+      "caution": "Exact source audit required; one canonical Task/Attempt ledger, no alternate authority for billing/d",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "cryptonomicsed-byte/okf-security-pipeline",
+      "priority": "P1",
+      "adoption_type": "SECURITY EVIDENCE",
+      "caution": "Uploaded snapshot was audited; historical artifact mismatches and missing refs must be shown, not si",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "n8n-io/n8n",
+      "priority": "P1",
+      "adoption_type": "OPTIONAL WORKFLOW CONNECTOR",
+      "caution": "Distinct product from Nod; separate license; never second canonical job ledger.",
+      "license": "NOASSERTION",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "remotion-dev/skills",
+      "priority": "P1",
+      "adoption_type": "SKILL/REFERENCE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "fractal-nyc/software-engineering-go-launch-checklist",
+      "priority": "P0",
+      "adoption_type": "GATE",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "giladHaimov/Smart-Contract-AI-Audit-Skill",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "pashov/ai-web3-security",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "daoism-systems/solidity-audit-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "NOASSERTION",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "dilukangelosl/web3-ai-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "LollyTim/solidity-evm-skill",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Neph0s/awesome-llm-role-playing-with-persona",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "tencent-ailab/persona-hub",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "anthropics/evals",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "CC-BY-4.0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "InteractiveNLP-Team/RoleLLM-public",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "LISK819129/OpenNPC",
+      "priority": "P2",
+      "adoption_type": "DATA/ROLE/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "NOASSERTION",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "SnapdragonGameStudios/mindsand-engine",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "BSD-3-Clause-Clear",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "awslabs/hcls-agent-skills",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "MIT-0",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "JarvisUSTC/DoctorAgent-RL",
+      "priority": "P2",
+      "adoption_type": "DOMAIN SKILL/EVAL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "NOASSERTION",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "Newmcpe/rust-coding-skill",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "WTFPL",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "actionbook/rust-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "MystenLabs/sui-dev-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "polyglotdev/best-practice-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "iwillig/clojure-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "iwillig/agentic-engineering-with-clojure",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "chaploud/clojure-skills",
+      "priority": "P1",
+      "adoption_type": "LANGUAGE SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": "NOASSERTION",
+      "archived": false,
+      "private": false
+    },
+    {
+      "repo": "kodustech/awesome-agent-skills",
+      "priority": "P2",
+      "adoption_type": "DISCOVERY/PROCESS",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "license": null,
+      "archived": false,
+      "private": false
+    }
+  ],
+  "not_found": [
+    {
+      "repo": "google/gvisor",
+      "priority": "P1",
+      "adoption_type": "ISOLATION OPTION",
+      "caution": "Validate kernel/host compatibility; not a substitute for tenant policy.",
+      "finding": "no data"
+    },
+    {
+      "repo": "nickvasilescu/grokbot-clone",
+      "priority": "P1",
+      "adoption_type": "HISTORICAL REFERENCE",
+      "caution": "Avoid protected names/voices/art and no redundant agent stack.",
+      "finding": "no data"
+    },
+    {
+      "repo": "iCodeCraft/anti-slop",
+      "priority": "P1",
+      "adoption_type": "GATE/SKILL",
+      "caution": "Pin SHA; read license; treat external content as untrusted until evaluation",
+      "finding": "no data"
+    }
+  ]
+}
