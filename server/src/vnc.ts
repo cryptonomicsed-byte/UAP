@@ -218,7 +218,12 @@ async function relay(client: WebSocket, userId: string, botId: string, mode: 'wa
     });
     upstream.on('close', (code, reason) => { fromUp.close(new Error(`upstream closed ${code}`)); closeAll(1000, `upstream ${code} ${reason}`); });
     upstream.on('error', (e) => { fromUp.close(e as Error); closeAll(1011, String(e)); });
-    await new Promise<void>((res, rej) => { upstream!.once('open', () => res()); upstream!.once('error', rej); });
+    // Local upstreams are already connected by the time connectLocalVnc() resolves and never
+    // emit 'open' (they are a bare TCP socket, not a WebSocket) — waiting for it hung every
+    // local-screen viewer session forever. Only real WebSocket upstreams (Orgo) need this wait.
+    if (upstream.readyState !== WebSocket.OPEN) {
+      await new Promise<void>((res, rej) => { upstream!.once('open', () => res()); upstream!.once('error', rej); });
+    }
 
     const serverInit = await upstreamHandshake(fromUp, (b) => upstream!.send(b), password);
     await browserHandshake(fromClient, (b) => client.send(b), serverInit);
