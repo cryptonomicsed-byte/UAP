@@ -29,8 +29,11 @@ export function selectRuntime(input: {
 }
 
 export const LOCAL_VOICES = [
-  { id: 'local-default', name: 'Device voice', gender: 'neutral' },
-  { id: 'local-calm', name: 'Device voice (slower)', gender: 'neutral' },
+  { id: 'local-default', name: 'Device voice (US)', gender: 'neutral' },
+  { id: 'local-calm', name: 'Device voice (US, slower)', gender: 'neutral' },
+  { id: 'local-gb', name: 'Device voice (British)', gender: 'male' },
+  { id: 'local-rp', name: 'Device voice (Received Pronunciation)', gender: 'male' },
+  { id: 'local-scotland', name: 'Device voice (Scottish)', gender: 'male' },
 ] as const;
 
 export const LOCAL_CONNECTORS = [

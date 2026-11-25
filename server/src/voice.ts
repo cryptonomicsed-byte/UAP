@@ -8,6 +8,7 @@ import { db, now } from './db.js';
 import { env } from './env.js';
 import { requireProvider, isProviderConfigured } from './providers.js';
 import { LOCAL_VOICES } from './lib/free-runtime.js';
+import { synthesizeLocal, LocalTtsError } from './lib/local-tts.js';
 import { newId } from './lib/ids.js';
 import type { AuthVars } from './lib/auth.js';
 import { appendRow, emitBot, getBotRow, getLive, listRoutines, listTasks, updateRow } from './store.js';
@@ -475,6 +476,15 @@ voiceApi.post('/preview', async (c) => {
   const language = p.language && langName(p.language) ? p.language : s.language;
   const text = String(p.text || `Hi, I'm ${bot?.name ?? 'your Bot'}. This is how I'll sound when we talk.`).slice(0, 400);
   const codec = p.codec === 'pcm' ? 'pcm' : 'mp3';
+  if (!isProviderConfigured('xai')) {
+    try {
+      const wav = synthesizeLocal(text, voice, clampSpeed(p.speed ?? s.speed));
+      return c.body(new Uint8Array(wav), 200, { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store' });
+    } catch (error) {
+      console.warn('[voice] local tts failed', error instanceof LocalTtsError ? error.message : error);
+      return c.json({ error: 'Preview unavailable' }, 502);
+    }
+  }
   const r = await fetch(`${XAI}/tts`, {
     method: 'POST',
     headers: { ...xaiHeaders(), 'Content-Type': 'application/json' },
