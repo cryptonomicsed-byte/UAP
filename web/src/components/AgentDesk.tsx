@@ -13,12 +13,14 @@ import { useConfigUI } from '../configStore';
 
 type Template = { slug: string; title: string; family: string };
 type Note = { id: string; text: string };
+type McpServer = { id: string; name: string; url: string; headerNames: string[]; enabled: boolean };
 
 export function AgentDesk({ bot }: { bot: Bot }) {
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading');
   const [autonomy, setAutonomy] = useState('ask');
   const [notes, setNotes] = useState<Note[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [mcpServers, setMcpServers] = useState<McpServer[]>([]);
   const [pending, setPending] = useState<number | null>(null);
   const [pack, setPack] = useState('Engineering pack not loaded');
   const [themeCss, setThemeCss] = useState('');
@@ -30,16 +32,18 @@ export function AgentDesk({ bot }: { bot: Bot }) {
     setPhase('loading');
     setError(null);
     try {
-      const [auto, memory, catalog, live] = await Promise.all([
+      const [auto, memory, catalog, live, connectors] = await Promise.all([
         fetch(`/api/v6/bots/${bot.id}/autonomy`, { credentials: 'include' }).then((r) => r.json()),
         fetch(`/api/bots/${bot.id}/memories`, { credentials: 'include' }).then((r) => r.json()),
         fetch('/api/v6/sid/templates', { credentials: 'include' }).then((r) => r.json()),
         fetch('/api/v6/live', { credentials: 'include' }).then((r) => r.json()),
+        fetch(`/api/v6/bots/${bot.id}/mcp-servers`, { credentials: 'include' }).then((r) => r.json()),
       ]);
       setAutonomy(auto.mode || 'ask');
       setNotes(memory.memories ?? []);
       setTemplates(catalog.templates ?? []);
       setPending(Array.isArray(live.pending) ? live.pending.length : 0);
+      setMcpServers(connectors.servers ?? []);
       const packRes = await fetch('/api/v6/engineering-pack', { credentials: 'include' }).then((r) => r.json());
       setPack(`${packRes.count} sources pinned, ${packRes.installed} installed. A finished prompt is not a release.`);
       const theme = await fetch(`/api/v6/bots/${bot.id}/theme`, { credentials: 'include' }).then((r) => r.json());
@@ -113,6 +117,44 @@ export function AgentDesk({ bot }: { bot: Bot }) {
     setThemeTokens(body.tokens ?? {});
   }
 
+  async function addConnector(form: HTMLFormElement) {
+    const name = (form.elements.namedItem('mcp_name') as HTMLInputElement).value.trim();
+    const url = (form.elements.namedItem('mcp_url') as HTMLInputElement).value.trim();
+    const headerName = (form.elements.namedItem('mcp_header_name') as HTMLInputElement).value.trim();
+    const headerValue = (form.elements.namedItem('mcp_header_value') as HTMLInputElement).value;
+    if (!name || !url) return;
+    setBusy('mcp-add');
+    setError(null);
+    const res = await fetch(`/api/v6/bots/${bot.id}/mcp-servers`, {
+      method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, url, headers: headerName ? { [headerName]: headerValue } : undefined }),
+    });
+    const body = await res.json().catch(() => ({}));
+    setBusy(null);
+    if (!res.ok) { setError(body.error || 'The MCP server was not added.'); return; }
+    setMcpServers((rows) => [...rows, body.server]);
+    form.reset();
+  }
+
+  async function toggleConnector(id: string, enabled: boolean) {
+    setBusy(`mcp-${id}`);
+    const res = await fetch(`/api/v6/bots/${bot.id}/mcp-servers/${id}`, {
+      method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }),
+    });
+    const body = await res.json().catch(() => ({}));
+    setBusy(null);
+    if (res.ok) setMcpServers(body.servers ?? []);
+  }
+
+  async function removeConnector(id: string) {
+    setBusy(`mcp-${id}`);
+    const res = await fetch(`/api/v6/bots/${bot.id}/mcp-servers/${id}`, { method: 'DELETE', credentials: 'include' });
+    const body = await res.json().catch(() => ({}));
+    setBusy(null);
+    if (res.ok) setMcpServers(body.servers ?? []);
+  }
+
   if (phase === 'loading') return <p className="desk__state">Loading {bot.name}'s desk…</p>;
   if (phase === 'error') return <p className="desk__state" role="alert">{error} <button type="button" className="link-btn" onClick={() => load()}>Retry</button></p>;
 
@@ -162,6 +204,30 @@ export function AgentDesk({ bot }: { bot: Bot }) {
             ))}
           </ul>
         )}
+      </section>
+      <section className="desk__block">
+        <h3>Connectors</h3>
+        <p className="desk__state">Real MCP servers for this agent — not just Composio's catalog. A name becomes its tool prefix (<code>mcp_&lt;name&gt;_*</code>). Header values are never shown again once saved.</p>
+        {mcpServers.length === 0 ? <p className="desk__state">No custom MCP servers yet.</p> : (
+          <ul className="desk__list">
+            {mcpServers.map((s) => (
+              <li key={s.id}>
+                <span><strong>{s.name}</strong><small>{s.url}{s.headerNames.length > 0 ? ` · ${s.headerNames.join(', ')} set` : ''}</small></span>
+                <span className="desk__row">
+                  <button type="button" className="btn btn--sm btn--secondary" disabled={busy === `mcp-${s.id}`} onClick={() => toggleConnector(s.id, !s.enabled)}>{s.enabled ? 'On' : 'Off'}</button>
+                  <button type="button" className="btn btn--sm btn--secondary" disabled={busy === `mcp-${s.id}`} onClick={() => removeConnector(s.id)}>Remove</button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <form className="desk__row" onSubmit={(event) => { event.preventDefault(); addConnector(event.currentTarget); }}>
+          <input name="mcp_name" className="text-input" aria-label="Server name" placeholder="spacemail" />
+          <input name="mcp_url" className="text-input" aria-label="Server URL" placeholder="https://mcp.example.com/mcp" />
+          <input name="mcp_header_name" className="text-input" aria-label="Header name (optional)" placeholder="Authorization" />
+          <input name="mcp_header_value" className="text-input" aria-label="Header value (optional)" type="password" placeholder="Bearer sk-..." />
+          <button type="submit" className="btn btn--sm" disabled={busy === 'mcp-add'}>Add</button>
+        </form>
       </section>
       <section className="desk__block">
         <h3>Appearance</h3>

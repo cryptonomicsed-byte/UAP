@@ -6,6 +6,7 @@ import YAML from 'yaml';
 import { displayFor } from './box.js';
 import { cdpUrlFor, screenFor } from './computer.js';
 import { db } from './db.js';
+import { mcpServersFor } from './lib/mcp-connectors.js';
 import { deployment } from './deployment.js';
 import { env } from './env.js';
 import type { EngineInfo, EngineProvider } from './types.js';
@@ -257,6 +258,7 @@ async function writeHome(botId: string): Promise<{ home: string; key: string; di
   cfg.mcp_servers = {
     ...(cfg.mcp_servers ?? {}),
     ...extraMcpServers(),
+    ...mcpServersFor(db, botId),
     hq: { url: `${env.mcpBaseUrl}/mcp/${botId}`, headers: { Authorization: `Bearer ${mcpToken(botId)}` }, timeout: 1800, connect_timeout: 30 },
   };
   writePrivate(cfgFile, YAML.stringify(cfg));

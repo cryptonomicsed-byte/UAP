@@ -24,6 +24,7 @@ import { createFactoryJob, smithersBuild, skillforgeAttachPack, reaEvaluate, ass
 import { adoptionReport, loadAdoptionMatrix } from './lib/agentos-adoption.js';
 import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-templates.js';
 import { materializeSidBot } from './lib/sid-bots.js';
+import { listMcpServers, addMcpServer, removeMcpServer, setMcpServerEnabled, McpConnectorError } from './lib/mcp-connectors.js';
 import { polyglotMap } from './lib/polyglot-map.js';
 import { SOURCE_RIGHTS, duskbotBlocked } from './lib/source-rights.js';
 import { autonomyDecision, getAutonomy, setAutonomy, type Autonomy } from './lib/autonomy.js';
@@ -494,5 +495,34 @@ v6Api.post('/sid/materialize', requireUser, async (c) => {
     const err = error instanceof SidTemplateError ? error : new SidTemplateError('failed', String((error as Error).message));
     return c.json({ error: err.message, code: err.code }, 400);
   }
+});
+
+v6Api.get('/bots/:id/mcp-servers', requireUser, (c) => c.json({ servers: listMcpServers(db, c.req.param('id')) }));
+
+v6Api.post('/bots/:id/mcp-servers', requireUser, async (c) => {
+  const botId = c.req.param('id');
+  const body = await c.req.json<{ name?: string; url?: string; headers?: Record<string, string> }>().catch(() => ({ name: undefined, url: undefined, headers: undefined }));
+  if (!body.name || !body.url) return c.json({ error: 'name and url are required' }, 400);
+  try {
+    const server = addMcpServer(db, botId, { name: body.name, url: body.url, headers: body.headers });
+    return c.json({ server });
+  } catch (error) {
+    if (error instanceof McpConnectorError) return c.json({ error: error.message }, 400);
+    return c.json({ error: 'Could not add that MCP server.' }, 400);
+  }
+});
+
+v6Api.patch('/bots/:id/mcp-servers/:serverId', requireUser, async (c) => {
+  const body = await c.req.json<{ enabled?: boolean }>().catch(() => ({ enabled: undefined }));
+  if (typeof body.enabled !== 'boolean') return c.json({ error: 'enabled must be a boolean' }, 400);
+  const ok = setMcpServerEnabled(db, c.req.param('id'), c.req.param('serverId'), body.enabled);
+  if (!ok) return c.json({ error: 'not found' }, 404);
+  return c.json({ ok: true, servers: listMcpServers(db, c.req.param('id')) });
+});
+
+v6Api.delete('/bots/:id/mcp-servers/:serverId', requireUser, (c) => {
+  const ok = removeMcpServer(db, c.req.param('id'), c.req.param('serverId'));
+  if (!ok) return c.json({ error: 'not found' }, 404);
+  return c.json({ ok: true, servers: listMcpServers(db, c.req.param('id')) });
 });
 

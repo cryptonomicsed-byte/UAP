@@ -353,6 +353,13 @@ CREATE TABLE IF NOT EXISTS pack_installs (
   specialist_id TEXT NOT NULL, skill_id TEXT NOT NULL, created_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS pack_installs_bot ON pack_installs(bot_id);` },
+  { id: 16, name: 'bot-mcp-servers', sql: `
+CREATE TABLE IF NOT EXISTS bot_mcp_servers (
+  id TEXT PRIMARY KEY, bot_id TEXT NOT NULL, name TEXT NOT NULL, url TEXT NOT NULL,
+  headers_json TEXT NOT NULL DEFAULT '{}', enabled INTEGER NOT NULL DEFAULT 1,
+  created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS bot_mcp_servers_bot ON bot_mcp_servers(bot_id);` },
 ];
 
 export class SqliteMigrationError extends Error {
