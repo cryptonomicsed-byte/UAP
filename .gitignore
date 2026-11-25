@@ -19,3 +19,4 @@ artifacts/
 
 # Rust build output (Cargo.lock is committed: this is an application, not a library)
 target/
+erl_crash.dump
