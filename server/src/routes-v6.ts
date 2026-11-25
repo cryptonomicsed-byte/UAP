@@ -28,6 +28,7 @@ import { polyglotMap } from './lib/polyglot-map.js';
 import { SOURCE_RIGHTS, duskbotBlocked } from './lib/source-rights.js';
 import { autonomyDecision, getAutonomy, setAutonomy, type Autonomy } from './lib/autonomy.js';
 import { boardSnapshot } from './lib/board.js';
+import { liveSnapshot } from './lib/live.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -411,6 +412,7 @@ v6Api.post('/sid/spawn', async (c) => {
 });
 
 v6Api.get('/board', (c) => c.json(boardSnapshot(db)));
+v6Api.get('/live', (c) => c.json(liveSnapshot(db)));
 v6Api.get('/sources', (c) => c.json({ sources: SOURCE_RIGHTS, duskbot: duskbotBlocked() }));
 v6Api.get('/polyglot', (c) => c.json({ pillars: polyglotMap() }));
 v6Api.get('/bots/:id/autonomy', (c) => c.json({ mode: getAutonomy(db, c.req.param('id')) }));

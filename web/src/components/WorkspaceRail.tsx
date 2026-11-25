@@ -24,7 +24,9 @@ export type WorkspaceSurface =
   | 'memory'
   | 'skills'
   | 'polyglot'
-  | 'board';
+  | 'board'
+  | 'market'
+  | 'live';
 
 const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'chat', label: 'Chat', hint: 'Talk to the selected agent' },
@@ -40,6 +42,8 @@ const ITEMS: { id: WorkspaceSurface; label: string; hint: string }[] = [
   { id: 'skills', label: 'Skills', hint: 'Instructions, not grants' },
   { id: 'polyglot', label: 'Stack', hint: 'Which language owns which job' },
   { id: 'board', label: 'Board', hint: 'Tasks and SID identity' },
+  { id: 'market', label: 'Market', hint: 'Templates you can install, and trial roles you cannot' },
+  { id: 'live', label: 'Live', hint: 'Turns and approvals, not message text' },
 ];
 
 export function WorkspaceRail({
@@ -84,6 +88,9 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
   const [skills, setSkills] = useState<{ id: string; name?: string; title?: string }[]>([]);
   const [pillars, setPillars] = useState<{ niche: string; language: string; owns: string; present: boolean }[]>([]);
   const [board, setBoard] = useState<{ tasks: { task_id: string; status: string; intent: string }[]; identities: { sid: string; template_slug: string; kind: string; status: string; parent_sid: string | null }[]; screens: { bot_id: string; screen_id: string }[] }>({ tasks: [], identities: [], screens: [] });
+  const [roles, setRoles] = useState<{ id: string; title: string; family: string; state: string; riskClass: string }[]>([]);
+  const [family, setFamily] = useState('all');
+  const [live, setLive] = useState<{ pending: { bot_id: string; state: string }[]; approvals: { id: string; tool: string; status: string }[]; recent: { bot_id: string; kind: string }[]; note?: string }>({ pending: [], approvals: [], recent: [] });
   const [autonomy, setAutonomyMode] = useState('ask');
 
   useEffect(() => {
@@ -132,6 +139,22 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
       .then((r) => r.json())
       .then((j) => setBoard({ tasks: j.tasks ?? [], identities: j.identities ?? [], screens: j.screens ?? [] }))
       .catch(() => setNote('Board unavailable'));
+  }, [surface]);
+
+  useEffect(() => {
+    if (surface !== 'market') return;
+    fetch('/api/v6/roles/roster', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setRoles(j.roles ?? []))
+      .catch(() => setNote('Roster unavailable'));
+  }, [surface]);
+
+  useEffect(() => {
+    if (surface !== 'live') return;
+    fetch('/api/v6/live', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((j) => setLive({ pending: j.pending ?? [], approvals: j.approvals ?? [], recent: j.recent ?? [], note: j.note }))
+      .catch(() => setNote('Live view unavailable'));
   }, [surface]);
 
   useEffect(() => {
@@ -301,6 +324,53 @@ export function WorkspaceStage({ surface }: { surface: WorkspaceSurface }) {
         <ul className="ws-list">
           {skills.length === 0 && <li className="ws-empty">No skills on this agent.</li>}
           {skills.map((row) => <li key={row.id}><strong>{row.name || row.title || row.id}</strong></li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'market') {
+    const families = ['all', ...new Set(roles.map((row) => row.family))];
+    const shown = roles.filter((row) => family === 'all' || row.family === family);
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Market</h1>
+          <p>Installable agents are on Templates. This roster is trial. A title here is not a grant and does not install.</p>
+          <div className="ws-card__actions">
+            {families.map((name) => (
+              <button key={name} type="button" className={name === family ? 'ws-btn' : 'ws-btn ws-btn--ghost'} onClick={() => setFamily(name)}>{name}</button>
+            ))}
+          </div>
+        </header>
+        <ul className="ws-list">
+          {shown.map((row) => <li key={`${row.id}-${row.family}`}><strong>{row.title}</strong><span>{row.family} · {row.state} · {row.riskClass}</span></li>)}
+        </ul>
+      </section>
+    );
+  }
+
+  if (surface === 'live') {
+    return (
+      <section className="ws-stage">
+        <header className="ws-stage__head">
+          <h1>Live</h1>
+          <p>{live.note || 'Turns and approvals. Message text stays in the chat.'}</p>
+        </header>
+        <h2>Pending</h2>
+        <ul className="ws-list">
+          {live.pending.length === 0 && <li className="ws-empty">No turn in flight.</li>}
+          {live.pending.map((row) => <li key={row.bot_id}><strong>{row.state}</strong><span>{row.bot_id}</span></li>)}
+        </ul>
+        <h2>Approvals</h2>
+        <ul className="ws-list">
+          {live.approvals.length === 0 && <li className="ws-empty">No approvals.</li>}
+          {live.approvals.map((row) => <li key={row.id}><strong>{row.tool}</strong><span>{row.status}</span></li>)}
+        </ul>
+        <h2>Recent kinds</h2>
+        <ul className="ws-list">
+          {live.recent.length === 0 && <li className="ws-empty">No rows yet.</li>}
+          {live.recent.map((row, index) => <li key={`${row.bot_id}-${index}`}><strong>{row.kind}</strong><span>{row.bot_id}</span></li>)}
         </ul>
       </section>
     );
