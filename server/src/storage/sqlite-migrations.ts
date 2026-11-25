@@ -341,7 +341,8 @@ CREATE TABLE IF NOT EXISTS agent_fallback_ledger (
 CREATE TABLE IF NOT EXISTS standing_grants (
   bot_id TEXT NOT NULL, server_id TEXT NOT NULL, tool_name TEXT NOT NULL, config_hash TEXT NOT NULL, created_at INTEGER NOT NULL,
   PRIMARY KEY (bot_id, server_id, tool_name)
-);
+);` },
+  { id: 13, name: 'bot-theme', sql: `
 CREATE TABLE IF NOT EXISTS bot_theme (bot_id TEXT PRIMARY KEY, css TEXT NOT NULL, updated_at INTEGER NOT NULL);` },
 ];
 
