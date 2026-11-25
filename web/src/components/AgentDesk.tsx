@@ -19,6 +19,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [pending, setPending] = useState<number | null>(null);
+  const [pack, setPack] = useState('Engineering pack not loaded');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -36,6 +37,8 @@ export function AgentDesk({ bot }: { bot: Bot }) {
       setNotes(memory.memories ?? []);
       setTemplates(catalog.templates ?? []);
       setPending(Array.isArray(live.pending) ? live.pending.length : 0);
+      const packRes = await fetch('/api/v6/engineering-pack', { credentials: 'include' }).then((r) => r.json());
+      setPack(`${packRes.count} sources pinned, ${packRes.installed} installed. A finished prompt is not a release.`);
       setPhase('ready');
     } catch {
       setPhase('error');
@@ -97,7 +100,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
       {error && <p className="desk__state" role="status">{error}</p>}
       <section className="desk__block">
         <h3>Autonomy</h3>
-        <p>{pending === 0 ? 'No turn is in flight.' : `${pending} turn${pending === 1 ? '' : 's'} in flight.`}</p>
+        <p>{pending === 0 ? 'No turn is in flight.' : `${pending} turn${pending === 1 ? '' : 's'} in flight.`} {pack}</p>
         <div className="desk__row">
           {(['ask', 'draft', 'act'] as const).map((mode) => (
             <button key={mode} type="button" className={autonomy === mode ? 'btn btn--sm' : 'btn btn--sm btn--secondary'} disabled={busy === mode} onClick={() => setMode(mode)}>{mode}</button>

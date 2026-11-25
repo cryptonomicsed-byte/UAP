@@ -30,6 +30,7 @@ import { autonomyDecision, getAutonomy, setAutonomy, type Autonomy } from './lib
 import { boardSnapshot } from './lib/board.js';
 import { liveSnapshot } from './lib/live.js';
 import { domainSurface } from './lib/domain-surface.js';
+import { acceptBuild, dispatchSpecialists, packReport, type TaskEvidence } from './lib/engineering-pack.js';
 import { scanPromptInjection, signSbom, buildReleaseRecord } from './lib/ops-security.js';
 import {
   goldenLeaseFixture,
@@ -415,6 +416,16 @@ v6Api.post('/sid/spawn', async (c) => {
 v6Api.get('/board', (c) => c.json(boardSnapshot(db)));
 v6Api.get('/live', (c) => c.json(liveSnapshot(db)));
 v6Api.get('/domain', (c) => c.json(domainSurface()));
+v6Api.get('/engineering-pack', (c) => c.json(packReport()));
+v6Api.post('/smithers/dispatch', async (c) => {
+  const body = await c.req.json<{ task?: string }>().catch(() => ({ task: undefined as string | undefined }));
+  if (!body.task) return c.json({ error: 'task required' }, 400);
+  return c.json(dispatchSpecialists(body.task));
+});
+v6Api.post('/smithers/accept', async (c) => {
+  const body = await c.req.json<TaskEvidence>().catch(() => ({} as TaskEvidence));
+  return c.json(acceptBuild(body));
+});
 v6Api.get('/sources', (c) => c.json({ sources: SOURCE_RIGHTS, duskbot: duskbotBlocked() }));
 v6Api.get('/polyglot', (c) => c.json({ pillars: polyglotMap() }));
 v6Api.get('/bots/:id/autonomy', (c) => c.json({ mode: getAutonomy(db, c.req.param('id')) }));

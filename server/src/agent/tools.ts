@@ -22,6 +22,7 @@ import { addMemory, listMemories } from '../engine-memory.js';
 import { boardSnapshot } from '../lib/board.js';
 import { liveSnapshot } from '../lib/live.js';
 import { domainSurface } from '../lib/domain-surface.js';
+import { acceptBuild, dispatchSpecialists } from '../lib/engineering-pack.js';
 
 export interface ToolCtx {
   userId: string;
@@ -399,6 +400,34 @@ const ALL_TOOLS: ToolDef[] = [
       if (!memory) return { output: 'Could not save a note. This agent may have no home.' };
       return { output: JSON.stringify({ id: memory.id, text: memory.text }), summary: 'Note saved' };
     },
+  },
+  {
+    name: 'dispatch_specialist',
+    description: 'Ask Smithers which specialist and skill sources a task needs. It does not load the whole engineering pack and it does not grant tools.',
+    parameters: obj({ task: { type: 'string' } }, ['task']),
+    activity: 'working',
+    label: 'Dispatching a specialist',
+    impl: async (a) => ({ output: JSON.stringify(dispatchSpecialists(String(a.task ?? ''))), summary: 'Specialist dispatched' }),
+  },
+  {
+    name: 'accept_build',
+    description: 'Release gate. A claim that the work is finished is not evidence. Tests must exit 0 and the reviewer must be a different specialist.',
+    parameters: obj({
+      acceptance: { type: 'string' },
+      specialist: { type: 'string' },
+      testExit: { type: 'number' },
+      reviewSid: { type: 'string' },
+      realityNote: { type: 'string' },
+    }, ['acceptance', 'specialist', 'testExit', 'reviewSid', 'realityNote']),
+    activity: 'working',
+    label: 'Checking the release gate',
+    impl: async (a) => ({ output: JSON.stringify(acceptBuild({
+      acceptance: String(a.acceptance ?? ''),
+      specialist: String(a.specialist ?? ''),
+      testExit: Number(a.testExit),
+      reviewSid: String(a.reviewSid ?? ''),
+      realityNote: String(a.realityNote ?? ''),
+    })) }),
   },
   {
     name: 'list_domain',
