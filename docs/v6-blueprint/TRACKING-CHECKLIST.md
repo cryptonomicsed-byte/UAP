@@ -433,7 +433,7 @@ blueprint text, no inference, no self-grading without a citation that was verifi
 - [ ] **MAUS-G-07** Test transcript search pagination without cross-tenant data leakage or unbounded logs.
 - [ ] **MAUS-G-08** Provide a typed `team.deploy` tool that stages import, shows requested grants, and waits for required human approval.
 - [ ] **MAUS-G-09** Log MCP events with redacted payload and stable correlation ID for each external client invocation.
-- [x] **MAUS-G-10** Add safe static documentation of tool effects, budgets, error families and idempotency expectations. — _PENDING tests/tool-docs.test.mjs (`every registered tool gets a doc entry with a real effect/risk`): server/src/lib/tool-docs.ts generates docs/architecture/TOOL-REFERENCE.md (219 lines, 24 tools) straight from the kernel's real classification (policy/tool-intents.ts effect+risk, autonomy.ts RISKY set, lib/failure.ts error taxonomy) — not hand-typed prose. Exposed at GET /api/v6/tool-docs. 4/4 tests green._
+- [x] **MAUS-G-10** Add safe static documentation of tool effects, budgets, error families and idempotency expectations. — _069d325 tests/tool-docs.test.mjs (`every registered tool gets a doc entry with a real effect/risk`): server/src/lib/tool-docs.ts generates docs/architecture/TOOL-REFERENCE.md (219 lines, 24 tools) straight from the kernel's real classification (policy/tool-intents.ts effect+risk, autonomy.ts RISKY set, lib/failure.ts error taxonomy) — not hand-typed prose. Exposed at GET /api/v6/tool-docs. 4/4 tests green._
 - [ ] **MAUS-G-11** Test an external agent that possesses only read scope cannot call worker control or deployment operations.
 - [ ] **MAUS-G-12** Support protocol version upgrades with contract fixtures, compatibility windows, deprecation and rollback.
 
