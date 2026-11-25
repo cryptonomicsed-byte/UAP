@@ -1178,13 +1178,13 @@
       "note": "Verified via `npm run v6:evidence:verify` (scripts/v6-evidence-map.mjs --verify): cited file(s) exist: server/src/lib/ops-security.ts."
     },
     "MAUS-E-03": {
-      "commit": "PENDING",
+      "commit": "ab83c91",
       "file": "tests/team-package-import.test.mjs",
       "test": "YAML anchor/alias (billion-laughs vector) is refused",
       "note": "server/src/lib/team-package-import.ts: hand-rolled safe YAML subset parser (no js-yaml on untrusted input). Enforces 256KB size cap, max depth 12, refuses anchors/aliases/merge-keys/tags outright (not approximated), path-traversal rejection for every referenced file (absolute, .., drive letter, null byte). 7/7 tests green."
     },
     "MAUS-F-11": {
-      "commit": "PENDING",
+      "commit": "ab83c91",
       "file": "tests/channel-cap-wiring.test.mjs",
       "test": "enqueue() gates new turns on the channel cap",
       "note": "server/src/lib/channel-caps.ts (sliding-window sqlite cap, migration 14) wired into agent/loop.ts enqueue() \u2014 the single real choke point every user and bot-to-bot trigger passes through. Denies new turn starts past 20/min per bot with a visible retry-after notice; never caps an internal system trigger. 12/12 tests green (channel-caps + wiring + team-package-import)."

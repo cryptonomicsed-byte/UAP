@@ -9,7 +9,7 @@ A box is checked only when TRACKING.json has a real entry for its id AND
 cited test string is actually present in it. No keyword matching against the
 blueprint text, no inference, no self-grading without a citation that was verified.
 
-**235 / 1610 checked, each with a cited commit + test/file.**
+**237 / 1610 checked, each with a cited commit + test/file.**
 
 ## 7.1 A. Base and rights (10/10)
 
@@ -389,11 +389,11 @@ blueprint text, no inference, no self-grading without a citation that was verifi
 - [ ] **MAUS-D-11** Run cross-tenant spoofing tests where caller swaps agent_id, SID, workspace_id, template digest or device key.
 - [ ] **MAUS-D-12** Block an agent from approving its own privileged release, admin grant or payment simply by claiming a SID.
 
-## 18.E — Agency Agents and OpenMaus portable team packages (0/15)
+## 18.E — Agency Agents and OpenMaus portable team packages (1/15)
 
 - [ ] **MAUS-E-01** Verify the user's exact Agency Agents fork source tree, license and specialist definitions; pin the selected SHA.
 - [ ] **MAUS-E-02** Inspect OpenMaus team package Markdown/YAML format and convert it into a safe, versioned import schema.
-- [ ] **MAUS-E-03** Implement isolated parsing with size, YAML alias, depth, CPU and path traversal limits.
+- [x] **MAUS-E-03** Implement isolated parsing with size, YAML alias, depth, CPU and path traversal limits. — _ab83c91 tests/team-package-import.test.mjs (`YAML anchor/alias (billion-laughs vector) is refused`): server/src/lib/team-package-import.ts: hand-rolled safe YAML subset parser (no js-yaml on untrusted input). Enforces 256KB size cap, max depth 12, refuses anchors/aliases/merge-keys/tags outright (not approximated), path-traversal rejection for every referenced file (absolute, .., drive letter, null byte). 7/7 tests green._
 - [ ] **MAUS-E-04** Preserve source URL, package digest, publisher identity, license, upstream commit, reviewedAt and trust verdict.
 - [ ] **MAUS-E-05** Quarantine imported instructions and embedded shell fragments until policy and content checks complete.
 - [ ] **MAUS-E-06** Display imported roles, requests for tools, apps, computers, costs and schedules before user approval.
@@ -407,7 +407,7 @@ blueprint text, no inference, no self-grading without a citation that was verifi
 - [ ] **MAUS-E-14** Provide Smithers with a versioned, replayable team-deployment receipt and actual per-agent readiness status.
 - [ ] **MAUS-E-15** Benchmark a real development team performing an integrated project rather than counting role labels as specialists.
 
-## 18.F — Multi-bot channels, messaging and intelligent routing (0/12)
+## 18.F — Multi-bot channels, messaging and intelligent routing (1/12)
 
 - [ ] **MAUS-F-01** Model channels and rooms as tenant/project-scoped ACL resources with explicit human and SID memberships.
 - [ ] **MAUS-F-02** Maintain per-channel conversation history, artifact visibility, retention, responder rules and shared context boundaries.
@@ -419,7 +419,7 @@ blueprint text, no inference, no self-grading without a citation that was verifi
 - [ ] **MAUS-F-08** Prohibit cross-channel memory copy without explicit resource authorization and provenance-preserving export.
 - [ ] **MAUS-F-09** Test simultaneous agent replies for sequence, thread ownership, cancellation and delivered notification dedupe.
 - [ ] **MAUS-F-10** Keep private channels inaccessible to Team MCP exports unless the invoking principal has read permission.
-- [ ] **MAUS-F-11** Add per-channel rate/usage caps and prevent a message storm from launching unlimited paid agents.
+- [x] **MAUS-F-11** Add per-channel rate/usage caps and prevent a message storm from launching unlimited paid agents. — _ab83c91 tests/channel-cap-wiring.test.mjs (`enqueue() gates new turns on the channel cap`): server/src/lib/channel-caps.ts (sliding-window sqlite cap, migration 14) wired into agent/loop.ts enqueue() — the single real choke point every user and bot-to-bot trigger passes through. Denies new turn starts past 20/min per bot with a visible retry-after notice; never caps an internal system trigger. 12/12 tests green (channel-caps + wiring + team-package-import)._
 - [ ] **MAUS-F-12** Provide UI unread, searchable transcript, archive and restore behavior grounded in persistent server state.
 
 ## 18.G — Team-control MCP server and external agent orchestration (0/12)
