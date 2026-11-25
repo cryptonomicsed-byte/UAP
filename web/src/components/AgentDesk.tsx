@@ -22,6 +22,8 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [mcpServers, setMcpServers] = useState<McpServer[]>([]);
   const [npub, setNpub] = useState<string | null>(null);
+  const [calls, setCalls] = useState<{ id: string; from_pubkey: string | null; created_at: number }[]>([]);
+  const [listening, setListening] = useState(false);
   const [pending, setPending] = useState<number | null>(null);
   const [pack, setPack] = useState('Engineering pack not loaded');
   const [themeCss, setThemeCss] = useState('');
@@ -51,6 +53,7 @@ export function AgentDesk({ bot }: { bot: Bot }) {
       setThemeCss(theme.css ?? '');
       setThemeTokens(theme.tokens ?? {});
       fetch(`/api/v6/bots/${bot.id}/nostr-identity`, { credentials: 'include' }).then((r) => r.json()).then((d) => setNpub(d.npub ?? null)).catch(() => {});
+      fetch(`/api/v6/bots/${bot.id}/calls`, { credentials: 'include' }).then((r) => r.json()).then((d) => { setCalls(d.calls ?? []); setListening(!!d.listening); }).catch(() => {});
       setPhase('ready');
     } catch {
       setPhase('error');
@@ -160,6 +163,16 @@ export function AgentDesk({ bot }: { bot: Bot }) {
   if (phase === 'loading') return <p className="desk__state">Loading {bot.name}'s desk…</p>;
   if (phase === 'error') return <p className="desk__state" role="alert">{error} <button type="button" className="link-btn" onClick={() => load()}>Retry</button></p>;
 
+  async function toggleListening() {
+    setBusy('listen');
+    try {
+      const r = await fetch(`/api/v6/bots/${bot.id}/nostr-listen${listening ? '/stop' : ''}`, { method: 'POST', credentials: 'include' }).then((r2) => r2.json());
+      setListening(!!r.listening);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className={`desk sid-theme-${bot.id}`} style={themeTokens as React.CSSProperties}>
       {error && <p className="desk__state" role="status">{error}</p>}
@@ -207,6 +220,27 @@ export function AgentDesk({ bot }: { bot: Bot }) {
             ))}
           </ul>
         )}
+      </section>
+      <section className="desk__block">
+        <h3>Calls</h3>
+        <p className="desk__state">
+          This agent's real, numberless address on the Nostr relay: {npub ? <code>{npub}</code> : 'minting…'}.
+          Another agent that has this npub can call it.
+        </p>
+        <button type="button" className="btn btn--sm" disabled={busy === 'listen'} onClick={() => void toggleListening()}>
+          {listening ? 'Stop listening for calls' : 'Start listening for calls'}
+        </button>
+        {calls.length === 0 ? <p className="desk__state">No incoming calls waiting.</p> : (
+          <ul className="desk__list">
+            {calls.map((call) => (
+              <li key={call.id}>
+                <span>Ringing from <code>{call.from_pubkey?.slice(0, 16) ?? 'unknown'}…</code></span>
+                <small>{new Date(call.created_at).toLocaleTimeString()}</small>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="desk__state">Signaling only for now — real-time audio over this call isn't wired up yet.</p>
       </section>
       <section className="desk__block">
         <h3>Connectors</h3>

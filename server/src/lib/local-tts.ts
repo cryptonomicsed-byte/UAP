@@ -38,3 +38,21 @@ export function synthesizeLocal(text: string, voiceId: string, speed = 1): Buffe
     throw new LocalTtsError(`Local TTS (espeak-ng) failed: ${e?.message ?? e}`);
   }
 }
+
+/** Same synthesis, but as headerless 16-bit PCM at `sampleRate` -- what the frontend's
+ *  PcmPlayer actually expects (it always requests codec:'pcm' and treats the whole response
+ *  body as raw Int16 samples; feeding it a WAV container's header bytes as if they were
+ *  samples produces an audible click/garbage at the start). ffmpeg does the resample +
+ *  container stripping; espeak-ng itself only emits WAV. */
+export function synthesizeLocalPcm(text: string, voiceId: string, speed: number, sampleRate: number): Buffer {
+  const wav = synthesizeLocal(text, voiceId, speed);
+  try {
+    return execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'wav', '-i', 'pipe:0', '-ar', String(sampleRate), '-ac', '1', '-f', 's16le', 'pipe:1'], {
+      input: wav,
+      maxBuffer: 20 * 1024 * 1024,
+      timeout: 15_000,
+    });
+  } catch (e: any) {
+    throw new LocalTtsError(`Local TTS PCM conversion failed: ${e?.message ?? e}`);
+  }
+}

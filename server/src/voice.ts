@@ -8,7 +8,7 @@ import { db, now } from './db.js';
 import { env } from './env.js';
 import { requireProvider, isProviderConfigured } from './providers.js';
 import { LOCAL_VOICES } from './lib/free-runtime.js';
-import { synthesizeLocal, LocalTtsError } from './lib/local-tts.js';
+import { synthesizeLocal, synthesizeLocalPcm, LocalTtsError } from './lib/local-tts.js';
 import { transcribeLocal, LocalSttError } from './lib/local-stt.js';
 import { newId } from './lib/ids.js';
 import type { AuthVars } from './lib/auth.js';
@@ -479,6 +479,10 @@ voiceApi.post('/preview', async (c) => {
   const codec = p.codec === 'pcm' ? 'pcm' : 'mp3';
   if (!isProviderConfigured('xai')) {
     try {
+      if (codec === 'pcm') {
+        const pcm = synthesizeLocalPcm(text, voice, clampSpeed(p.speed ?? s.speed), SAMPLE_RATE);
+        return c.body(new Uint8Array(pcm), 200, { 'Content-Type': `audio/pcm;rate=${SAMPLE_RATE}`, 'Cache-Control': 'no-store' });
+      }
       const wav = synthesizeLocal(text, voice, clampSpeed(p.speed ?? s.speed));
       return c.body(new Uint8Array(wav), 200, { 'Content-Type': 'audio/wav', 'Cache-Control': 'no-store' });
     } catch (error) {
@@ -496,7 +500,7 @@ voiceApi.post('/preview', async (c) => {
     console.warn('[voice] tts failed', r?.status, (await r?.text().catch(() => ''))?.slice(0, 200));
     return c.json({ error: 'Preview unavailable' }, 502);
   }
-  return c.body(Buffer.from(await r.arrayBuffer()), 200, {
+  return c.body(new Uint8Array(await r.arrayBuffer()), 200, {
     'Content-Type': codec === 'pcm' ? `audio/pcm;rate=${SAMPLE_RATE}` : 'audio/mpeg',
     'Cache-Control': 'no-store',
   });

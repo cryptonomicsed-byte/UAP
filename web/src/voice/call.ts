@@ -122,44 +122,105 @@ class VoiceCall {
     }
   }
 
+  /** Local mode: input via the browser's own SpeechRecognition when available, else our
+   *  real server-side STT (MediaRecorder -> /voice/stt, Vosk-backed). Output ALWAYS goes
+   *  through our real server-side TTS (/voice/preview, espeak-ng-backed) now -- this used to
+   *  just say a canned "Sent to the agent" line and never actually voice the reply, which is
+   *  the real reason "the voice section doesn't work": it technically ran, but you never
+   *  heard the agent talk back. */
   private startLocal(sess: VoiceSession) {
-    const w = window as unknown as {
-      SpeechRecognition?: new () => any;
-      webkitSpeechRecognition?: new () => any;
-    };
-    const Rec = w.SpeechRecognition ?? w.webkitSpeechRecognition;
     this.ready = true;
     setV({ status: 'live', startedAt: Date.now(), thinking: false, error: null });
-    const speak = (text: string) => {
-      if (!text.trim() || !window.speechSynthesis) return;
-      const u = new SpeechSynthesisUtterance(text.slice(0, 500));
-      u.rate = sess.speed || 1;
-      setV({ speaking: true });
-      u.onend = () => setV({ speaking: false });
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-    };
-    speak('Listening on this device. No paid voice provider.');
-    if (!Rec) {
-      setV({ error: 'This browser has speech synthesis but no speech recognition. Type in chat.' });
+    const say = (text: string) => { void this.speakLocal(text, sess); };
+    say("Listening on this device. I'll speak my real reply, no paid voice provider needed.");
+
+    const w = window as unknown as { SpeechRecognition?: new () => any; webkitSpeechRecognition?: new () => any };
+    const Rec = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    if (Rec) {
+      const rec = new Rec();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.onresult = (ev: any) => {
+        const last = ev.results[ev.results.length - 1];
+        const text = last?.[0]?.transcript?.trim() ?? '';
+        if (!text) return;
+        setV({ listening: !last.isFinal, captions: [...useVoice.getState().captions, { id: `u-${Date.now()}`, role: 'user', text, final: last.isFinal }] });
+        if (!last.isFinal || this.ended) return;
+        this.sendLocalTurn(text, say);
+      };
+      rec.onerror = () => setV({ error: 'Device speech recognition stopped' });
+      try { rec.start(); } catch { setV({ error: 'Could not start device speech recognition' }); }
+      this.localRec = rec;
       return;
     }
-    const rec = new Rec();
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.onresult = (ev: any) => {
-      const last = ev.results[ev.results.length - 1];
-      const text = last?.[0]?.transcript?.trim() ?? '';
-      if (!text) return;
-      setV({ listening: !last.isFinal, captions: [...useVoice.getState().captions, { id: `u-${Date.now()}`, role: 'user', text, final: last.isFinal }] });
-      if (!last.isFinal || this.ended) return;
-      void api.send(this.botId, text).then(() => {
-        speak('Sent to the agent.');
-      }).catch((e: Error) => setV({ error: e.message }));
-    };
-    rec.onerror = () => setV({ error: 'Device speech recognition stopped' });
-    try { rec.start(); } catch { setV({ error: 'Could not start device speech recognition' }); }
-    this.localRec = rec;
+    // No SpeechRecognition in this browser (e.g. Firefox): record real audio and transcribe
+    // it ourselves instead of giving up on input entirely.
+    this.startLocalRecorder(say);
+  }
+
+  private async startLocalRecorder(say: (text: string) => void) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const rec = new MediaRecorder(stream);
+      let chunks: Blob[] = [];
+      const cycle = () => { chunks = []; rec.start(); setTimeout(() => { if (rec.state === 'recording') rec.stop(); }, 4000); };
+      rec.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+      rec.onstop = async () => {
+        if (this.ended) { stream.getTracks().forEach((t) => t.stop()); return; }
+        const blob = new Blob(chunks, { type: rec.mimeType });
+        try {
+          const text = (await voiceApi.transcribe(blob)).trim();
+          if (text) {
+            setV({ captions: [...useVoice.getState().captions, { id: `u-${Date.now()}`, role: 'user', text, final: true }] });
+            this.sendLocalTurn(text, say);
+          }
+        } catch { /* a silent 4s window transcribing to nothing is normal, not an error */ }
+        if (!this.ended) cycle();
+      };
+      this.localRec = { stop: () => { try { rec.stop(); } catch { /* ignore */ } stream.getTracks().forEach((t) => t.stop()); } };
+      cycle();
+    } catch (e) {
+      setV({ error: 'No speech recognition in this browser and microphone access failed: ' + micErrorMessage(e) });
+    }
+  }
+
+  private sendLocalTurn(text: string, say: (text: string) => void) {
+    const sentSeq = Math.max(0, ...sortedRows(useStore.getState().transcripts[this.botId]).map((r) => r.seq));
+    setV({ thinking: true });
+    void api.send(this.botId, text).then(() => this.awaitLocalReply(sentSeq, say)).catch((e: Error) => { setV({ error: e.message, thinking: false }); });
+  }
+
+  /** Watches the live store (already kept current by the app's own event stream) for the
+   *  next real assistant reply after `sentSeq`, then speaks it for real. */
+  private awaitLocalReply(sentSeq: number, say: (text: string) => void, triesLeft = 40) {
+    if (this.ended) return;
+    const rows = sortedRows(useStore.getState().transcripts[this.botId]);
+    const reply = rows.find((r) => r.seq > sentSeq && r.body.type === 'message' && r.body.role === 'assistant' && !r.body.streaming);
+    if (reply && reply.body.type === 'message') {
+      setV({ thinking: false, captions: [...useVoice.getState().captions, { id: `a-${reply.seq}`, role: 'assistant', text: reply.body.text, final: true }] });
+      say(reply.body.text);
+      return;
+    }
+    if (triesLeft <= 0) { setV({ thinking: false }); say("Sorry, that's taking a while -- check the chat."); return; }
+    setTimeout(() => this.awaitLocalReply(sentSeq, say, triesLeft - 1), 500);
+  }
+
+  private async speakLocal(text: string, sess: VoiceSession) {
+    if (!text.trim() || this.ended) return;
+    setV({ speaking: true });
+    try {
+      await previewVoice({ botId: this.botId, voice: sess.voice, speed: sess.speed, language: sess.language, text: text.slice(0, 1600) });
+    } catch {
+      // Server-side TTS failed (e.g. espeak-ng missing on this deployment) -- fall back to
+      // whatever the browser itself can do rather than going silent.
+      if (window.speechSynthesis) {
+        const u = new SpeechSynthesisUtterance(text.slice(0, 500));
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      }
+    } finally {
+      if (!this.ended) setV({ speaking: false });
+    }
   }
 
   private localRec: { stop: () => void } | null = null;
@@ -490,7 +551,7 @@ function landedNote(request: string, replies: Row[], after: Row[]): string {
 }
 
 /** Play a short TTS sample through the same PCM path the call uses. */
-export async function previewVoice(p: { botId: string; voice?: string; speed?: number; language?: string }): Promise<void> {
+export async function previewVoice(p: { botId: string; voice?: string; speed?: number; language?: string; text?: string }): Promise<void> {
   const ctx = createAudioContext();
   const player = new PcmPlayer(ctx);
   try {
