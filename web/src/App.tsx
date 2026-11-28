@@ -7,6 +7,7 @@ import { DetailsPanel } from './components/DetailsPanel';
 import { Sidebar } from './components/Sidebar';
 import { SignIn } from './components/SignIn';
 import { ConnectAppsModal } from './components/modals/ConnectAppsModal';
+import { OmokodaBirthModal } from './components/modals/OmokodaBirthModal';
 import { CreateBotModal } from './components/modals/CreateBotModal';
 import { CreateGroupModal } from './components/modals/CreateGroupModal';
 import { SearchModal } from './components/modals/SearchModal';
@@ -25,6 +26,13 @@ function Shell() {
   const view = useConfigUI((s) => s.view);
   const set = useStore((s) => s.set);
   const [navOpen, setNavOpen] = useState(false);
+  const [omokodaBirth, setOmokodaBirth] = useState(() => new URLSearchParams(location.search).get('birth') === 'omokoda');
+  function closeOmokodaBirth() {
+    const url = new URL(location.href);
+    url.searchParams.delete('birth');
+    history.replaceState(history.state, '', url);
+    setOmokodaBirth(false);
+  }
 
   useEffect(() => {
     const st = useStore.getState();
@@ -92,7 +100,8 @@ function Shell() {
         />
       )}
       {showDetails && <DetailsPanel />}
-      {modal === 'create' && <CreateBotModal />}
+      {omokodaBirth && <OmokodaBirthModal onClose={closeOmokodaBirth} />}
+      {modal === 'create' && !omokodaBirth && <CreateBotModal />}
       {modal === 'group' && <CreateGroupModal />}
       {modal === 'search' && <SearchModal />}
       {modal === 'apps' && <ConnectAppsModal />}

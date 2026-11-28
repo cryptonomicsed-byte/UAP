@@ -95,6 +95,7 @@ test('birth mints a verified SID and stores the kernel key only as a 0600 file',
   assert.equal(kernelHandler.last.body.name, 'Ada');
   assert.match(born.sid, /^sid_omokoda-guest-[0-9a-f]{6}$/);
   assert.equal(born.kernelAgentId, 'guest-ada-01');
+  assert.equal(database.prepare('SELECT name FROM bots WHERE id=?').get(born.botId).name, 'Ada');
   assert.match(born.genesisHash, /^[0-9a-f]{64}$/);
 
   const row = database.prepare('SELECT sid, document_json FROM sid_agents WHERE sid=?').get(born.sid);

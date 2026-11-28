@@ -19,4 +19,8 @@ New workspace SIDs commit to the normalized name, kernel guest ID, receipt ID wh
 
 Deploy the managed-capable kernel first; its `/v1/health` advertises `uap_managed_birth: 1`. UAP refuses to birth against an older kernel. The managed kernel omits native registration and publication during birth, leaving Vantage registration to UAP. Manage legacy guests separately; they are not promoted or routed through Hermes as a fallback.
 
-UAP routes managed workspace turns to the authenticated, text-only `/v1/think` path. The kernel persists managed status and credential verification data, refuses direct native actions and tool-using cognition, and cannot promote a managed guest into the owner slot. UAP does not execute tools inferred from the returned text. Tool proposals backed by UAP grants and the Vantage-to-UAP birth handoff are separate, unfinished parts of the integration.
+UAP routes managed workspace turns to the authenticated, text-only `/v1/think` path. The kernel persists managed status and credential verification data, refuses direct native actions and tool-using cognition, and cannot promote a managed guest into the owner slot. UAP does not execute tools inferred from the returned text. Tool proposals backed by UAP grants are not enabled for managed guests.
+
+## Vantage handoff
+
+After deploying the managed kernel and UAP, configure Vantage’s `UAP_BIRTH_ORIGIN` to the public HTTPS origin of UAP (origin only, no path or credentials). Its dashboard opens `/?birth=omokoda`; the UAP workspace shows the confirmation form after sign-in. Vantage’s discovery endpoint is `GET /api/agents/birth-omokoda/handoff`. When configured, the old birth POST returns `409 uap_birth_required` with the handoff URL and never contacts the kernel. Unset the origin to retain an intentional legacy direct-birth deployment. No cross-app account linking or secret transport is involved.

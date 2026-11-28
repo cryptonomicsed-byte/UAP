@@ -173,7 +173,7 @@ export async function birthOmokodaGuest(
   const genesisHash = genesisHashOf(name, kernelAgentId, birth);
   let made: ReturnType<typeof materializeSidBot>;
   try {
-    made = materializeSidBot(db, { userId: input.userId, template: 'omokoda-guest', omokodaBirthHash: genesisHash });
+    made = materializeSidBot(db, { userId: input.userId, template: 'omokoda-guest', omokodaBirthHash: genesisHash, displayName: name });
   } catch (error) {
     throw new OmokodaBirthError('sid', `SID mint failed: ${(error as Error).message}`, kernelAgentId);
   }
