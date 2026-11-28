@@ -266,6 +266,34 @@ test('old kernels are refused before posting a birth', async (t) => {
   assert.equal(writes, 0);
 });
 
+test('a confirmed preflight refusal permits the same request after upgrade', async (t) => {
+  fresh(t);
+  const old = await serve(() => assert.fail('old kernel received a birth'), { managed: false });
+  const current = await serve(kernelHandler());
+  t.after(() => { old.server.close(); current.server.close(); });
+  const database = db();
+  const input = { userId: 'tenant-a', name: 'Ada', register: false, requestKey: 'preflight-ada' };
+  process.env.OMOKODA_URL = old.url;
+  await assert.rejects(birthAndRegister(database, input), (e) => e.code === 'kernel-not-managed');
+  process.env.OMOKODA_URL = current.url;
+  const born = await birthAndRegister(database, input);
+  assert.deepEqual(await birthAndRegister(database, input), born);
+});
+
+test('credential persistence failure cannot publish a bot with no managed binding', async (t) => {
+  const dir = fresh(t);
+  const kernel = await serve(kernelHandler());
+  t.after(() => kernel.server.close());
+  process.env.OMOKODA_URL = kernel.url;
+  process.env.OMOKODA_KEY_DIR = path.join(dir, 'not-a-directory');
+  fs.writeFileSync(process.env.OMOKODA_KEY_DIR, 'fixture');
+  const database = db();
+  await assert.rejects(birthOmokodaGuest(database, { userId: 'tenant-a', name: 'Ada' }));
+  for (const table of ['bots', 'sid_agents', 'omokoda_births', 'omokoda_managed_runtime']) {
+    assert.equal(database.prepare(`SELECT COUNT(*) n FROM ${table}`).get().n, 0, table);
+  }
+});
+
 test('managed workspace turns send only authenticated non-agentic cognition', async (t) => {
   fresh(t);
   const kernel = await serve((req, res) => {

@@ -8,12 +8,15 @@ UAP owns the workspace bot and its template SID; the Omokoda kernel owns the gue
 
 - A completed request with the same key and equivalent input returns its original result.
 - Different effective input under the same key returns `409 birth-conflict`.
+- Discovery failure before sending a birth POST releases the reservation. The same key can be retried when the managed kernel is available.
 - If the original request is still in flight or did not record a definitive result, a repeat returns `409 birth-unresolved`. Reconcile the kernel and Vantage records before starting a new birth. Do not generate a new key merely because a request timed out. UAP does not automatically retry or expire ambiguous requests.
 - The optional Vantage registration can fail independently; that does not undo the kernel guest or workspace SID. A Vantage timeout can still leave a Vantage-side registration.
 
 `GET /api/v6/sid/omokoda/birth/:botId` is scoped to the owning UAP account. It returns the birth linkage and credential presence only. Keep the internal service URLs and credential files server-side.
 
 New workspace SIDs commit to the normalized name, kernel guest ID, receipt ID when present, and the verified kernel SID hash in `provenance.omokoda_birth_hash`. UAP checks the kernel document against `sid/0.1` and checks that its embedded agent ID matches the birth result. The read API exposes the linked kernel SID ID and hash for new births. Existing SIDs are not rewritten.
+
+UAP commits the bot, SID, and managed binding together only after local credential storage succeeds. On local provisioning failure the workspace records roll back, but the remote guest may still exist; a keyed attempt remains unresolved rather than creating another guest.
 
 ## Runtime boundary
 
