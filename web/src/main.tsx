@@ -18,6 +18,7 @@ import './styles/workspace.css';
 import './styles/depth.css';
 import './styles/glass.css';
 import './styles/public-call.css';
+import './styles/studio.css';
 
 // A QR code opens /call/<token> with no login at all -- gate this before any auth check or
 // app shell render, like the other HelixMain repos' /call/<slug> orb pages.

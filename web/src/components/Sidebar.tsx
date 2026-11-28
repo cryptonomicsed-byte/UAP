@@ -8,6 +8,7 @@ import { displayName, useStore } from '../store';
 import { api } from '../lib/api';
 import { Icon } from './Icon';
 import { Menu } from './Menu';
+import { AgentPortrait } from './studio/AgentPortrait';
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -30,11 +31,12 @@ function previewFor(bot: Bot, running: boolean, awaiting: string | null) {
   return bot.lastPreview ?? 'No messages yet';
 }
 
-const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect }: { bot: Bot; selected: boolean; running: boolean; awaiting: string | null; onSelect: (id: string) => void }) {
+const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect, studio }: { bot: Bot; selected: boolean; running: boolean; awaiting: string | null; onSelect: (id: string) => void; studio?: boolean }) {
   return (
     <button type="button" className={`bot-row${selected ? ' is-selected' : ''}`} onClick={() => onSelect(bot.id)} aria-current={selected || undefined}>
       <span className="bot-row__avatar">
-        <BotAvatarFor bot={bot} size={36} state={running ? 'working' : 'idle'} />
+        {studio && bot.kind !== 'room' ? <AgentPortrait id={bot.id} size={36} state={awaiting ? 'waiting' : running ? 'working' : 'idle'} /> :
+          <BotAvatarFor bot={bot} size={36} state={running ? 'working' : 'idle'} />}
         {(running || awaiting || bot.unread > 0) && (
           <span className={`status-dot ${awaiting ? 'is-attention' : running ? 'is-working' : 'is-unread'}`} aria-label={awaiting ? 'Needs attention' : running ? 'Working' : 'Unread activity'} />
         )}
@@ -47,11 +49,11 @@ const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect
   );
 });
 
-export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
+export function Sidebar({ onNavigate, studio, onChangeLayout }: { onNavigate?: () => void; studio?: boolean; onChangeLayout?: (enabled: boolean) => void } = {}) {
   const bots = useStore((s) => s.bots);
   const live = useStore((s) => s.live);
   const storeSelectedBotId = useStore((s) => s.selectedBotId);
-  const inTasks = useConfigUI((s) => s.view === 'tasks');
+  const inTasks = useConfigUI((s) => s.view !== 'chat');
   const selectedBotId = inTasks ? null : storeSelectedBotId; // nothing highlighted while the Tasks view is open
   const user = useStore((s) => s.user);
   const collapsed = useStore((s) => s.sidebarCollapsed);
@@ -65,20 +67,23 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   }, [storeSelectBot, onNavigate]);
   const setModal = useStore((s) => s.setModal);
   const [accountMenu, setAccountMenu] = useState(false);
+  const [filter, setFilter] = useState('');
   const logout = async () => { await api.logout().catch(() => {}); location.reload(); };
 
-  const primary = bots.find((b) => b.isPrimary);
-  const others = bots.filter((b) => !b.isPrimary).sort((a, b) => b.lastActivityAt - a.lastActivityAt);
+  const primary = !studio ? bots.find((b) => b.isPrimary) : undefined;
+  const query = studio && !collapsed ? filter.trim().toLocaleLowerCase() : '';
+  const others = bots.filter((b) => (studio || !b.isPrimary) && displayName(b).toLocaleLowerCase().includes(query))
+    .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary) || b.lastActivityAt - a.lastActivityAt);
 
   return (
-    <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}`}>
+    <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}`} aria-label={studio ? 'Workspace roster' : undefined}>
       <div className="sidebar__titlebar">
-        <TrafficLights />
+        {!studio && <TrafficLights />}
         {!collapsed && (
           <div className="sidebar__brand" title="Universal Agent Platform">
             <span className="sidebar__brand-mark" aria-hidden>U</span>
-            <span className="sidebar__brand-name">UAP</span>
-            <span className="sidebar__brand-ver">v6</span>
+            <span className="sidebar__brand-name">UAP{studio && <small>Living Workspace</small>}</span>
+            {!studio && <span className="sidebar__brand-ver">v6</span>}
           </div>
         )}
         <div className="sidebar__controls">
@@ -99,6 +104,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       </div>
 
       <div className="sidebar__scroll">
+        {studio && !collapsed && <div className="studio-roster__section">Workspace</div>}
         <TasksIsland />
         <BoardIsland />
         {primary && (
@@ -112,17 +118,24 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             </button>
           </div>
         )}
+        {studio && !collapsed && <>
+          <div className="studio-roster__section">Teammates</div>
+          <label className="studio-roster__search"><Icon name="search" size={14} />
+            <input placeholder="Filter agents" aria-label="Filter agents" value={filter} onChange={(e) => setFilter(e.target.value)} />
+          </label>
+        </>}
         <div className="bot-list">
           {others.map((b) =>
             collapsed ? (
               <button key={b.id} type="button" className={`bot-rail-item${selectedBotId === b.id ? ' is-selected' : ''}`} onClick={() => selectBot(b.id)} title={displayName(b)}>
-                <BotAvatarFor bot={b} size={36} />
+                {studio && b.kind !== 'room' ? <AgentPortrait id={b.id} size={36} state={live[b.id]?.awaiting ? 'waiting' : live[b.id]?.isRunning ? 'working' : 'idle'} /> : <BotAvatarFor bot={b} size={36} />}
               </button>
             ) : (
-              <BotRow key={b.id} bot={b} selected={selectedBotId === b.id} running={!!live[b.id]?.isRunning} awaiting={live[b.id]?.awaiting?.reason ?? null} onSelect={selectBot} />
+              <BotRow key={b.id} bot={b} selected={selectedBotId === b.id} running={!!live[b.id]?.isRunning} awaiting={live[b.id]?.awaiting?.reason ?? null} onSelect={selectBot} studio={studio} />
             ),
           )}
-          {!collapsed && others.length === 0 && (
+          {studio && !collapsed && query && !others.length && <p className="studio-roster__empty">No agents match that name.</p>}
+          {!collapsed && others.length === 0 && !query && (
             <button type="button" className="bot-list__empty" onClick={() => setModal('create')}>
               <span className="bot-list__empty-plus"><Icon name="plus" size={14} opacity={0.66} /></span>
               <span>
@@ -149,6 +162,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
                 items={[
                   { label: 'Settings', hint: '⌘,', onSelect: () => useConfigUI.getState().openAppSettings() },
                   { label: 'Connect apps', onSelect: () => setModal('apps') },
+                  ...(onChangeLayout ? [{ label: studio ? 'Use classic layout' : 'Use Living Workspace', onSelect: () => onChangeLayout(!studio) }] : []),
                   { label: 'Log out', danger: true, onSelect: logout },
                 ]}
               >

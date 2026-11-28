@@ -8,7 +8,7 @@ import { Glyph } from './glyphs';
 import { formatBytes } from './ui';
 
 /** Files the bot saved under /root/grokbot/files/<botId> on its computer. */
-export function LibraryTab({ bot }: { bot: Bot }) {
+export function LibraryTab({ bot, studio }: { bot: Bot; studio?: boolean }) {
   const awake = useStore((s) => s.computer?.status === 'running');
   const [path, setPath] = useState('');
   const [list, setList] = useState<LibraryListing | null>(null);
@@ -19,9 +19,9 @@ export function LibraryTab({ bot }: { bot: Bot }) {
   const load = useCallback(async (wake = false) => {
     setLoading(true); setError(null);
     try { setList(await configApi.files(bot.id, path, wake)); }
-    catch (e) { setError((e as Error).message); }
+    catch (e) { setList(null); setError(studio ? 'Could not load files. Try refreshing.' : (e as Error).message); }
     finally { setLoading(false); }
-  }, [bot.id, path]);
+  }, [bot.id, path, studio]);
 
   useEffect(() => { setPath(''); setList(null); }, [bot.id]);
   useEffect(() => { load(); }, [load, awake]);
@@ -34,7 +34,7 @@ export function LibraryTab({ bot }: { bot: Bot }) {
       const a = document.createElement('a');
       a.href = url; a.download = f.name; a.rel = 'noopener';
       document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) { setError(`Couldn’t download ${f.name}: ${(e as Error).message}`); }
+    } catch (e) { setError(studio ? `Couldn’t download ${f.name}.` : `Couldn’t download ${f.name}: ${(e as Error).message}`); }
     finally { setBusyFile(null); }
   };
 
@@ -70,8 +70,8 @@ export function LibraryTab({ bot }: { bot: Bot }) {
           ) : !list && loading ? (
             <div className="panel-empty">Looking for files…</div>
           ) : list?.status === 'error' ? (
-            <div className="panel-empty">Couldn’t reach the computer. {list.error ? <span className="lib-err">{list.error}</span> : null}</div>
-          ) : !list?.files.length ? (
+            <div className="panel-empty">Couldn’t reach the computer. {!studio && list.error ? <span className="lib-err">{list.error}</span> : null}</div>
+          ) : !list && error && studio ? null : !list?.files.length ? (
             <div className="panel-empty panel-empty--center">{path ? 'This folder is empty.' : `Files that ${bot.name} creates, like reports and notes, are kept here.`}</div>
           ) : (
             list.files.map((f) => (
@@ -92,7 +92,7 @@ export function LibraryTab({ bot }: { bot: Bot }) {
             ))
           )}
         </div>
-        {error && <div className="cfg-error cfg-error--small">{error}</div>}
+        {error && <div className="cfg-error cfg-error--small" role="alert">{error}</div>}
       </section>
     </div>
   );
