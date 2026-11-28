@@ -16,6 +16,12 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Install the native runtimes used by the test suite
+        run: sudo apt-get update && sudo apt-get install -y espeak-ng
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.17'
       - run: npm ci
       - run: npm run check
       - run: npx playwright install --with-deps chromium
