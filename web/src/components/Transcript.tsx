@@ -9,6 +9,7 @@ import { ThinkingBlock } from './ActivityLine';
 import { CardRow } from './cards/Cards';
 import { Icon } from './Icon';
 import { Markdown } from './Markdown';
+import { AgentPortrait } from './studio/AgentPortrait';
 
 type Item =
   | { kind: 'divider'; key: string; ts: number }
@@ -195,9 +196,9 @@ function SystemRow({ row }: { row: Row }) {
   return null;
 }
 
-interface Props { bot: Bot; rows: Row[]; live: LiveState | undefined; loaded: boolean }
+interface Props { bot: Bot; rows: Row[]; live: LiveState | undefined; loaded: boolean; studio?: boolean }
 
-export function Transcript({ bot, rows, live, loaded }: Props) {
+export function Transcript({ bot, rows, live, loaded, studio }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const stick = useRef(true);
   const [showJump, setShowJump] = useState(false);
@@ -254,7 +255,7 @@ export function Transcript({ bot, rows, live, loaded }: Props) {
     <div className="transcript-wrap">
     <div className="transcript" ref={scrollRef} onScroll={onScroll}>
       <div className="transcript__col">
-        {loaded && rows.length === 0 && <EmptyChat bot={bot} />}
+        {loaded && rows.length === 0 && <EmptyChat bot={bot} studio={studio} />}
         {items.map((it) => {
           switch (it.kind) {
             case 'divider':
@@ -286,12 +287,13 @@ export function Transcript({ bot, rows, live, loaded }: Props) {
   );
 }
 
-function EmptyChat({ bot }: { bot: Bot }) {
+function EmptyChat({ bot, studio }: { bot: Bot; studio?: boolean }) {
   return (
     <div className="empty-chat">
-      <BotAvatarFor bot={bot} size={72} />
-      <div className="empty-chat__title">{bot.name}</div>
-      <div className="empty-chat__sub">{bot.description || (bot.mode === 'teammate' ? 'A Bot for the whole team. Hand it a task and it will see it through.' : 'Your personal assistant. Hand it a task and it will see it through.')}</div>
+      {studio && bot.kind !== 'room' ? <AgentPortrait id={bot.id} size={112} /> : <BotAvatarFor bot={bot} size={72} />}
+      {studio && <span className="studio-empty__eyebrow">{bot.kind === 'room' ? 'Group conversation' : 'Your agent workspace'}</span>}
+      {studio ? <h1 className="empty-chat__title">{bot.name}</h1> : <div className="empty-chat__title">{bot.name}</div>}
+      <div className="empty-chat__sub">{bot.description || (studio ? 'Start a conversation, share some context, or ask for help with a task.' : bot.mode === 'teammate' ? 'A Bot for the whole team. Hand it a task and it will see it through.' : 'Your personal assistant. Hand it a task and it will see it through.')}</div>
     </div>
   );
 }

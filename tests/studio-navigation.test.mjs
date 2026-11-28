@@ -26,3 +26,12 @@ test('workspace facets and mobile navigation retain the existing action componen
   assert.match(chat, /<Composer key=\{bot\.id\}/);
   assert.match(read('main.tsx'), /styles\/studio\.css/);
 });
+
+test('the studio stage connects the selected agent to original art, files, activity and routines', () => {
+  const chat = read('components/ChatView.tsx');
+  assert.match(chat, /<AgentActivity bot=\{bot\} rows=\{rows\}/);
+  assert.match(chat, /<AgentAutomations bot=\{bot\}/);
+  assert.match(chat, /<LibraryTab key=\{bot\.id\} bot=\{bot\}/);
+  assert.match(read('components/Transcript.tsx'), /<AgentPortrait id=\{bot\.id\}/);
+  assert.match(read('components/Sidebar.tsx'), /<AgentPortrait id=\{bot\.id\}/);
+});

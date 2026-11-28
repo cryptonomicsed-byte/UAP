@@ -18,6 +18,7 @@ import { Glyph } from './config/glyphs';
 import { LibraryTab } from './config/LibraryTab';
 import { BotTasks } from './config/TasksView';
 import { AgentDesk } from './AgentDesk';
+import { AgentPortrait } from './studio/AgentPortrait';
 
 // Other files import this from here; it lives in lib/computer so the viewer can use it too.
 export { computerStatusText };
@@ -49,7 +50,7 @@ function RoutineRow({ r }: { r: Routine }) {
   );
 }
 
-export function DetailsPanel() {
+export function DetailsPanel({ studio }: { studio?: boolean }) {
   const bot = useSelectedBot();
   const routines = useStore((s) => (bot ? s.routines[bot.id] : undefined));
   const computer = useStore((s) => s.computer);
@@ -82,6 +83,15 @@ export function DetailsPanel() {
             <BotAvatarFor bot={bot} size={64} />
             <div className="details__name" title={displayName(bot)}>{displayName(bot)}</div>
           </div>
+        ) : studio ? (
+          <div className="studio-inspector__identity">
+            <AgentPortrait id={bot.id} size={44} />
+            <div className="details__who-text">
+              <div className="details__who-name">{displayName(bot)}</div>
+              <div className="details__who-sub">Computer {computerStatusText(computer).toLowerCase()}</div>
+            </div>
+            <button type="button" className="btn btn--sm btn--secondary" onClick={() => openComputer('watch')}>Preview</button>
+          </div>
         ) : (
           <div className="details__hero">
             <ComputerScreen key={bot.id} bot={bot} variant="panel" paused={viewerOpen} onExpand={openComputer} />
@@ -100,7 +110,7 @@ export function DetailsPanel() {
         )}
         <div className="details__tabs">
           <div className="segmented segmented--wrap">
-            <button type="button" className={tab === 'operate' ? 'is-active' : ''} onClick={() => setTab('operate')}>Desk</button>
+            <button type="button" aria-pressed={tab === 'operate'} className={tab === 'operate' ? 'is-active' : ''} onClick={() => setTab('operate')}>{studio ? 'Operate' : 'Desk'}</button>
             <button type="button" className={tab === 'activity' ? 'is-active' : ''} onClick={() => setTab('activity')}>Activity</button>
             <button type="button" className={tab === 'tasks' ? 'is-active' : ''} onClick={() => setTab('tasks')}>Tasks</button>
             <button type="button" className={tab === 'library' ? 'is-active' : ''} onClick={() => setTab('library')}>Library</button>

@@ -25,9 +25,9 @@ test('main imports operate + mobile + config css', () => {
 
 test('DetailsPanel defaults to the agent desk', () => {
   const src = readFileSync(path.join(root, 'web/src/components/DetailsPanel.tsx'), 'utf8');
-  assert.match(src, /useState<'operate' \| 'activity'/);
+  assert.match(src, /useState<'operate' \| 'activity' \| 'tasks' \| 'library'>\('operate'\)/);
   assert.match(src, /AgentDesk/);
-  assert.match(src, />Desk</);
+  assert.match(src, /studio \? 'Operate' : 'Desk'/);
 });
 
 test('ChatView exposes Computer Voice Agent quick actions', () => {

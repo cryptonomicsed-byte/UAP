@@ -8,6 +8,7 @@ import { displayName, useStore } from '../store';
 import { api } from '../lib/api';
 import { Icon } from './Icon';
 import { Menu } from './Menu';
+import { AgentPortrait } from './studio/AgentPortrait';
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -30,11 +31,12 @@ function previewFor(bot: Bot, running: boolean, awaiting: string | null) {
   return bot.lastPreview ?? 'No messages yet';
 }
 
-const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect }: { bot: Bot; selected: boolean; running: boolean; awaiting: string | null; onSelect: (id: string) => void }) {
+const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect, studio }: { bot: Bot; selected: boolean; running: boolean; awaiting: string | null; onSelect: (id: string) => void; studio?: boolean }) {
   return (
     <button type="button" className={`bot-row${selected ? ' is-selected' : ''}`} onClick={() => onSelect(bot.id)} aria-current={selected || undefined}>
       <span className="bot-row__avatar">
-        <BotAvatarFor bot={bot} size={36} state={running ? 'working' : 'idle'} />
+        {studio && bot.kind !== 'room' ? <AgentPortrait id={bot.id} size={36} state={awaiting ? 'waiting' : running ? 'working' : 'idle'} /> :
+          <BotAvatarFor bot={bot} size={36} state={running ? 'working' : 'idle'} />}
         {(running || awaiting || bot.unread > 0) && (
           <span className={`status-dot ${awaiting ? 'is-attention' : running ? 'is-working' : 'is-unread'}`} aria-label={awaiting ? 'Needs attention' : running ? 'Working' : 'Unread activity'} />
         )}
@@ -80,7 +82,7 @@ export function Sidebar({ onNavigate, studio, onChangeLayout }: { onNavigate?: (
         {!collapsed && (
           <div className="sidebar__brand" title="Universal Agent Platform">
             <span className="sidebar__brand-mark" aria-hidden>U</span>
-            <span className="sidebar__brand-name">{studio ? 'Living Workspace' : 'UAP'}</span>
+            <span className="sidebar__brand-name">UAP{studio && <small>Living Workspace</small>}</span>
             {!studio && <span className="sidebar__brand-ver">v6</span>}
           </div>
         )}
@@ -126,10 +128,10 @@ export function Sidebar({ onNavigate, studio, onChangeLayout }: { onNavigate?: (
           {others.map((b) =>
             collapsed ? (
               <button key={b.id} type="button" className={`bot-rail-item${selectedBotId === b.id ? ' is-selected' : ''}`} onClick={() => selectBot(b.id)} title={displayName(b)}>
-                <BotAvatarFor bot={b} size={36} />
+                {studio && b.kind !== 'room' ? <AgentPortrait id={b.id} size={36} state={live[b.id]?.awaiting ? 'waiting' : live[b.id]?.isRunning ? 'working' : 'idle'} /> : <BotAvatarFor bot={b} size={36} />}
               </button>
             ) : (
-              <BotRow key={b.id} bot={b} selected={selectedBotId === b.id} running={!!live[b.id]?.isRunning} awaiting={live[b.id]?.awaiting?.reason ?? null} onSelect={selectBot} />
+              <BotRow key={b.id} bot={b} selected={selectedBotId === b.id} running={!!live[b.id]?.isRunning} awaiting={live[b.id]?.awaiting?.reason ?? null} onSelect={selectBot} studio={studio} />
             ),
           )}
           {studio && !collapsed && query && !others.length && <p className="studio-roster__empty">No agents match that name.</p>}

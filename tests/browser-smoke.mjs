@@ -108,17 +108,48 @@ try {
   const facets = page.getByRole('navigation', { name: 'Agent workspace' });
   await facets.waitFor();
   assert.equal(await page.locator('aside.sidebar').count(), 1);
+  await page.getByRole('heading', { name: 'Doug', exact: true }).waitFor();
+  assert.equal(await page.locator('.empty-chat .studio-portrait').count(), 1);
+  await page.screenshot({ path: path.join(output, 'living-workspace-desktop.png') });
   await roster.getByRole('textbox', { name: 'Filter agents' }).fill('no fixture matches this');
   await roster.getByText('No agents match that name.').waitFor();
   await roster.getByRole('textbox', { name: 'Filter agents' }).clear();
   await facets.getByRole('button', { name: 'Work' }).click();
   await page.getByRole('heading', { name: 'Work', exact: true }).waitFor();
   await page.getByText(/No tasks yet/).waitFor();
+  await facets.getByRole('button', { name: 'Files', exact: true }).click();
+  await page.getByRole('heading', { name: 'Files', exact: true }).waitFor();
+  await page.getByText(/computer is asleep/).waitFor();
+  await facets.getByRole('button', { name: 'Activity', exact: true }).click();
+  await page.getByText('No recent activity.').waitFor();
+  // Seed a scheduler-disabled routine and an existing transcript event behind the real API.
+  const studioDb = new Database(env.DB_PATH);
+  const agent = studioDb.prepare('SELECT id,generation FROM bots WHERE id = ?').get(before[0].id);
+  const ts = Date.now();
+  studioDb.prepare('INSERT INTO routines (id,bot_id,name,prompt,schedule,timezone,enabled,created_at) VALUES (?,?,?,?,?,?,?,?)')
+    .run('studio-fixture-routine', agent.id, 'Workspace digest', 'Private fixture prompt', '0 8 * * *', 'UTC', 1, ts);
+  const notice = { type: 'notice', code: 'provider_auth', tone: 'error', text: 'Private fixture notice' };
+  studioDb.prepare('INSERT INTO rows (bot_id,generation,seq,updated_seq,kind,body,created_at) VALUES (?,?,?,?,?,?,?)')
+    .run(agent.id, agent.generation, 1, 1, 'notice', JSON.stringify(notice), ts);
+  studioDb.close();
+  await facets.getByRole('button', { name: 'Automations' }).click();
+  await page.getByRole('button', { name: 'Pause Workspace digest' }).click();
+  await page.getByRole('button', { name: 'Resume Workspace digest' }).waitFor();
+  const afterPause = new Database(env.DB_PATH, { readonly: true });
+  assert.equal(afterPause.prepare('SELECT enabled FROM routines WHERE id=?').get('studio-fixture-routine').enabled, 0);
+  afterPause.close();
+  assert.equal(await page.getByText('Private fixture prompt').count(), 0);
   await facets.getByRole('button', { name: 'Chat' }).click();
   await page.getByPlaceholder(/Message Doug/).first().waitFor();
   await page.reload();
   await facets.waitFor();
-  await page.screenshot({ path: path.join(output, 'living-workspace-desktop.png') });
+  assert.equal(await details.getByRole('button', { name: 'Operate', exact: true }).getAttribute('aria-pressed'), 'true');
+  await facets.getByRole('button', { name: 'Automations' }).click();
+  await page.getByRole('button', { name: 'Resume Workspace digest' }).waitFor();
+  await facets.getByRole('button', { name: 'Activity', exact: true }).click();
+  await page.getByText('Provider authentication failed', { exact: true }).waitFor();
+  assert.equal(await page.getByText('Private fixture notice').count(), 0);
+  await facets.getByRole('button', { name: 'Chat' }).click();
   for (const width of [360, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await page.getByPlaceholder(/Message Doug/).first().waitFor();
@@ -133,6 +164,13 @@ try {
   if (await details.isVisible()) await details.getByRole('button', { name: 'Close details', exact: true }).click();
   await page.getByRole('button', { name: 'Open navigation' }).click();
   await roster.getByRole('textbox', { name: 'Filter agents' }).waitFor();
+  await roster.getByRole('button', { name: 'Tasks', exact: true }).click();
+  await page.locator('.tasks-view').waitFor();
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await roster.getByRole('textbox', { name: 'Filter agents' }).waitFor();
+  await roster.getByRole('button', { name: /Doug/ }).click();
+  await facets.waitFor();
+  await page.getByRole('button', { name: 'Open navigation' }).click();
   await page.keyboard.press('Escape');
   await roster.getByRole('textbox', { name: 'Filter agents' }).waitFor({ state: 'hidden' });
   await page.screenshot({ path: path.join(output, 'living-workspace-mobile.png') });
@@ -141,7 +179,7 @@ try {
   await page.getByText('Use classic layout', { exact: true }).click();
   await facets.waitFor({ state: 'hidden' });
   await page.getByPlaceholder(/Message Doug/).first().waitFor();
-  report.checks.push('Living Workspace and classic layout both operate; roster search, scoped work, preference reload and six viewport widths covered.');
+  report.checks.push('Studio and classic operate: roster filter, Work, Files, original plush, safe Activity projection, real routine pause and reload, and six viewport widths.');
   assert.deepEqual(pageErrors, []);
   assert.deepEqual(missingAssets, []);
   assert.equal(await readFile(sentinel, 'utf8'), '# External primary remains unchanged\n');

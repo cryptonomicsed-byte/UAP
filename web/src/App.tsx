@@ -14,6 +14,7 @@ import { ConfigLayer } from './components/config/ConfigLayer';
 import { TasksView } from './components/config/TasksView';
 import { BoardView } from './components/config/BoardView';
 import { DeployBadge } from './components/DeployBadge';
+import { Icon } from './components/Icon';
 import { useConfigUI } from './configStore';
 import { readPreference } from './lib/preferences';
 
@@ -107,14 +108,18 @@ function Shell() {
     >
       <button type="button" className="shell__scrim" aria-label="Close panel" onClick={closeOverlays} />
       <Sidebar onNavigate={() => setNavOpen(false)} studio={studio} onChangeLayout={changeLayout} />
-      {view === 'tasks' ? <TasksView /> : view === 'board' ? <BoardView /> : (
+      {view !== 'chat' && studio ? <div className="studio-global">
+        <button type="button" className="shell__nav-toggle studio-global__nav" onClick={toggleNav} aria-expanded={navOpen}
+          aria-label={navOpen ? 'Close navigation' : 'Open navigation'}><Icon name="sidebar" /></button>
+        {view === 'tasks' ? <TasksView /> : <BoardView />}
+      </div> : view === 'tasks' ? <TasksView /> : view === 'board' ? <BoardView /> : (
         <ChatView
           navOpen={navOpen}
           studio={studio}
           onToggleNav={toggleNav}
         />
       )}
-      {showDetails && <DetailsPanel />}
+      {showDetails && <DetailsPanel studio={studio} />}
       {modal === 'create' && <CreateBotModal />}
       {modal === 'group' && <CreateGroupModal />}
       {modal === 'search' && <SearchModal />}

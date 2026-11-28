@@ -13,6 +13,13 @@ import { VoiceCallBar } from './VoiceCallBar';
 import { endCall, isCallActive, startCall, useVoice } from '../voice/call';
 import { useMagnetic } from '../lib/useMagnetic';
 import { BotTasks } from './config/TasksView';
+import { LibraryTab } from './config/LibraryTab';
+import { AgentActivity } from './studio/AgentActivity';
+import { AgentAutomations } from './studio/AgentAutomations';
+import { AgentPortrait } from './studio/AgentPortrait';
+
+const FACETS = [['chat', 'Chat'], ['work', 'Work'], ['files', 'Files'], ['automations', 'Automations'], ['activity', 'Activity']] as const;
+type Facet = typeof FACETS[number][0];
 
 export function ChatView(props: {
   navOpen?: boolean;
@@ -29,7 +36,7 @@ export function ChatView(props: {
   const [menu, setMenu] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [voiceBusy, setVoiceBusy] = useState(false);
-  const [facet, setFacet] = useState<{ id: string; view: 'chat' | 'work' }>();
+  const [facet, setFacet] = useState<{ id: string; view: Facet }>();
   const rows = useMemo(() => sortedRows(transcript), [transcript]);
   const inCall = useVoice((s) => isCallActive(s) && !!bot && s.botId === bot.id);
   const voiceOk = isProviderConfigured(providers, 'xai');
@@ -52,7 +59,8 @@ export function ChatView(props: {
     );
   }
 
-  const view = props.studio && facet?.id === bot.id ? facet.view : 'chat';
+  const view = props.studio && facet?.id === bot.id && (bot.kind !== 'room' || facet.view !== 'automations') ? facet.view : 'chat';
+  const state = live?.awaiting ? 'waiting' : live?.isRunning ? 'working' : 'idle';
   const flash = (t: string) => { setToast(t); setTimeout(() => setToast(null), 2000); };
 
   const toggleVoice = async () => {
@@ -75,11 +83,12 @@ export function ChatView(props: {
         {navButton}
         <span className="chat__pill-anchor">
           <button type="button" className="chat__pill" onClick={() => setMenu(!menu)} aria-haspopup="menu" aria-expanded={menu}>
-            <BotAvatarFor bot={bot} size={24} state={live?.isRunning ? 'working' : 'idle'} />
+            {props.studio && bot.kind !== 'room' ? <AgentPortrait id={bot.id} size={38} state={state} /> :
+              <BotAvatarFor bot={bot} size={24} state={live?.isRunning ? 'working' : 'idle'} />}
             <span className="chat__pill-meta">
               <span className="chat__pill-name">{displayName(bot)}</span>
-              {props.studio && <span className="studio-agent-status" data-state={live?.awaiting ? 'waiting' : live?.isRunning ? 'working' : 'idle'}>
-                {live?.awaiting ? 'Needs your input' : live?.isRunning ? 'Working' : bot.kind === 'room' ? 'Group conversation' : 'Agent workspace'}
+              {props.studio && <span className="studio-agent-status" data-state={state}>
+                {state === 'waiting' ? 'Needs your input' : state === 'working' ? 'Working' : bot.kind === 'room' ? 'Group conversation' : 'Agent workspace'}
               </span>}
             </span>
           </button>
@@ -135,14 +144,23 @@ export function ChatView(props: {
         </div>
       </header>
       {props.studio && <nav className="studio-facets" aria-label="Agent workspace">
-        <button type="button" aria-pressed={view === 'chat'} onClick={() => setFacet({ id: bot.id, view: 'chat' })}>Chat</button>
-        <button type="button" aria-pressed={view === 'work'} onClick={() => setFacet({ id: bot.id, view: 'work' })}>Work</button>
+        {FACETS.filter(([id]) => bot.kind !== 'room' || id !== 'automations').map(([id, label]) => (
+          <button key={id} type="button" aria-pressed={view === id} onClick={() => setFacet({ id: bot.id, view: id })}>{label}</button>
+        ))}
       </nav>}
-      {view === 'chat' ? <Transcript bot={bot} rows={rows} live={live} loaded={!!transcript?.loaded} /> :
-        <div className="studio-stage-scroll"><section className="studio-facet" aria-label="Agent work">
-          <header className="studio-facet__head"><p>Workspace / Work</p><h1>Work</h1><span>Tasks assigned to {displayName(bot)}.</span></header>
-          <BotTasks bot={bot} />
-        </section></div>}
+      {view === 'chat' ? <Transcript bot={bot} rows={rows} live={live} loaded={!!transcript?.loaded} studio={props.studio} /> :
+        <div className="studio-stage-scroll" key={`${bot.id}:${view}`}>
+          {view === 'work' && <section className="studio-facet" aria-label="Agent work">
+            <header className="studio-facet__head"><p>Workspace / Work</p><h1>Work</h1><span>Tasks assigned to {displayName(bot)}.</span></header>
+            <BotTasks bot={bot} onOpenConversation={() => setFacet({ id: bot.id, view: 'chat' })} />
+          </section>}
+          {view === 'files' && <section className="studio-facet" aria-label="Agent files">
+            <header className="studio-facet__head"><p>Workspace / Files</p><h1>Files</h1><span>Files saved by {displayName(bot)}.</span></header>
+            <LibraryTab key={bot.id} bot={bot} studio />
+          </section>}
+          {view === 'automations' && <AgentAutomations bot={bot} />}
+          {view === 'activity' && (transcript?.loaded ? <AgentActivity bot={bot} rows={rows} /> : <p className="studio-facet" role="status">Waiting for conversation history…</p>)}
+        </div>}
       <VoiceCallBar />
       {view === 'chat' && <Composer key={bot.id} bot={bot} running={!!live?.isRunning} />}
       {toast && <div className="toast" role="status">{toast}</div>}

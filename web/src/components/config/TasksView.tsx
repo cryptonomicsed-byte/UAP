@@ -18,8 +18,8 @@ function when(t: Task): string {
   return t.state === 'done' ? `Completed ${ago}` : t.state === 'needs_input' ? `Asked ${ago}` : `Updated ${ago}`;
 }
 
-function TaskRow({ t, bot, showBot }: { t: Task; bot?: Bot; showBot: boolean }) {
-  const open = () => { if (bot) { useStore.getState().selectBot(bot.id); useConfigUI.getState().setView('chat'); } };
+function TaskRow({ t, bot, showBot, onOpenConversation }: { t: Task; bot?: Bot; showBot: boolean; onOpenConversation?: () => void }) {
+  const open = () => { if (bot) { useStore.getState().selectBot(bot.id); useConfigUI.getState().setView('chat'); onOpenConversation?.(); } };
   return (
     <button type="button" className={`task-row is-${t.state}`} onClick={open} disabled={!bot} title={bot ? `Open ${bot.name}` : undefined}>
       <span className={`task-row__check is-${t.state}`} aria-hidden>{t.state === 'done' ? <Glyph name="check_circle" size={18} /> : <span className="task-row__ring" />}</span>
@@ -103,7 +103,7 @@ export function TasksIsland() {
 }
 
 /** Tasks for one bot (details panel → Tasks tab). */
-export function BotTasks({ bot }: { bot: Bot }) {
+export function BotTasks({ bot, onOpenConversation }: { bot: Bot; onOpenConversation?: () => void }) {
   const tasks = useTasks(bot.id);
   const sorted = useMemo(() => sortTasks(tasks ?? []), [tasks]);
   return (
@@ -116,7 +116,7 @@ export function BotTasks({ bot }: { bot: Bot }) {
         {tasks === null ? <div className="panel-card"><div className="panel-empty">Loading…</div></div> : sorted.length === 0 ? (
           <div className="panel-card"><div className="panel-empty">No tasks yet. Ask {bot.name} for a few things at once and they’ll be tracked here.</div></div>
         ) : (
-          <div className="panel-card task-list task-list--compact">{sorted.map((t) => <TaskRow key={t.id} t={t} bot={bot} showBot={false} />)}</div>
+          <div className="panel-card task-list task-list--compact">{sorted.map((t) => <TaskRow key={t.id} t={t} bot={bot} showBot={false} onOpenConversation={onOpenConversation} />)}</div>
         )}
       </section>
     </div>
