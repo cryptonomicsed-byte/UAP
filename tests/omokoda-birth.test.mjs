@@ -6,22 +6,38 @@ import os from 'node:os';
 import path from 'node:path';
 import Database from 'better-sqlite3';
 import { ensureSidTemplateSchema } from '../server/src/lib/sid-templates.ts';
-import { verifySidLegacy } from '../server/src/identity/sid-legacy.ts';
+import { actingHashLegacy, sidHashLegacy, verifySidLegacy } from '../server/src/identity/sid-legacy.ts';
 import {
   birthAndRegister,
   birthOmokodaGuest,
   getOmokodaBirth,
+  thinkOmokodaGuest,
   OmokodaBirthError,
 } from '../server/src/lib/omokoda-birth.ts';
 
 const KERNEL_KEY = 'KERNEL-SECRET-7f3a9c2e';
 const VANTAGE_KEY = 'VANTAGE-SECRET-91bd44ef';
 
-function serve(handler) {
+function serve(handler, { managed = true } = {}) {
   return new Promise((resolve) => {
-    const server = http.createServer(handler);
+    const server = http.createServer((req, res) => {
+      if (req.url === '/v1/health') return res.end(JSON.stringify({ ok: true, ...(managed ? { uap_managed_birth: 1 } : {}) }));
+      return handler(req, res);
+    });
     server.listen(0, '127.0.0.1', () => resolve({ server, url: `http://127.0.0.1:${server.address().port}` }));
   });
+}
+
+function nativeSid() {
+  const sid = {
+    format: 'sid/0.1', id: 'sid_guest-ada-01', status: 'cast', version: 1, previous_version: null, previous_hash: 'none',
+    born_at: '2026-11-28T12:00:00Z',
+    identity: { name: 'Ada', type: 'agent', odu_primary: 7, odu_secondary: 11, odu_link: 1803 },
+    appendix: { agent_id: 'guest-ada-01' },
+  };
+  sid.acting_hash = actingHashLegacy(sid);
+  sid.hash = sidHashLegacy(sid);
+  return sid;
 }
 
 function kernelHandler(status = 200) {
@@ -35,7 +51,7 @@ function kernelHandler(status = 200) {
         return res.end(JSON.stringify({ error: 'refused' }));
       }
       res.writeHead(200, { 'content-type': 'application/json' });
-      res.end(JSON.stringify({ status: 'born', name: 'Ada', agent_id: 'guest-ada-01', agent_key: KERNEL_KEY, identity: { odu: 7 } }));
+      res.end(JSON.stringify({ managed: true, agent_id: 'guest-ada-01', agent_key: KERNEL_KEY, sid_document: nativeSid() }));
     });
   };
 }
@@ -237,6 +253,42 @@ test('an ambiguous kernel response does not allow a second birth with the same k
   await assert.rejects(birthAndRegister(database, input), (e) => e.code === 'kernel-malformed');
   await assert.rejects(birthAndRegister(database, input), (e) => e.code === 'birth-unresolved');
   assert.equal(kernelCalls, 1);
+});
+
+test('old kernels are refused before posting a birth', async (t) => {
+  fresh(t);
+  let writes = 0;
+  const kernel = await serve((_req, res) => { writes++; res.end(); }, { managed: false });
+  t.after(() => kernel.server.close());
+  process.env.OMOKODA_URL = kernel.url;
+  await assert.rejects(birthOmokodaGuest(db(), { userId: 'tenant-a', name: 'Ada' }), (e) => e.code === 'kernel-not-managed');
+  assert.equal(writes, 0);
+});
+
+test('managed workspace turns send only authenticated non-agentic cognition', async (t) => {
+  fresh(t);
+  const kernel = await serve((req, res) => {
+    if (req.url === '/v1/birth') return kernelHandler()(req, res);
+    assert.equal(req.url, '/v1/think');
+    assert.equal(req.headers['x-agent-key'], KERNEL_KEY);
+    assert.equal(req.headers['x-agent-id'], 'guest-ada-01');
+    let body = '';
+    req.on('data', (part) => { body += part; });
+    req.on('end', () => {
+      assert.deepEqual(JSON.parse(body), { prompt: 'Hello', agentic: false });
+      res.end(JSON.stringify({ tool_output: 'Hello from the kernel' }));
+    });
+  });
+  t.after(() => kernel.server.close());
+  process.env.OMOKODA_URL = kernel.url;
+  const database = db();
+  const born = await birthOmokodaGuest(database, { userId: 'tenant-a', name: 'Ada' });
+  const row = getOmokodaBirth(database, born.botId, 'tenant-a');
+  assert.equal(row.kernel_sid_hash, nativeSid().hash);
+  assert.equal(await thinkOmokodaGuest(database, { botId: born.botId, userId: 'tenant-b', prompt: 'Hello' }), null);
+  assert.equal(await thinkOmokodaGuest(database, { botId: born.botId, userId: 'tenant-a', prompt: 'Hello' }), 'Hello from the kernel');
+  database.prepare('DELETE FROM omokoda_managed_runtime').run();
+  await assert.rejects(thinkOmokodaGuest(database, { botId: born.botId, userId: 'tenant-a', prompt: 'Hello' }), /not bound/);
 });
 
 test('registration is skipped when VANTAGE_URL is unset', async (t) => {

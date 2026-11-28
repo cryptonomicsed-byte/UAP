@@ -8,6 +8,7 @@ import { screenForWork } from '../computer.js';
 import { engineFor } from '../engine.js';
 import { instructionsFor } from './prompt.js';
 import { conversationThread } from './hermes-adapter.js';
+import { thinkOmokodaGuest } from '../lib/omokoda-birth.js';
 import { activityFor, appToolName, humanizeSlug, policyFor } from './tools.js';
 import { classifyFailure, sanitizeDetail } from '../lib/failure.js';
 import { recordTurnFailure } from '../lib/agent-fallback.js';
@@ -379,6 +380,11 @@ async function runTurn(botId: string, trigger: Trigger) {
   let failed = false;
 
   try {
+    const managedReply = await thinkOmokodaGuest(db, { botId, userId, prompt: triggerText(trigger), signal: ctrl.signal });
+    if (managedReply !== null) {
+      if (!ctrl.signal.aborted) say(managedReply);
+      return;
+    }
     // The screen first: the engine's browser and computer tools point at it.
     await screenForWork(userId, botId).catch((e) => console.warn(`[computer] screen not ready for ${botId}: ${e?.message ?? e}`));
     const engine = await engineFor(botId);

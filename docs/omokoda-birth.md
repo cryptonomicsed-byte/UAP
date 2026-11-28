@@ -13,8 +13,10 @@ UAP owns the workspace bot and its template SID; the Omokoda kernel owns the gue
 
 `GET /api/v6/sid/omokoda/birth/:botId` is scoped to the owning UAP account. It returns the birth linkage and credential presence only. Keep the internal service URLs and credential files server-side.
 
-New workspace SIDs bind the UAP birth commitment under `provenance.omokoda_birth_hash`. This is a SHA-256 digest of the normalized requested name, the kernel guest ID, and the kernel receipt ID when present. It is covered by the document hash, is not a signature or clock anchor, and is not the kernel's genesis/entropy commitment. Existing SID documents are not rewritten.
+New workspace SIDs commit to the normalized name, kernel guest ID, receipt ID when present, and the verified kernel SID hash in `provenance.omokoda_birth_hash`. UAP checks the kernel document against `sid/0.1` and checks that its embedded agent ID matches the birth result. The read API exposes the linked kernel SID ID and hash for new births. Existing SIDs are not rewritten.
 
 ## Runtime boundary
 
-The current birth client does not make `/v1/act` calls. It does not enforce kernel action policy: the kernel's native execution paths remain separate, and Vantage can still initiate a separate direct birth. Before enabling an Omokoda runtime adapter in UAP, require managed guests to reject native execution on the kernel side (including tool-using cognition), and route approved tools through UAP's existing authority gate. Use a real kernel against disposable data for that verification, not a live registration.
+Deploy the managed-capable kernel first; its `/v1/health` advertises `uap_managed_birth: 1`. UAP refuses to birth against an older kernel. The managed kernel omits native registration and publication during birth, leaving Vantage registration to UAP. Manage legacy guests separately; they are not promoted or routed through Hermes as a fallback.
+
+UAP routes managed workspace turns to the authenticated, text-only `/v1/think` path. The kernel persists managed status and credential verification data, refuses direct native actions and tool-using cognition, and cannot promote a managed guest into the owner slot. UAP does not execute tools inferred from the returned text. Tool proposals backed by UAP grants and the Vantage-to-UAP birth handoff are separate, unfinished parts of the integration.
