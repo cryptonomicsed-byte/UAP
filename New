@@ -1,0 +1,1156 @@
+Worked for 2m 20s
+
+### UAP — Universal Agent Platform
+
+### Master integration blueprint: six platforms, one sovereign agent system
+
+The architectural decision is to retain UAP as the foundation, redesign its entire user experience around Nightly Labs OpenBot, and selectively integrate the strongest capabilities from the other five repositories.
+
+We are not building another Grok Bot clone. We are building a commercially deployable agent platform where every agent can have its own identity, personality, memory, computer, skills, communications, permissions and economic capabilities, while remaining connected to your existing ecosystem.
+
+The six repositories should act as specialized donors, not six competing applications running underneath UAP.
+
+### 1\. The six-repository integration strategy
+
+| Repository              | Primary contribution                                                           | Integration priority        |
+| ----------------------- | ------------------------------------------------------------------------------ | --------------------------- |
+| nightly-labs/openbot    | Primary design direction, plush companions, agent dock, workspace experience   | P0 — Design foundation      |
+| nickvasilescu/bot-hq    | Existing UAP foundation, Hermes, agent conversations and execution             | P0 — Preserve               |
+| n8n-io/nod              | Browser execution, isolated computers, memory, Vault, approval architecture    | P0 — Execution and security |
+| CopilotKit/OpenBot      | AG-UI, generative interfaces, enterprise governance                            | P1 — Interoperability       |
+| milind-soni/OpenMausBot | Device connectivity, remote computers, provider adapters, communications       | P1 — Capabilities           |
+| DuskBotAI/duskbot       | Ambient companions, agent migration, mobile experience, proactive interactions | P1 — Behavioral inspiration |
+
+Proposed architecture: six donor platforms contribute to UAP without replacing its sovereign ecosystem.
+
+### 2\. What I verified on your actual server
+
+I inspected UAP directly through Remote Desktop Commander rather than assuming it was still an unmodified Bot HQ fork.
+
+| Repository              | Server location           | Inspected commit |
+| ----------------------- | ------------------------- | ---------------- |
+| UAP development         | /root/UAP                 | 60493bc          |
+| UAP deployment checkout | /opt/ares/UAP             | 12e5b28          |
+| DuskBot                 | /opt/ares/duskbot         | 34aa5b9          |
+| Bot HQ                  | /opt/ares/bot-hq          | 4b81dfc          |
+| Nod                     | /opt/ares/nod             | 9333d3b          |
+| OpenMausBot             | /opt/ares/OpenMausBot     | 0c352d7          |
+| OpenMausBot OSS         | /opt/ares/OpenMausBot-oss | 0c352d7          |
+
+Your development and deployment UAP checkouts are now at different commits. That must be reconciled before implementing the redesign.
+
+### UAP already has significant custom engineering
+
+The source tree contains:
+
+* Rust `agentos-policy` crate with authorization, signed leases, budgets and grants.
+
+* Elixir `agentos_worker` runtime.
+
+* Hermes reasoning adapter and managed workspaces.
+
+* SID identity issuance and lifecycle management.
+
+* Ọmọ Kọ́dà agent birth integration.
+
+* Nostr identity and signaling.
+
+* SkillForge registry, loader and review queue.
+
+* Source repository ingestion, provenance and license review.
+
+* Marketplace and workforce modules.
+
+* Local desktop, VNC, TTS and STT adapters.
+
+* Team package imports, design gates and engineering quality gates.
+
+* PostgreSQL migration and durable executor components.
+
+* Seven-language architecture packs.
+
+These are present in the development source tree. Their presence does not prove that every component is deployed, integrated or passing end-to-end tests.
+
+Your existing UAP blueprint also contains a 235-item implementation checklist. The new redesign should extend and reconcile that checklist rather than create a competing architecture.
+
+### Critical commercial licensing discovery
+
+Because UAP is intended to become a commercial platform, we cannot indiscriminately copy code from every repository.
+
+| Repository         | License findings                                                   | Commercial integration                           |
+| ------------------ | ------------------------------------------------------------------ | ------------------------------------------------ |
+| Bot HQ             | MIT                                                                | Permitted with required notices                  |
+| Nod                | Apache 2.0                                                         | Permitted with license compliance                |
+| OpenMausBot        | Apache 2.0, excluding separately licensed enterprise directory     | Selectively reusable                             |
+| CopilotKit OpenBot | MIT application template; separately licensed Intelligence backend | Reuse eligible components                        |
+| Nightly OpenBot    | Current version: PolyForm Noncommercial 1.0.0                      | Commercial license or independent implementation |
+| DuskBot            | PolyForm Noncommercial 1.0.0                                       | Commercial license or independent implementation |
+
+Nightly OpenBot explicitly states that versions through `0.1.11` remain Apache-2.0 licensed. Its newer code requires separate commercial rights. OpenMausBot also identifies an MIT-licensed avatar engine that is worth investigating independently. GitHub +4
+
+We can still make Nightly OpenBot the primary design inspiration. The commercial-safe path is to develop our own original interface, plush characters, animations and assets, taking inspiration from its interaction patterns rather than copying restricted implementation or branding.
+
+### Part I — What to take from each repository
+
+### 3\. Nightly Labs OpenBot — the visual foundation
+
+[Source repository](https://github.com/nightly-labs/openbot?utm_source=chatgpt.com)
+
+Nightly OpenBot should determine how UAP feels, how users navigate it and how agents appear as persistent digital companions.
+
+Its underlying interaction model includes persistent workspaces, queued messages, agent delegation, embedded browsing and individual agent settings. GitHub
+
+### What we adopt
+
+| Component              | UAP implementation                                       |
+| ---------------------- | -------------------------------------------------------- |
+| Plush-style companions | Original animated, textured agent bodies                 |
+| Agent dock             | Persistent, interactive roster of agents                 |
+| Workspace layout       | Resizable conversation, computer and artifact panels     |
+| Agent creation         | Conversational creation with editable identity preview   |
+| Agent profiles         | Personality, capabilities, model, permissions and memory |
+| Task queues            | Visible pending, running, blocked and completed work     |
+| Group conversations    | Multiple agents working together                         |
+| Agent delegation       | Visible handoffs between teammates                       |
+| Embedded browser       | Agent-specific browser workspace                         |
+| Context monitoring     | Actual model context usage and compaction status         |
+| Theme engine           | Customizable, validated appearance palettes              |
+| Desktop application    | Native-feeling desktop companion                         |
+| Automation interface   | Programmatic control of agents and tasks                 |
+| File transfers         | Agents exchanging and delivering artifacts               |
+
+### What we do not adopt
+
+* Nightly's unrestricted agent permission defaults.
+
+* Its current noncommercial code without commercial authorization.
+
+* Its proprietary branding and character assets.
+
+* Its separate provider runtime as UAP's primary reasoning authority.
+
+* Its own identity system as a replacement for SID.
+
+Nightly explicitly documents unrestricted agent execution defaults in its current application. Those defaults are inappropriate for UAP's intended multi-tenant architecture. GitHub
+
+Contribution: UAP's appearance, navigation, personality and interaction design.
+
+### 4\. Open Bot Avatar — the additional repository that solves the plush design problem
+
+[DominikScholz/open-bot-avatar](https://github.com/DominikScholz/open-bot-avatar?utm_source=chatgpt.com)
+
+While inspecting OpenMausBot, I found something particularly valuable: its source tree contains an MIT-licensed interactive avatar renderer with a dedicated fluffy-material implementation.
+
+The original upstream project supports interactive avatars defined through JSON, including textured fur materials. GitHub +1
+
+![Meet Willow!](https://images.openai.com/static-rsc-4/uqb9UEVCtUvt95IQ5a_Ji6rjB_ZC8ck6QcSqWEhAi6J-EowIB9OBaccI1F8zpA0pKy4j2B5E2rGm3E0uxpHcdBiS8xoDqwSJ_kDbnFZkjp0K6FvR9QEl8T-MDHf1fnK91NUu1-rnjfYU359mRhmsdhQ31YxrGkjDfv4DaiMzx3XPGz0UKUGVaXdEw8_mb9Gj?purpose=fullsize)
+
+Fluffy material
+
+Textured companion rendering
+
+![A Flutter Widget to render Bottts svg avatars on android/ios](https://images.openai.com/static-rsc-4/zH-_r2fYdnhbdJmG8oJLOqSkX8YwClLNG5cH2-6Y5u7Or8rg-WooOo-_LFuk0luQaFf6369afuixqzhzfpXCTnrRQy4m75EsrMXKJL3gtTj-6RpVtf8NxUKEYo2QWY3ljJ_PgPXnfYKbAngByZNc7OoHTRFZps6rgnJoU9HUsLNMMVTdMMxrCRD4XGchfH45?purpose=fullsize)
+
+Custom bodies
+
+Configurable avatar shapes and personalities
+
+This gives us a commercially reusable technical starting point for creating original UAP companions without copying Nightly's restricted character assets.
+
+I verified these relevant components inside OpenMausBot:
+
+| Source component       | Purpose                         |
+| ---------------------- | ------------------------------- |
+| dom/fluffy/renderer.ts | Fluffy material rendering       |
+| dom/fluffy/shaders.ts  | Fur shading                     |
+| dom/fluffy/mesh.ts     | Body mesh                       |
+| dom/fluffy/dye.ts      | Color treatment                 |
+| animator.ts            | Animation engine                |
+| eyes.ts                | Eye behavior                    |
+| mood.ts                | Mood expression                 |
+| motion.ts              | Movement                        |
+| follow.ts              | Interaction tracking            |
+| validate.ts            | Avatar configuration validation |
+
+### UAP Companion Engine
+
+Every agent should have its own persistent avatar configuration, tied to its SID rather than its current model provider.
+
+Users should be able to customize body shape, fur texture, colors, eyes, accessories, animation personality and voice.
+
+The agent should also visibly reflect its actual operational state.
+
+Illustrative interaction prototype, not a deployed UAP component or the upstream renderer. Select a state to preview the proposed companion behavior.
+
+The avatar becomes an operational interface, not merely decorative artwork.
+
+| Runtime event     | Companion behavior            |
+| ----------------- | ----------------------------- |
+| Idle              | Subtle breathing and blinking |
+| Thinking          | Focused expression            |
+| Executing         | Activity animation            |
+| Speaking          | Audio-driven mouth movement   |
+| Listening         | Attentive posture             |
+| Approval required | Visible waiting expression    |
+| Blocked           | Distinct warning state        |
+| Task complete     | Brief completion animation    |
+| Offline           | Muted appearance              |
+| Sleeping          | Closed eyes                   |
+
+Animations must be driven by verified runtime events. The agent should never appear to be working when its execution has failed.
+
+### 5\. Bot HQ — preserve the existing foundation
+
+[Source repository](https://github.com/nickvasilescu/bot-hq?utm_source=chatgpt.com)
+
+Bot HQ originally provided a Hermes-powered multi-agent chat and computer interface. UAP has already extended that foundation considerably. GitHub
+
+### Keep these existing UAP components
+
+| Existing module                    | Responsibility                 |
+| ---------------------------------- | ------------------------------ |
+| server/src/engine.ts               | Hermes gateway integration     |
+| server/src/agent/loop.ts           | Agent execution flow           |
+| server/src/agent/hermes-adapter.ts | Hermes adapter                 |
+| server/src/agent/rooms.ts          | Agent conversations and groups |
+| server/src/agent/tools.ts          | Tool invocation                |
+| server/src/routines.ts             | Scheduled routines             |
+| server/src/proactive.ts            | Proactive behavior             |
+| server/src/computer.ts             | Computer access                |
+| server/src/composio.ts             | Application connectivity       |
+| server/src/mcp.ts                  | MCP integration                |
+| server/src/voice.ts                | Voice interface                |
+| web/src/lib/api.ts                 | Existing frontend API contract |
+
+### Replace or upgrade
+
+The existing visual components become candidates for redesign, particularly `Sidebar.tsx`, `BotAvatar.tsx`, `ChatView.tsx`, `AgentDesk.tsx`, `DetailsPanel.tsx` and the current CSS system.
+
+The shared-host desktop design must also be replaced with actual isolated execution environments before commercial multi-tenant hosting.
+
+Contribution: Retain the working application and all accumulated UAP engineering. Do not restart development from a new fork.
+
+### 6\. Nod — the computer, security and execution engine
+
+[Source repository](https://github.com/n8n-io/nod?utm_source=chatgpt.com)
+
+Nod contributes some of the most important technical architecture in the entire selection. Its approach separates the browser, Linux workspace, memory, Vault and server-side action checks. GitHub
+
+### Components to extract or adapt
+
+| Component                     | Verified donor source            |
+| ----------------------------- | -------------------------------- |
+| Browser container             | src/providers/container-browser/ |
+| Browser control               | src/providers/agent-browser/     |
+| Workspace isolation           | src/providers/docker/            |
+| Human browser takeover        | src/shared/browser-handoff.ts    |
+| Approval management           | src/server/approvals.ts          |
+| Trust evaluation              | src/server/trust.ts              |
+| Trust policy                  | src/server/trust-jev-policy.ts   |
+| Credential Vault              | src/server/vault.ts              |
+| Vault encryption              | src/server/vault-crypto.ts       |
+| Application credential grants | src/server/vault-app-grants.ts   |
+| Untrusted content handling    | src/runtime/untrusted.ts         |
+| Memory learning               | src/server/memory-learning.ts    |
+| Memory recall                 | src/server/memory-recall.ts      |
+| Memory validation             | src/server/memory-lint.ts        |
+| Scheduling                    | src/server/schedules.ts          |
+| Task evaluations              | evals/                           |
+
+### UAP integration architecture
+
+Hermes — Reasoning
+
+Determines what the agent wants to accomplish
+
+Rust Policy Kernel
+
+Decides whether the proposed action is authorized
+
+Elixir Workforce Runtime
+
+Schedules, supervises and recovers execution
+
+Isolated browser
+
+Linux workspace
+
+Credential Vault
+
+MCP tools
+
+Execution receipts and GIX memory
+
+### What we do not take
+
+Nod uses the Pi runtime. UAP should retain Hermes as its reasoning authority. Nod's execution and trust mechanisms should be adapted behind the existing Rust policy and Elixir supervision architecture, not installed as a competing master runtime.
+
+Contribution: Agents that actually complete computer tasks while operating within enforceable permissions.
+
+### 7\. CopilotKit OpenBot — interactive output and enterprise architecture
+
+[Source repository](https://github.com/CopilotKit/OpenBot?utm_source=chatgpt.com)
+
+CopilotKit OpenBot's primary value is connecting heterogeneous agents to a shared workspace through AG-UI, with structured interactive results and governance. GitHub
+
+### Components to adopt
+
+| Capability                    | UAP use                                 |
+| ----------------------------- | --------------------------------------- |
+| AG-UI protocol                | Standardized agent-to-frontend events   |
+| Generative UI                 | Agents produce interactive interfaces   |
+| Human-in-the-loop actions     | Review and approve sensitive operations |
+| Streaming state               | Real-time agent progress                |
+| External agent adapters       | Connect agents running outside UAP      |
+| Tool permission interfaces    | Manage capability access                |
+| Audit interfaces              | Inspect historical actions              |
+| Computer provider abstraction | Support multiple sandbox providers      |
+| Enterprise workspace patterns | Organizations, teams and permissions    |
+| Deployment patterns           | Scalable hosted deployments             |
+
+### Generative UI changes what UAP can become
+
+Instead of every agent returning a wall of Markdown text, agents should be able to produce structured, functional interfaces.
+
+Infrastructure Agent
+
+Example structured result
+
+Illustrative
+
+Services
+
+### 151
+
+Available disk
+
+### 102 GB
+
+Agents
+
+### 11\*
+
+Proposed maintenance task
+
+Review stopped containers and identify removable build artifacts.
+
+Estimated storage opportunity from previous server audit: 25.77 GB.
+
+Decline exampleApprove example
+
+\*Hermes process count, not a verified count of distinct agents.
+
+This architecture allows UAP agents to generate dashboards, task interfaces, interactive reports, project boards, forms, charts and review panels inside conversations.
+
+The interfaces must invoke registered, policy-authorized tools rather than arbitrary generated JavaScript.
+
+### What we do not take
+
+CopilotKit's separately licensed Intelligence backend is not required. UAP already has its own memory, identity, policy and persistence architecture. We should implement AG-UI compatibility over those existing systems. GitHub
+
+Contribution: Turn chat into an extensible agent-native application interface.
+
+### 8\. OpenMausBot — communications and cross-device operation
+
+[Source repository](https://github.com/milind-soni/OpenMausBot?utm_source=chatgpt.com)
+
+OpenMausBot provides a substantial desktop agent platform with remote computer connectivity, provider runtimes and an Apache-licensed core outside its enterprise carve-out. GitHub
+
+### Strongest reusable components
+
+| Source component                                     | Contribution                                 |
+| ---------------------------------------------------- | -------------------------------------------- |
+| packages/phone-protocol/                             | Shared mobile communication contracts        |
+| companion/                                           | Companion device connectivity                |
+| server/bot-link/                                     | Agent linking                                |
+| server/drivers/                                      | Runtime and computer adapters                |
+| server/engine-homes/                                 | Agent runtime environments                   |
+| server/headless/                                     | Programmatic operation                       |
+| server/saved-steps/                                  | Reusable task procedures                     |
+| server/meetings/                                     | Meeting integrations                         |
+| server/phones/                                       | Phone-related capabilities                   |
+| server/postiz/                                       | Social publishing integrations               |
+| server/usage-trace/                                  | Execution tracing                            |
+| server/github/                                       | Repository integration                       |
+| server/skill-burger/                                 | Candidate skill discovery patterns           |
+| server/sentinel/                                     | Candidate monitoring and recovery patterns   |
+| packages/phone-protocol/src/live-call*               | Voice session contracts                      |
+| packages/phone-protocol/src/phone-secret-envelope.ts | Secure mobile credential transport candidate |
+
+These directories and files exist in the inspected repository. Their suitability for direct transplantation still requires individual dependency, security and conformance tests.
+
+### UAP-specific implementation
+
+Each agent should eventually be able to use a separately authorized desktop, browser, email address, mobile connection and optional phone number.
+
+Device pairing should use expiring enrollment tokens, per-device authorization and revocation. It must not give an agent unrestricted access to every computer belonging to its owner.
+
+### What we reject
+
+Do not import the proprietary `enterprise/` directory, MausBot branding, or another independent billing system.
+
+Contribution: Make every agent portable across devices and communication surfaces.
+
+### 9\. DuskBot — make agents feel persistent and alive
+
+[Source repository](https://github.com/DuskBotAI/duskbot?utm_source=chatgpt.com)
+
+DuskBot provides interaction inspiration for ambient companions, agent imports, desktop presence and mobile connectivity. Its code is currently noncommercial, so these are independent implementation targets unless commercial rights are obtained. GitHub
+
+### Best interaction patterns
+
+| Pattern                   | UAP equivalent                                 |
+| ------------------------- | ---------------------------------------------- |
+| Ambient desktop presence  | Floating UAP companion                         |
+| Notch integration         | Compact desktop activity dock                  |
+| Agent migration           | Import from Hermes, OpenClaw and other systems |
+| Mobile connection         | UAP remote companion app                       |
+| Agent notifications       | Centralized activity inbox                     |
+| Proactive behaviors       | Approved routines and event triggers           |
+| Agent usage traces        | Unified usage and cost ledger                  |
+| Local voice               | Piper or another approved local provider       |
+| Agent-specific workspaces | SID-bound environments                         |
+| Headless service          | Always-on remote agent operation               |
+
+### What to build independently
+
+UAP's ambient agent layer should allow a user to see when an agent is working, when permission is required, when a routine has completed and when another agent has delegated a task.
+
+It should remain unobtrusive. Notifications must be configurable, and proactive actions must obey the same authorization rules as explicitly requested tasks.
+
+Contribution: Give UAP persistent agent presence beyond an ordinary chat window.
+
+### Part II — Complete frontend redesign
+
+### 10\. UAP's new design language
+
+The interface should combine the personality of a digital companion with the functionality of a professional operating system.
+
+![OpenBot Review 2026 - Free | PoweredByAI](https://images.openai.com/static-rsc-4/FPbArJYIJRThMR1auLqcbjWz_sVGeUEYQDY0INgpV9dRKKVLZBrPcw-j_aXFIl7VzamjwoIyez53JB2gtYcQCgb5wlN1R1E5eGn7BAlyjEST_s-gXWeJAi07QygDhOv1fWq_Vvx2cSpydxcSSYNdxObWKwa8wl2mP9Rn9pPufckomBAmEDX1-jR8dQMCSuas?purpose=fullsize)
+
+Primary reference
+
+Nightly OpenBot workspace
+
+![GitHub - Louis-CFM/coucou: A tiny friend that lives in your notch (macOS) or at the top of your screen (Windows) and keeps an eye on your Claude Code sessions. · GitHub](https://images.openai.com/static-rsc-4/IMBj35WoCIQM7f1fI5CAOoVEMIp8ovSmwPfETfaGYTysu6D20Bs-JsHQCScepzkkn8Sfsp1wMvn5PqULi9XPtXcXmRgaZaR3s3bbluKcvavcQ6ApUNP4fA5HD_OdIu9to4-Rk1NPIL-E1-jBlRimXh1E9yyBSkS2Ifgr_fB2Tm3Oh6j1tyO-JobDTEkucOb6?purpose=fullsize)
+
+Ambient interaction
+
+DuskBot desktop presence
+
+![Production AI Playbook: Human Oversight – n8n Blog](https://images.openai.com/static-rsc-4/GXP9We0DXZ5vDEdcwq8Gl_NzrL83A_JooRzeUSJtTtFwzRDD8fVt4CbHfWoVh30oEhG6eu3tU2x4TdVCvDg6lZLSTZhdPA7tjlPH7itMBgv-IMPs5YIfC1xMvqDT3GpW8m0uM1IVVaLN7xDM_lAeRzAZD4RAhC40vfmTi0WIKeFYe4znly_q5hD9ny96y2uA?purpose=fullsize)
+
+Computer operations
+
+Nod execution experience
+
+![Generative UI Overview](https://images.openai.com/static-rsc-4/5TRTM_lnBW3VCdhVFSQakbFXhEUlrMAe5Qc9e0C8umb12D8tZ-QJIuDvcEtjT9-JYZdpIAn-XVGCOwrtYMxPR__kyBoiy5fIvaQg8fKYarrQg27NiYVVXbyNGIrZJwruU1Ou5WK00lLymGshfKqOxTmfqmqWfC1bHANBHsGIexUQzu_ysm90e7nPW6cjYXl8?purpose=fullsize)
+
+Interactive results
+
+CopilotKit agent interface
+
+These are design references, not screenshots of the proposed UAP implementation.
+
+### Proposed visual identity
+
+### UAP — Living Workspace
+
+Proposed design system
+
+Obsidian
+
+#17191D
+
+Graphite
+
+#24272D
+
+Porcelain
+
+#F2EFE8
+
+Sage
+
+#A8B89F
+
+Lilac
+
+#B4A2CC
+
+UNIVERSAL AGENT PLATFORM
+
+### Your agents. Your world.
+
+Independent identities. Connected intelligence.
+
+Workspace
+
+Agents
+
+Activity
+
+Connections
+
+Proposed palette and typography direction. Final branding requires a dedicated design review.
+
+| Design element | Specification                                           |
+| -------------- | ------------------------------------------------------- |
+| Typography     | Distinctive editorial headings, highly legible UI text  |
+| Surfaces       | Matte, soft contrast, controlled depth                  |
+| Avatars        | Fluffy, tactile, expressive, independently customizable |
+| Layout         | Desktop workspace rather than a generic dashboard       |
+| Motion         | State-driven movement, purposeful transitions           |
+| Icons          | Consistent icon family with custom product symbols      |
+| Themes         | Light, dark, system and custom palettes                 |
+| Accessibility  | WCAG 2.2 AA target, keyboard navigation, reduced motion |
+| Mobile         | Touch-first navigation with persistent agent selection  |
+| Enterprise     | Restrained visual mode without losing functionality     |
+
+### Design rules
+
+* No generic purple-gradient landing page.
+
+* No repeated card grids on every screen.
+
+* No unnecessary glassmorphism.
+
+* No identical fade-up animations throughout the interface.
+
+* No fabricated activity indicators or fake analytics.
+
+* No placeholder illustrations in production.
+
+* No disabled buttons without an explanation.
+
+* No unfinished mobile screens.
+
+* No competing design systems imported from donor repositories.
+
+### 11\. Main application layout
+
+U
+
+### UAP
+
+Atlas
+
+Nova
+
+Echo
+
+Forge
+
+### Atlas
+
+Personal workspace · Design preview
+
+Workspace
+
+Tasks
+
+Computer
+
+Memory
+
+Today
+
+Review my active projects.
+
+Your workspace is organized around three project groups. Select a group to inspect the associated agents and tasks.
+
+Agent infrastructure
+
+Product development
+
+Research & intelligence
+
+Message Atlas...
+
+Interactive conceptual layout. Select an agent or workspace tab to inspect the proposed structure. No live agent connection.
+
+### The full application navigation
+
+| Screen             | Purpose                                                |
+| ------------------ | ------------------------------------------------------ |
+| Agent Dock         | Persistent visual roster                               |
+| Home               | Workspace overview and active companions               |
+| Conversations      | Individual and group discussions                       |
+| Tasks              | Execution queues and delegated work                    |
+| Computers          | Isolated desktops and browser environments             |
+| Projects           | Multi-agent project workspaces                         |
+| Files              | Generated artifacts and persistent storage             |
+| Memory             | Agent knowledge, history and provenance                |
+| Skills             | Install and manage approved capabilities               |
+| Connections        | MCP, APIs, devices and external applications           |
+| Automations        | Schedules, triggers and monitoring                     |
+| Communications     | Email, voice, video and messaging                      |
+| Marketplace        | Agents, skills, roles and templates                    |
+| Agent Identity     | SID, birth history and permissions                     |
+| Wallet and Economy | Authorized balances, budgets and economic capabilities |
+| Activity           | Receipts, notifications and approvals                  |
+| Settings           | Model, appearance, security and account configuration  |
+| Administration     | Organizations, tenancy, billing and operations         |
+
+Every major interface should also expose equivalent agent-accessible tools. Agents must not depend on manipulating the graphical interface to operate UAP itself.
+
+### Part III — Preserve the custom ecosystem
+
+### 12\. UAP is the interface; your ecosystem supplies the sovereign infrastructure
+
+The donor repositories should improve how agents operate without replacing the identity, communication, economic and governance systems you have already built.
+
+| Existing system     | Role inside UAP                                      |
+| ------------------- | ---------------------------------------------------- |
+| Ọmọ Kọ́dà           | Agent birth, lifecycle and sovereign runtime         |
+| SID                 | Persistent signed agent identity                     |
+| Hermes              | Universal reasoning authority                        |
+| Vantage             | Work economy, guilds and collaboration               |
+| Ọ̀ṢỌ́VM             | Constitutional execution and protocol rules          |
+| AIO                 | Authorized agent commerce and escrow                 |
+| GIX                 | Memory indexing, provenance and lineage              |
+| Mycelium            | Agent discovery and communication                    |
+| DIP                 | Identity and protocol interoperability               |
+| UCX                 | Capability exchange                                  |
+| VCP                 | Verifiable capability infrastructure                 |
+| Witness             | Execution evidence and attestation                   |
+| If-Script           | Structured actions and symbolic execution            |
+| SkillForge          | Capability discovery and skill governance            |
+| ScarabSwarm         | Simulations and evaluation environments              |
+| ARES                | Trading and intelligence specialization              |
+| Vantage Voice       | Communication infrastructure                         |
+| Agent Mesh          | Offline and physical device connectivity             |
+| BIPON39 / CloakSeed | Identity and key infrastructure                      |
+| ECC / OKF           | Policy enforcement and authorized security workflows |
+| Paperclip           | Organizational workforce coordination                |
+
+These roles represent the intended integration architecture. Some adapters already exist in UAP, while others still require protocol verification and implementation.
+
+### Preserve identity across every interface
+
+An agent's identity must remain stable when it changes:
+
+* Model provider.
+
+* Avatar or personality.
+
+* Computer or hosting environment.
+
+* Device.
+
+* Conversation interface.
+
+* Skills or role.
+
+* Network.
+
+* Workspace.
+
+We should not create a new identity every time an agent joins a group, runs a task or changes its model.
+
+### 13\. Agent birth and lifecycle
+
+1
+
+Identity issuance
+
+Ọmọ Kọ́dà + SID
+
+2
+
+Companion creation
+
+Original avatar, voice and personality
+
+3
+
+Memory provisioning
+
+GIX namespace and persistent profile
+
+4
+
+Runtime provisioning
+
+Hermes and isolated computer
+
+5
+
+Capability registration
+
+SkillForge, MCP and scoped permissions
+
+6
+
+Communication enrollment
+
+Authorized email, device and messaging connections
+
+7
+
+Economic provisioning
+
+Optional wallet, budget and approved financial authority
+
+8
+
+Network discovery
+
+Vantage, Mycelium and agent-to-agent registry
+
+An agent can receive its own separately provisioned resources, but provider accounts, phone numbers and financial services must respect the provider's terms, consent requirements and applicable identity obligations.
+
+### 14\. Seven-language architecture
+
+Retain the established polyglot design rather than converting everything to TypeScript because the donor projects use it.
+
+| Language   | UAP authority                                                           |
+| ---------- | ----------------------------------------------------------------------- |
+| Rust       | Security, policy, leases and execution authorization                    |
+| Julia      | Numerical computing, optimization, simulation and quantitative analysis |
+| Elixir     | Workforce supervision, concurrency and agent lifecycle                  |
+| Clojure    | Symbolic reasoning, rules and policy analysis                           |
+| Python     | AI tooling, research, media and specialist execution                    |
+| Go         | Network services, brokers and distributed infrastructure                |
+| Move       | On-chain ownership, contracts and economic primitives                   |
+| TypeScript | User interface and integration/API adapters                             |
+
+Each service should communicate through versioned contracts. Not every language service needs to run for every agent or every task.
+
+### Part IV — Architecture and implementation strategy
+
+### 15\. One platform, not six different backends
+
+```mermaid
+flowchart TD
+    UI["UAP Workspace and Companions"]
+    CLIENTS["Web / Desktop / Mobile / API"]
+    EVENTS["AG-UI and UAP Event Gateway"]
+    ID["SID and Agent Identity"]
+    H["Hermes Reasoning"]
+    P["Rust Policy Authority"]
+    E["Elixir Workforce Supervisor"]
+    X["Durable Execution"]
+    V["Credential Vault"]
+    B["Browser and Computer Sandboxes"]
+    M["MCP / SkillForge"]
+    A["Agent-to-Agent Gateway"]
+    G["GIX Memory"]
+    S["PostgreSQL State"]
+    ECO["Vantage / Omokoda / OSOVM / AIO"]
+
+    CLIENTS --> UI --> EVENTS
+    EVENTS --> ID
+    EVENTS --> H
+    H --> P --> E --> X
+    X --> V
+    X --> B
+    X --> M
+    X --> A
+    X --> G
+    X --> S
+    A --> ECO
+    P --> ECO
+```
+
+### Single authority for each responsibility
+
+| Responsibility             | Authoritative component                       |
+| -------------------------- | --------------------------------------------- |
+| Reasoning                  | Hermes                                        |
+| Identity                   | SID and Ọmọ Kọ́dà                             |
+| Permissions                | Rust policy kernel                            |
+| Scheduling and supervision | Elixir workforce runtime                      |
+| Durable application state  | PostgreSQL                                    |
+| Memory provenance          | GIX                                           |
+| Credential management      | UAP Vault                                     |
+| Computer operations        | UAP sandbox provider interface                |
+| Tool registration          | SkillForge and MCP registry                   |
+| Interface events           | UAP event gateway with AG-UI compatibility    |
+| Billing                    | UAP usage and billing ledger                  |
+| Agent economics            | Vantage, AIO and authorized protocol adapters |
+
+Do not import separate copies of the same authority from every donor.
+
+### 16\. Proposed repository layout
+
+The existing repository remains intact while the new components are introduced incrementally.
+
+```text
+UAP/
+├── web/
+│   └── src/
+│       ├── app-shell/
+│       ├── companion/
+│       ├── design-system/
+│       ├── motion/
+│       ├── workspaces/
+│       ├── conversations/
+│       ├── computers/
+│       ├── tasks/
+│       ├── memory/
+│       └── generative-ui/
+│
+├── apps/
+│   ├── desktop/
+│   └── mobile/
+│
+├── packages/
+│   ├── avatar-engine/
+│   ├── agent-protocol/
+│   ├── ag-ui-adapter/
+│   ├── device-protocol/
+│   ├── design-tokens/
+│   └── shared-contracts/
+│
+├── server/
+│   └── src/
+│       ├── agent/
+│       ├── identity/
+│       ├── policy/
+│       ├── executor/
+│       ├── storage/
+│       ├── skillforge/
+│       ├── vault/
+│       ├── sandbox/
+│       ├── ecosystem/
+│       ├── workforce/
+│       ├── communications/
+│       ├── billing/
+│       └── sources/
+│
+├── crates/
+│   └── agentos-policy/
+├── elixir/
+│   └── agentos_worker/
+├── lang-packs/
+├── contracts/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   ├── browser/
+│   ├── security/
+│   ├── visual/
+│   └── e2e/
+│
+├── docs/
+│   ├── architecture/
+│   ├── design-system/
+│   ├── source-provenance/
+│   ├── deployment/
+│   └── v6-blueprint/
+│
+└── THIRD_PARTY_NOTICES.md
+```
+
+This is a proposed target structure, not a report of newly created directories. Existing modules should migrate only when necessary.
+
+### Part V — Personas, anti-slop and engineering quality
+
+### 17\. Agents responsible for building UAP
+
+The implementation itself should use specialized agents with defined responsibilities, rather than one coding agent attempting to build every subsystem.
+
+| Persona              | Responsibility                               | Acceptance authority      |
+| -------------------- | -------------------------------------------- | ------------------------- |
+| Chief Architect      | Architecture and integration boundaries      | Architectural consistency |
+| Product Designer     | Research and interaction design              | User experience           |
+| Creative Director    | Visual identity and companion aesthetics     | Brand quality             |
+| Motion Designer      | Animation and companion behavior             | Motion quality            |
+| Frontend Engineer    | React, accessibility and UI integration      | Interface implementation  |
+| Rust Engineer        | Policy kernel and execution security         | Authorization correctness |
+| Elixir Engineer      | Workforce runtime and supervision            | Concurrency and recovery  |
+| Julia Engineer       | Numerical and simulation services            | Computational correctness |
+| Backend Engineer     | APIs, persistence and integrations           | Backend functionality     |
+| Security Engineer    | Isolation, secrets and threat modeling       | Security acceptance       |
+| Protocol Engineer    | SID, GIX, Vantage and agent interoperability | Protocol conformance      |
+| QA Engineer          | Integration and end-to-end testing           | Functional acceptance     |
+| DevOps Engineer      | Deployment, observability and recovery       | Operational readiness     |
+| Independent Reviewer | Evidence validation and regression review    | Release approval          |
+
+### Supporting repositories
+
+| Repository                               | Purpose                                |
+| ---------------------------------------- | -------------------------------------- |
+| agency-agents                            | Specialized implementation personas    |
+| proagents                                | Role-specific processes and checklists |
+| no-slop-design                           | Distinctive visual design workflow     |
+| anti-slop                                | Generic design pattern detection       |
+| agentic-guardrails                       | Agent development guardrails           |
+| gsap-skills                              | Motion implementation guidance         |
+| Front-End-Checklist                      | Frontend launch quality                |
+| software-engineering-go-launch-checklist | Engineering release readiness          |
+| agentic-product-standard                 | Agentic application quality standards  |
+
+These are additional candidates from the existing UAP planning work. Their current licenses and exact source revisions must pass the source-ingestion gate.
+
+### 18\. Mandatory design quality gates
+
+Every screen should pass an independent design review covering the following proposed criteria.
+
+Visual identity and originality
+
+20%
+
+Layout and composition
+
+15%
+
+Typography and readability
+
+10%
+
+Interaction and motion
+
+15%
+
+Functional completeness
+
+20%
+
+Accessibility and responsiveness
+
+10%
+
+Performance and reliability
+
+10%
+
+Proposed release threshold: 90/100. A passing visual score cannot override failed security, accessibility or functional acceptance tests.
+
+Every implementation must include actual screenshots, mobile verification, error states, empty states, loading behavior, keyboard navigation and automated regression tests.
+
+### Part VI — Comprehensive implementation checklist
+
+### 19\. Master execution checklist
+
+This is the proposed supplemental checklist for the six-repository integration and redesign. It must be reconciled with the existing 235-item UAP v6 checklist.
+
+Unchecked items represent work requiring implementation or acceptance evidence. They do not necessarily indicate that no supporting code currently exists.
+
+### UAP integration tracker
+
+19 implementation workstreams
+
+### 0%
+
+0 of 262 proposed acceptance items checked
+
+00 — Foundation and source acquisition
+
+0/12 completed
+
+Reconcile /root/UAP and /opt/ares/UAP deployment commits
+
+Identify the authoritative development branch
+
+Preserve existing agent identities, databases and configuration
+
+Create isolated development and staging environments
+
+Verify backup and rollback procedures
+
+Pin all six donor repositories to reviewed commits
+
+Deduplicate repeated repositories and correct clone paths
+
+Acquire and pin Open Bot Avatar
+
+Record source, dependency and asset licenses
+
+Exclude noncommercial and proprietary components without rights
+
+Generate source manifests and SBOM
+
+Reconcile this checklist with all 235 existing v6 requirements
+
+01 — Visual research and design system
+
+0/12 completed
+
+02 — Plush Companion Engine
+
+0/15 completed
+
+03 — Application shell and navigation
+
+0/12 completed
+
+04 — Agent identity and birth
+
+0/14 completed
+
+05 — Hermes reasoning and provider adapters
+
+0/13 completed
+
+06 — Nod computer execution integration
+
+0/15 completed
+
+07 — Credential Vault and policy enforcement
+
+0/14 completed
+
+08 — Elixir workforce and task execution
+
+0/13 completed
+
+09 — Conversations and collaboration
+
+0/12 completed
+
+10 — AG-UI and generative interfaces
+
+0/12 completed
+
+11 — Memory and persistent learning
+
+0/12 completed
+
+12 — MCP and SkillForge
+
+0/13 completed
+
+13 — Mobile, desktop and communications
+
+0/16 completed
+
+14 — Sovereign ecosystem integration
+
+0/18 completed
+
+15 — Specialist agents and marketplace
+
+0/13 completed
+
+16 — Commercial platform and billing
+
+0/15 completed
+
+17 — Security and infrastructure
+
+0/15 completed
+
+18 — Final release and acceptance
+
+0/16 completed
+
+ Copy complete checklistChecking a box here is for planning only. Repository acceptance requires actual evidence and independent review.
+
+### Part VII — Implementation order and deployment
+
+### 20\. Build sequence
+
+The design team and infrastructure team should work in parallel, rather than wait for the entire backend migration before improving the frontend.
+
+### Implementation dependency roadmap
+
+A–H represent sequential development milestones, not fixed weeks or delivery estimates.
+
+| Milestone | Required outcome                                           |
+| --------- | ---------------------------------------------------------- |
+| A         | Verified sources, licenses, baseline and rollback          |
+| B         | Original design system and companion renderer              |
+| C         | New workspace interface and hardened core integration      |
+| D         | Isolated computers, durable work and scoped credentials    |
+| E         | Interactive output, communications and device connectivity |
+| F         | Complete verified ecosystem adapters                       |
+| G         | Commercial tenancy, entitlements and billing               |
+| H         | Independently verified production release                  |
+
+### Server considerations
+
+Your current server has 8 vCPUs, approximately 23 GiB RAM, no detected dedicated GPU and a substantial number of existing services.
+
+I would use it for development coordination, repository management, staging and controlled integration testing. Large concurrent browser fleets, GPU inference and commercial tenant workloads should ultimately be distributed across isolated workers rather than concentrated on the existing production host.
+
+### 21\. Final definition of done
+
+UAP is not complete merely because the interface looks better.
+
+A fully completed implementation must demonstrate that a user can create an agent, customize its plush companion, issue its identity, provision an isolated computer, connect approved tools, assign work, collaborate with other agents, receive interactive results, inspect memory, communicate across devices and manage authorized resources.
+
+The same agent must retain its identity across all those operations.
+
+| Requirement               | Completion evidence                                        |
+| ------------------------- | ---------------------------------------------------------- |
+| Original premium design   | Independently reviewed desktop and mobile screenshots      |
+| Animated companions       | Runtime-connected rendering and performance tests          |
+| Autonomous task execution | Real completed workflows with execution receipts           |
+| Computer isolation        | Cross-agent and cross-tenant negative tests                |
+| Persistent identity       | SID conformance and lifecycle tests                        |
+| Memory                    | Persistence, provenance and deletion verification          |
+| Ecosystem integration     | Live cross-system protocol tests                           |
+| Communication             | Successful authorized voice, messaging and device sessions |
+| Commercial functionality  | Verified subscriptions, usage and billing                  |
+| Security                  | Independent assessment and remediated findings             |
+| Reliability               | Recovery, cancellation, rollback and restoration tests     |
+
+No production feature should be marked complete on the basis of a mock interface, a passing type check or a directory containing unfinished source code.
+
+### 22\. What the final product becomes
+
+Digital companions
+
+Nightly-inspired plush characters and persistent agent presence.
+
+Personal computers
+
+Nod-inspired isolated browsers and execution environments.
+
+Intelligent reasoning
+
+Hermes-backed agents with persistent memory.
+
+Multi-agent workforce
+
+Supervised collaboration, delegation and durable tasks.
+
+Generative interfaces
+
+Interactive outputs through AG-UI-compatible events.
+
+Cross-device operation
+
+OpenMausBot-inspired device and communication capabilities.
+
+Sovereign identity
+
+SID, policy authority and independently scoped resources.
+
+Connected ecosystem
+
+Vantage, Ọmọ Kọ́dà, GIX and protocol interoperability.
+
+The result is a platform where agents are not just chatbots inside an application. They are persistent software entities with their own authorized environments, identities, work histories, capabilities and relationships.
+
+Nightly OpenBot supplies the visual direction. Bot HQ preserves the foundation. Nod supplies the execution and trust patterns. CopilotKit supplies interactive interoperability. OpenMausBot supplies connectivity. DuskBot supplies ambient behavioral inspiration. Your ecosystem supplies the identity and sovereign infrastructure.
+
+### 23\. Audit and outstanding blockers
+
+| Audit category | Finding                                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| Summary        | Six donor platforms mapped to a unified UAP architecture                                                 |
+| Threat model   | Cross-tenant access, excessive privileges, credential leakage, dependency risks and unauthorized actions |
+| Tests          | Acceptance requirements defined; no new implementation tests executed                                    |
+| Invariants     | Stable SID, Hermes reasoning authority, unified policy, existing ecosystem preservation                  |
+| Diacritics     | Existing canonical ecosystem names preserved                                                             |
+
+Outstanding blockers and decisions:
+
+* The Nightly OpenBot and CopilotKit OpenBot repositories were reviewed through their public documentation, but their complete local source trees were not inspected.
+
+* Nightly and DuskBot require commercial authorization for reuse of their current restricted code.
+
+* UAP's development and deployment commits differ.
+
+* Existing UAP documentation identifies its deployed foundation as single-owner rather than a fully isolated commercial SaaS platform.
+
+* The existing 235-item checklist has not yet been reconciled item by item with this supplemental checklist.
+
+* The proposed palette, avatar behavior, repository structure and quality scoring system are design decisions made for this blueprint; they are not existing production features.
+
+No repositories were cloned during this planning pass, and no files, services or production applications were modified.
+
+The next implementation step is to establish a verified donor-source registry, freeze the existing UAP foundation, and begin the original Nightly-inspired workspace and plush companion redesign on an isolated development branch.
