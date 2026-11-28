@@ -8,6 +8,8 @@ import { screenForWork } from '../computer.js';
 import { engineFor } from '../engine.js';
 import { instructionsFor } from './prompt.js';
 import { conversationThread } from './hermes-adapter.js';
+import { thinkOmokodaGuest } from '../lib/omokoda-birth.js';
+import { managedWorkspaceCommand } from './managed-workspace.js';
 import { activityFor, appToolName, humanizeSlug, policyFor } from './tools.js';
 import { classifyFailure, sanitizeDetail } from '../lib/failure.js';
 import { recordTurnFailure } from '../lib/agent-fallback.js';
@@ -25,7 +27,7 @@ import { recordAndCheckChannelCap } from '../lib/channel-caps.js';
  */
 
 export type Trigger =
-  | { type: 'user'; text: string }
+  | { type: 'user'; text: string; workspaceOwner?: boolean }
   | { type: 'routine'; routineId: string; name: string; prompt: string }
   | { type: 'bot'; fromBotId: string; fromName: string; text: string; depth: number }
   | { type: 'system'; text: string };
@@ -379,6 +381,18 @@ async function runTurn(botId: string, trigger: Trigger) {
   let failed = false;
 
   try {
+    if (trigger.type === 'user' && trigger.workspaceOwner) {
+      const command = await managedWorkspaceCommand(db, { botId, userId, text: trigger.text, fromUser: true, signal: ctrl.signal });
+      if (command) {
+        if (!ctrl.signal.aborted) say(command.text);
+        return;
+      }
+    }
+    const managedReply = await thinkOmokodaGuest(db, { botId, userId, prompt: triggerText(trigger), signal: ctrl.signal });
+    if (managedReply !== null) {
+      if (!ctrl.signal.aborted) say(managedReply);
+      return;
+    }
     // The screen first: the engine's browser and computer tools point at it.
     await screenForWork(userId, botId).catch((e) => console.warn(`[computer] screen not ready for ${botId}: ${e?.message ?? e}`));
     const engine = await engineFor(botId);

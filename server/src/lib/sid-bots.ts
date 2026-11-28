@@ -38,7 +38,7 @@ function ensureParentSid(db: Database.Database, rt: SidTemplateRuntime, parentBo
   return minted.sid;
 }
 
-export function materializeSidBot(db: Database.Database, input: { userId: string; template: string; parentBotId?: string | null; omokodaBirthHash?: string }): MaterializedSid {
+export function materializeSidBot(db: Database.Database, input: { userId: string; template: string; parentBotId?: string | null; omokodaBirthHash?: string; displayName?: string }): MaterializedSid {
   const template = templateOf(input.template);
   const rt = new SidTemplateRuntime(db);
   const parentBotId = input.parentBotId || null;
@@ -60,7 +60,7 @@ export function materializeSidBot(db: Database.Database, input: { userId: string
   ).run(
     botId,
     input.userId,
-    template.title,
+    input.displayName ?? template.title,
     template.family,
     template.source.take,
     instructions,

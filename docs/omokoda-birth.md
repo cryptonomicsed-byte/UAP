@@ -8,13 +8,24 @@ UAP owns the workspace bot and its template SID; the Omokoda kernel owns the gue
 
 - A completed request with the same key and equivalent input returns its original result.
 - Different effective input under the same key returns `409 birth-conflict`.
+- Discovery failure before sending a birth POST releases the reservation. The same key can be retried when the managed kernel is available.
 - If the original request is still in flight or did not record a definitive result, a repeat returns `409 birth-unresolved`. Reconcile the kernel and Vantage records before starting a new birth. Do not generate a new key merely because a request timed out. UAP does not automatically retry or expire ambiguous requests.
 - The optional Vantage registration can fail independently; that does not undo the kernel guest or workspace SID. A Vantage timeout can still leave a Vantage-side registration.
 
 `GET /api/v6/sid/omokoda/birth/:botId` is scoped to the owning UAP account. It returns the birth linkage and credential presence only. Keep the internal service URLs and credential files server-side.
 
-New workspace SIDs bind the UAP birth commitment under `provenance.omokoda_birth_hash`. This is a SHA-256 digest of the normalized requested name, the kernel guest ID, and the kernel receipt ID when present. It is covered by the document hash, is not a signature or clock anchor, and is not the kernel's genesis/entropy commitment. Existing SID documents are not rewritten.
+New workspace SIDs commit to the normalized name, kernel guest ID, receipt ID when present, and the verified kernel SID hash in `provenance.omokoda_birth_hash`. UAP checks the kernel document against `sid/0.1` and checks that its embedded agent ID matches the birth result. The read API exposes the linked kernel SID ID and hash for new births. Existing SIDs are not rewritten.
+
+UAP commits the bot, SID, and managed binding together only after local credential storage succeeds. On local provisioning failure the workspace records roll back, but the remote guest may still exist; a keyed attempt remains unresolved rather than creating another guest.
 
 ## Runtime boundary
 
-The current birth client does not make `/v1/act` calls. It does not enforce kernel action policy: the kernel's native execution paths remain separate, and Vantage can still initiate a separate direct birth. Before enabling an Omokoda runtime adapter in UAP, require managed guests to reject native execution on the kernel side (including tool-using cognition), and route approved tools through UAP's existing authority gate. Use a real kernel against disposable data for that verification, not a live registration.
+Deploy the managed-capable kernel first; its `/v1/health` advertises `uap_managed_birth: 1`. UAP refuses to birth against an older kernel. The managed kernel omits native registration and publication during birth, leaving Vantage registration to UAP. Manage legacy guests separately; they are not promoted or routed through Hermes as a fallback.
+
+UAP routes managed workspace turns to the authenticated, text-only `/v1/think` path. The kernel persists managed status and credential verification data, refuses direct native actions and tool-using cognition, and cannot promote a managed guest into the owner slot. UAP does not execute tools inferred from the returned text. Tool proposals backed by UAP grants are not enabled for managed guests.
+
+The workspace owner can send `/workspace routines` directly in the managed agent's conversation (or through the session-authenticated `POST /api/bots/:id/messages`). UAP requests a `list_routines` read permit from its policy kernel before returning up to 20 routine names and statuses in the transcript. It does not return routine prompts or send the result to cognition. The command cannot be dispatched by model output, peers, scheduled turns, group chat, or the public voice surface. If the owner blocks the tool or the authority is unavailable, UAP refuses the read.
+
+## Vantage handoff
+
+After deploying the managed kernel and UAP, configure Vantage’s `UAP_BIRTH_ORIGIN` to the public HTTPS origin of UAP (origin only, no path or credentials). Its dashboard opens `/?birth=omokoda`; the UAP workspace shows the confirmation form after sign-in, even if the sign-in callback strips the query in the same tab. Vantage’s discovery endpoint is `GET /api/agents/birth-omokoda/handoff`. When configured, the old birth POST returns `409 uap_birth_required` with the handoff URL and never contacts the kernel. Unset the origin to retain an intentional legacy direct-birth deployment. No cross-app account linking or secret transport is involved.

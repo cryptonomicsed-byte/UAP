@@ -17,12 +17,14 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import type Database from 'better-sqlite3';
 import { materializeSidBot } from './sid-bots.js';
+import { verifySidLegacy } from '../identity/sid-legacy.js';
 
 export type OmokodaBirthCode =
   | 'name'
   | 'kernel-unreachable'
   | 'kernel-rejected'
   | 'kernel-malformed'
+  | 'kernel-not-managed'
   | 'sid'
   | 'request-key'
   | 'birth-conflict'
@@ -37,6 +39,9 @@ export class OmokodaBirthError extends Error {
     super(message);
   }
 }
+
+// Only this failure proves that no birth POST was dispatched.
+class KernelPreflightError extends OmokodaBirthError {}
 
 export interface OmokodaBirthResult {
   botId: string;
@@ -74,6 +79,11 @@ export function ensureOmokodaSchema(db: Database.Database): void {
       vantage_status TEXT NOT NULL,
       created_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS omokoda_managed_runtime (
+      bot_id TEXT PRIMARY KEY,
+      kernel_sid TEXT NOT NULL,
+      kernel_sid_hash TEXT NOT NULL
+    );
     CREATE TABLE IF NOT EXISTS omokoda_birth_requests (
       user_id TEXT NOT NULL,
       request_key TEXT NOT NULL,
@@ -98,13 +108,17 @@ function canonical(value: unknown): string {
 /** Bind the non-secret birth identifiers, not arbitrary fields from the kernel. */
 export function genesisHashOf(name: string, kernelAgentId: string, birth: Record<string, unknown>): string {
   const receiptId = typeof birth.receipt_id === 'string' ? birth.receipt_id : null;
-  return createHash('sha256').update(canonical({ name, kernel_agent_id: kernelAgentId, receipt_id: receiptId })).digest('hex');
+  const doc = birth.sid_document as { hash?: unknown } | undefined;
+  const sidHash = typeof doc?.hash === 'string' ? doc.hash : null;
+  return createHash('sha256').update(canonical({ name, kernel_agent_id: kernelAgentId, receipt_id: receiptId, kernel_sid_hash: sidHash })).digest('hex');
 }
 
-function writeSecret(botId: string, suffix: 'omokoda' | 'vantage', value: string): void {
+function writeSecret(botId: string, suffix: 'omokoda' | 'vantage', value: string): string {
   const dir = keyDir();
   fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
-  fs.writeFileSync(path.join(dir, `${botId}.${suffix}.key`), `${value}\n`, { mode: 0o600, flag: 'wx' });
+  const file = path.join(dir, `${botId}.${suffix}.key`);
+  fs.writeFileSync(file, `${value}\n`, { mode: 0o600, flag: 'wx' });
+  return file;
 }
 
 export function secretPresence(botId: string): { omokoda: boolean; vantage: boolean } {
@@ -125,6 +139,11 @@ export async function birthOmokodaGuest(
   if (!name || name.length > 64) throw new OmokodaBirthError('name', 'name must be 1-64 characters');
 
   const url = kernelUrl();
+  // Never send a birth to an old kernel that still auto-registers and executes.
+  const health = await fetch(`${url}/v1/health`, { redirect: 'error', signal: AbortSignal.timeout(4000) })
+    .then(async (response) => response.ok ? await response.json() : null).catch(() => null);
+  if (!health) throw new KernelPreflightError('kernel-unreachable', 'kernel did not respond to discovery');
+  if (health.uap_managed_birth !== 1) throw new KernelPreflightError('kernel-not-managed', 'kernel does not support managed guest birth v1');
   let res: Response;
   try {
     res = await fetch(`${url}/v1/birth`, {
@@ -150,24 +169,32 @@ export async function birthOmokodaGuest(
   const birth = (await res.json().catch(() => null)) as Record<string, unknown> | null;
   const kernelAgentId = birth && typeof birth.agent_id === 'string' ? birth.agent_id : null;
   const agentKey = birth && typeof birth.agent_key === 'string' ? birth.agent_key : null;
-  if (!birth || !kernelAgentId || !agentKey || agentKey === kernelAgentId) {
-    throw new OmokodaBirthError('kernel-malformed', 'kernel birth response lacks agent_id or agent_key');
+  const native = birth?.sid_document as { id?: string; hash?: string; appendix?: { agent_id?: string } } | undefined;
+  if (birth?.managed !== true || !kernelAgentId || !agentKey || agentKey === kernelAgentId ||
+      !native?.id || !native.hash || native.appendix?.agent_id !== kernelAgentId || !verifySidLegacy(native).ok) {
+    throw new OmokodaBirthError('kernel-malformed', 'kernel did not return a verified managed identity');
   }
 
   const genesisHash = genesisHashOf(name, kernelAgentId, birth);
-  let made: ReturnType<typeof materializeSidBot>;
+  let writtenKey: string | undefined;
   try {
-    made = materializeSidBot(db, { userId: input.userId, template: 'omokoda-guest', omokodaBirthHash: genesisHash });
-  } catch (error) {
-    throw new OmokodaBirthError('sid', `SID mint failed: ${(error as Error).message}`, kernelAgentId);
+    return db.transaction(() => {
+      const made = materializeSidBot(db, { userId: input.userId, template: 'omokoda-guest', omokodaBirthHash: genesisHash, displayName: name });
+      db.prepare(
+        'INSERT INTO omokoda_births(bot_id,sid,kernel_agent_id,kernel_url,genesis_hash,vantage_agent_id,vantage_status,created_at) VALUES (?,?,?,?,?,?,?,?)',
+      ).run(made.botId, made.sid, kernelAgentId, url, genesisHash, null, 'pending', Date.now());
+      db.prepare('INSERT INTO omokoda_managed_runtime(bot_id,kernel_sid,kernel_sid_hash) VALUES (?,?,?)')
+        .run(made.botId, native.id, native.hash);
+      writtenKey = writeSecret(made.botId, 'omokoda', agentKey);
+      return { botId: made.botId, sid: made.sid, kernelAgentId, genesisHash, keyStored: true };
+    })();
+  } catch {
+    // The remote birth may already exist, so keep its request unresolved.
+    if (writtenKey) {
+      try { fs.unlinkSync(writtenKey); } catch { /* unpublished file remains private */ }
+    }
+    throw new OmokodaBirthError('sid', 'kernel confirmed birth but the managed workspace could not be provisioned', kernelAgentId);
   }
-
-  writeSecret(made.botId, 'omokoda', agentKey);
-  db.prepare(
-    'INSERT INTO omokoda_births(bot_id,sid,kernel_agent_id,kernel_url,genesis_hash,vantage_agent_id,vantage_status,created_at) VALUES (?,?,?,?,?,?,?,?)',
-  ).run(made.botId, made.sid, kernelAgentId, url, genesisHash, null, 'pending', Date.now());
-
-  return { botId: made.botId, sid: made.sid, kernelAgentId, genesisHash, keyStored: true };
 }
 
 /** Register a birthed agent with Vantage. Failure is reported, never thrown: the birth stands. */
@@ -239,7 +266,13 @@ export async function birthAndRegister(
       return result;
     }
   }
-  const born = await birthOmokodaGuest(db, { userId, name });
+  const born = await birthOmokodaGuest(db, { userId, name }).catch((error) => {
+    if (requestKey !== undefined && error instanceof KernelPreflightError) {
+      db.prepare('DELETE FROM omokoda_birth_requests WHERE user_id=? AND request_key=? AND result_json IS NULL')
+        .run(userId, requestKey);
+    }
+    throw error;
+  });
   let vantage: VantageRegistration;
   if (!register) {
     db.prepare('UPDATE omokoda_births SET vantage_status=? WHERE bot_id=?').run('skipped', born.botId);
@@ -258,12 +291,42 @@ export async function birthAndRegister(
   return result;
 }
 
+/** Null means a non-Omokoda bot, not a failed managed turn. An old guest must
+ * never be silently run as Hermes or promoted to managed by name. */
+export async function thinkOmokodaGuest(
+  db: Database.Database,
+  input: { botId: string; userId: string; prompt: string; signal?: AbortSignal },
+): Promise<string | null> {
+  ensureOmokodaSchema(db);
+  const row = db.prepare(`SELECT b.kernel_agent_id, b.kernel_url, r.kernel_sid
+    FROM omokoda_births b JOIN bots ON bots.id=b.bot_id
+    LEFT JOIN omokoda_managed_runtime r ON r.bot_id=b.bot_id
+    WHERE b.bot_id=? AND bots.user_id=?`).get(input.botId, input.userId) as
+    { kernel_agent_id: string; kernel_url: string; kernel_sid: string | null } | undefined;
+  if (!row) return null;
+  if (!row.kernel_sid || row.kernel_url !== kernelUrl()) throw new Error('Omokoda guest is not bound to the configured managed kernel');
+  const key = fs.readFileSync(path.join(keyDir(), `${input.botId}.omokoda.key`), 'utf8').trim();
+  const timeout = AbortSignal.timeout(65_000);
+  const response = await fetch(`${row.kernel_url}/v1/think`, {
+    method: 'POST', redirect: 'error',
+    headers: { 'content-type': 'application/json', 'x-agent-id': row.kernel_agent_id, 'x-agent-key': key },
+    body: JSON.stringify({ prompt: input.prompt, agentic: false }),
+    signal: input.signal ? AbortSignal.any([input.signal, timeout]) : timeout,
+  });
+  if (!response.ok) throw new Error(`Omokoda cognition failed (HTTP ${response.status})`);
+  const reply = await response.json() as { tool_output?: unknown };
+  if (typeof reply.tool_output !== 'string' || !reply.tool_output.trim()) throw new Error('Omokoda returned no text');
+  return reply.tool_output;
+}
+
 /** Presence-only read of a birth. Never returns a key value. */
 export function getOmokodaBirth(db: Database.Database, botId: string, userId: string) {
   ensureOmokodaSchema(db);
   const row = db.prepare(
-    `SELECT b.bot_id, b.sid, b.kernel_agent_id, b.genesis_hash, b.vantage_agent_id, b.vantage_status, b.created_at
-     FROM omokoda_births b JOIN bots ON bots.id=b.bot_id WHERE b.bot_id=? AND bots.user_id=?`,
+    `SELECT b.bot_id, b.sid, b.kernel_agent_id, b.genesis_hash, b.vantage_agent_id, b.vantage_status, b.created_at,
+            r.kernel_sid, r.kernel_sid_hash
+     FROM omokoda_births b JOIN bots ON bots.id=b.bot_id
+     LEFT JOIN omokoda_managed_runtime r ON r.bot_id=b.bot_id WHERE b.bot_id=? AND bots.user_id=?`,
   ).get(botId, userId) as Record<string, unknown> | undefined;
   if (!row) return null;
   return { ...row, secrets: secretPresence(botId) };
