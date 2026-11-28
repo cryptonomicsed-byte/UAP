@@ -47,11 +47,11 @@ const BotRow = memo(function BotRow({ bot, selected, running, awaiting, onSelect
   );
 });
 
-export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
+export function Sidebar({ onNavigate, studio, onChangeLayout }: { onNavigate?: () => void; studio?: boolean; onChangeLayout?: (enabled: boolean) => void } = {}) {
   const bots = useStore((s) => s.bots);
   const live = useStore((s) => s.live);
   const storeSelectedBotId = useStore((s) => s.selectedBotId);
-  const inTasks = useConfigUI((s) => s.view === 'tasks');
+  const inTasks = useConfigUI((s) => s.view !== 'chat');
   const selectedBotId = inTasks ? null : storeSelectedBotId; // nothing highlighted while the Tasks view is open
   const user = useStore((s) => s.user);
   const collapsed = useStore((s) => s.sidebarCollapsed);
@@ -65,20 +65,23 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   }, [storeSelectBot, onNavigate]);
   const setModal = useStore((s) => s.setModal);
   const [accountMenu, setAccountMenu] = useState(false);
+  const [filter, setFilter] = useState('');
   const logout = async () => { await api.logout().catch(() => {}); location.reload(); };
 
-  const primary = bots.find((b) => b.isPrimary);
-  const others = bots.filter((b) => !b.isPrimary).sort((a, b) => b.lastActivityAt - a.lastActivityAt);
+  const primary = !studio ? bots.find((b) => b.isPrimary) : undefined;
+  const query = studio && !collapsed ? filter.trim().toLocaleLowerCase() : '';
+  const others = bots.filter((b) => (studio || !b.isPrimary) && displayName(b).toLocaleLowerCase().includes(query))
+    .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary) || b.lastActivityAt - a.lastActivityAt);
 
   return (
-    <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}`}>
+    <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}`} aria-label={studio ? 'Workspace roster' : undefined}>
       <div className="sidebar__titlebar">
-        <TrafficLights />
+        {!studio && <TrafficLights />}
         {!collapsed && (
           <div className="sidebar__brand" title="Universal Agent Platform">
             <span className="sidebar__brand-mark" aria-hidden>U</span>
-            <span className="sidebar__brand-name">UAP</span>
-            <span className="sidebar__brand-ver">v6</span>
+            <span className="sidebar__brand-name">{studio ? 'Living Workspace' : 'UAP'}</span>
+            {!studio && <span className="sidebar__brand-ver">v6</span>}
           </div>
         )}
         <div className="sidebar__controls">
@@ -99,6 +102,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       </div>
 
       <div className="sidebar__scroll">
+        {studio && !collapsed && <div className="studio-roster__section">Workspace</div>}
         <TasksIsland />
         <BoardIsland />
         {primary && (
@@ -112,6 +116,12 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             </button>
           </div>
         )}
+        {studio && !collapsed && <>
+          <div className="studio-roster__section">Teammates</div>
+          <label className="studio-roster__search"><Icon name="search" size={14} />
+            <input placeholder="Filter agents" aria-label="Filter agents" value={filter} onChange={(e) => setFilter(e.target.value)} />
+          </label>
+        </>}
         <div className="bot-list">
           {others.map((b) =>
             collapsed ? (
@@ -122,7 +132,8 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
               <BotRow key={b.id} bot={b} selected={selectedBotId === b.id} running={!!live[b.id]?.isRunning} awaiting={live[b.id]?.awaiting?.reason ?? null} onSelect={selectBot} />
             ),
           )}
-          {!collapsed && others.length === 0 && (
+          {studio && !collapsed && query && !others.length && <p className="studio-roster__empty">No agents match that name.</p>}
+          {!collapsed && others.length === 0 && !query && (
             <button type="button" className="bot-list__empty" onClick={() => setModal('create')}>
               <span className="bot-list__empty-plus"><Icon name="plus" size={14} opacity={0.66} /></span>
               <span>
@@ -149,6 +160,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
                 items={[
                   { label: 'Settings', hint: '⌘,', onSelect: () => useConfigUI.getState().openAppSettings() },
                   { label: 'Connect apps', onSelect: () => setModal('apps') },
+                  ...(onChangeLayout ? [{ label: studio ? 'Use classic layout' : 'Use Living Workspace', onSelect: () => onChangeLayout(!studio) }] : []),
                   { label: 'Log out', danger: true, onSelect: logout },
                 ]}
               >

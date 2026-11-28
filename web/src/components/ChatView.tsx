@@ -12,9 +12,11 @@ import { Transcript } from './Transcript';
 import { VoiceCallBar } from './VoiceCallBar';
 import { endCall, isCallActive, startCall, useVoice } from '../voice/call';
 import { useMagnetic } from '../lib/useMagnetic';
+import { BotTasks } from './config/TasksView';
 
 export function ChatView(props: {
   navOpen?: boolean;
+  studio?: boolean;
   onToggleNav?: () => void;
 } = {}) {
   const bot = useSelectedBot();
@@ -27,16 +29,21 @@ export function ChatView(props: {
   const [menu, setMenu] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [voiceBusy, setVoiceBusy] = useState(false);
+  const [facet, setFacet] = useState<{ id: string; view: 'chat' | 'work' }>();
   const rows = useMemo(() => sortedRows(transcript), [transcript]);
   const inCall = useVoice((s) => isCallActive(s) && !!bot && s.botId === bot.id);
   const voiceOk = isProviderConfigured(providers, 'xai');
   const computerMag = useMagnetic<HTMLButtonElement>();
   const voiceMag = useMagnetic<HTMLButtonElement>();
   const agentMag = useMagnetic<HTMLButtonElement>();
+  const navButton = <button type="button" className="icon-btn icon-btn--bordered shell__nav-toggle"
+    aria-label={props.navOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={!!props.navOpen}
+    onClick={props.onToggleNav}><Icon name="sidebar" opacity={0.8} /></button>;
 
   if (!bot) {
     return (
       <main className="chat chat--empty">
+        {props.studio && navButton}
         <div className="empty-chat">
           <div className="empty-chat__sub">No agent selected.</div>
           <button type="button" className="btn btn--sm" onClick={() => useStore.getState().setModal('create')}>New agent</button>
@@ -45,6 +52,7 @@ export function ChatView(props: {
     );
   }
 
+  const view = props.studio && facet?.id === bot.id ? facet.view : 'chat';
   const flash = (t: string) => { setToast(t); setTimeout(() => setToast(null), 2000); };
 
   const toggleVoice = async () => {
@@ -64,19 +72,16 @@ export function ChatView(props: {
   return (
     <main className="chat" style={botVars(bot.avatarColor)}>
       <header className="chat__header glass-grain">
-        <button
-          type="button"
-          className="icon-btn icon-btn--bordered shell__nav-toggle"
-          aria-label={props.navOpen ? 'Close navigation' : 'Open navigation'}
-          aria-expanded={!!props.navOpen}
-          onClick={() => props.onToggleNav?.()}
-        >
-          <Icon name="sidebar" opacity={0.8} />
-        </button>
+        {navButton}
         <span className="chat__pill-anchor">
           <button type="button" className="chat__pill" onClick={() => setMenu(!menu)} aria-haspopup="menu" aria-expanded={menu}>
             <BotAvatarFor bot={bot} size={24} state={live?.isRunning ? 'working' : 'idle'} />
-            <span className="chat__pill-name">{displayName(bot)}</span>
+            <span className="chat__pill-meta">
+              <span className="chat__pill-name">{displayName(bot)}</span>
+              {props.studio && <span className="studio-agent-status" data-state={live?.awaiting ? 'waiting' : live?.isRunning ? 'working' : 'idle'}>
+                {live?.awaiting ? 'Needs your input' : live?.isRunning ? 'Working' : bot.kind === 'room' ? 'Group conversation' : 'Agent workspace'}
+              </span>}
+            </span>
           </button>
           {menu && (
             <Menu
@@ -111,7 +116,7 @@ export function ChatView(props: {
             type="button"
             className={`chat__quick magnetic${inCall ? ' is-on' : ''}`}
             onClick={() => void toggleVoice()}
-            title={voiceOk ? (inCall ? 'End voice call' : 'Start voice call') : 'Voice needs XAI_API_KEY'}
+            title={inCall ? 'End voice call' : 'Start voice call'}
             disabled={voiceBusy}
           >
             <span>{inCall ? 'End call' : 'Voice'}</span>
@@ -129,9 +134,17 @@ export function ChatView(props: {
           </button>
         </div>
       </header>
-      <Transcript bot={bot} rows={rows} live={live} loaded={!!transcript?.loaded} />
+      {props.studio && <nav className="studio-facets" aria-label="Agent workspace">
+        <button type="button" aria-pressed={view === 'chat'} onClick={() => setFacet({ id: bot.id, view: 'chat' })}>Chat</button>
+        <button type="button" aria-pressed={view === 'work'} onClick={() => setFacet({ id: bot.id, view: 'work' })}>Work</button>
+      </nav>}
+      {view === 'chat' ? <Transcript bot={bot} rows={rows} live={live} loaded={!!transcript?.loaded} /> :
+        <div className="studio-stage-scroll"><section className="studio-facet" aria-label="Agent work">
+          <header className="studio-facet__head"><p>Workspace / Work</p><h1>Work</h1><span>Tasks assigned to {displayName(bot)}.</span></header>
+          <BotTasks bot={bot} />
+        </section></div>}
       <VoiceCallBar />
-      <Composer bot={bot} running={!!live?.isRunning} />
+      {view === 'chat' && <Composer key={bot.id} bot={bot} running={!!live?.isRunning} />}
       {toast && <div className="toast" role="status">{toast}</div>}
     </main>
   );

@@ -15,6 +15,7 @@ import { TasksView } from './components/config/TasksView';
 import { BoardView } from './components/config/BoardView';
 import { DeployBadge } from './components/DeployBadge';
 import { useConfigUI } from './configStore';
+import { readPreference } from './lib/preferences';
 
 function Shell() {
   const detailsOpen = useStore((s) => s.detailsOpen);
@@ -25,6 +26,11 @@ function Shell() {
   const view = useConfigUI((s) => s.view);
   const set = useStore((s) => s.set);
   const [navOpen, setNavOpen] = useState(false);
+  const [studio, setStudio] = useState(() => (readPreference('uap.studio') ?? import.meta.env.VITE_UAP_STUDIO) === '1');
+  const changeLayout = (enabled: boolean) => {
+    setStudio(enabled);
+    try { localStorage.setItem('uap.studio', enabled ? '1' : '0'); } catch { /* Session-only preference. */ }
+  };
 
   useEffect(() => {
     const st = useStore.getState();
@@ -72,11 +78,27 @@ function Shell() {
     setNavOpen(false);
     if (window.matchMedia('(max-width: 900px)').matches && detailsOpen) set({ detailsOpen: false });
   };
+  const toggleNav = () => {
+    if (!navOpen && studio && matchMedia('(max-width: 900px)').matches && detailsOpen) set({ detailsOpen: false });
+    setNavOpen(!navOpen);
+  };
+  useEffect(() => {
+    function escape(event: KeyboardEvent) {
+      if (!studio || event.key !== 'Escape' || event.defaultPrevented || modal || viewerOpen) return;
+      const { appSettings, botSettings } = useConfigUI.getState();
+      if (appSettings || botSettings || !matchMedia('(max-width: 900px)').matches) return;
+      if (navOpen) setNavOpen(false);
+      else if (showDetails) set({ detailsOpen: false });
+    }
+    window.addEventListener('keydown', escape);
+    return () => window.removeEventListener('keydown', escape);
+  }, [studio, modal, navOpen, set, showDetails, viewerOpen]);
 
   return (
     <div
       className={[
         'app',
+        studio ? 'app--studio' : '',
         collapsed ? 'is-sidebar-collapsed' : '',
         showDetails ? 'has-details' : '',
         navOpen ? 'is-nav-open' : '',
@@ -84,11 +106,12 @@ function Shell() {
       ].filter(Boolean).join(' ')}
     >
       <button type="button" className="shell__scrim" aria-label="Close panel" onClick={closeOverlays} />
-      <Sidebar onNavigate={() => setNavOpen(false)} />
+      <Sidebar onNavigate={() => setNavOpen(false)} studio={studio} onChangeLayout={changeLayout} />
       {view === 'tasks' ? <TasksView /> : view === 'board' ? <BoardView /> : (
         <ChatView
           navOpen={navOpen}
-          onToggleNav={() => setNavOpen((v) => !v)}
+          studio={studio}
+          onToggleNav={toggleNav}
         />
       )}
       {showDetails && <DetailsPanel />}
