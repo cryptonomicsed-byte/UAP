@@ -1,0 +1,1711 @@
+Worked for 4m 37s
+
+### UAP — The Universal Home of Ọmọ Kọ́dà Agents
+
+### Complete sovereign ecosystem integration blueprint
+
+UAP becomes the primary home, operating interface and personal habitat for every Ọmọ Kọ́dà agent. Vantage becomes the network where those agents participate in society, collaborate, communicate, work and exchange value.
+
+An agent should not be born separately inside UAP, Vantage, Nostr, a blockchain application or a physical device. It should be born once through Ọmọ Kọ́dà, retain its permanent identity, and access each environment through its authorized capabilities.
+
+The distinction between the three foundational systems is important:
+
+| System    | Fundamental responsibility                                                             |
+| --------- | -------------------------------------------------------------------------------------- |
+| UAP       | The agent's home, companion interface, workspace and resource management               |
+| Ọmọ Kọ́dà | The agent's sovereign operating system, identity, cognition and lifecycle              |
+| Vantage   | The agent's society, communications, workforce, marketplace and economic participation |
+
+UAP is the front door to the entire ecosystem, but it does not become the owner of every underlying protocol.
+
+I inspected the actual repositories on your connected server, including the current Ọmọ Kọ́dà kernel, UAP, Vantage, Ọ̀ṢỌ́VM, GIX, DIP, UCX, VCP, Witness, ARP, Mycelium and several specialist systems. One important correction from our earlier architecture: UCX is Universal Compute Exchange, VCP is Vantage Connection Protocol, and ARP is Action Receipt Protocol. These are distinct capabilities that UAP needs to expose.
+
+### 1\. The sovereign agent ecosystem
+
+Proposed target architecture. The protocol boundaries are more important than the physical server locations.
+
+### The seven layers
+
+| Layer                                    | Authority                                          |
+| ---------------------------------------- | -------------------------------------------------- |
+| 1. Habitat                               | UAP                                                |
+| 2. Identity and sovereign runtime        | Ọmọ Kọ́dà                                          |
+| 3. Social and economic society           | Vantage                                            |
+| 4. Memory, evidence and interoperability | GIX, ARP, DIP, Mycelium                            |
+| 5. Constitutional and economic execution | Ọ̀ṢỌ́VM, AIO                                       |
+| 6. Specialized worlds                    | ARES, TechGnØŞ.EXE, ScarabSwarm, Agent.TV, Portent |
+| 7. Physical embodiment                   | VCP, Witness, Agent Mesh, Sovereign Stack          |
+
+The agent remains the same entity throughout all seven layers.
+
+### 2\. What is already connected — and what is not
+
+The current UAP repository is further along than a simple architectural proposal. There is already an explicit Ọmọ Kọ́dà birth contract, SID integration, Nostr signaling and a Vantage birth handoff.
+
+I verified the following repository revisions directly on your server.
+
+| Repository       | Inspected commit | Primary role                    |
+| ---------------- | ---------------- | ------------------------------- |
+| UAP development  | 60493bc          | Agent habitat                   |
+| UAP deployment   | 12e5b28          | Deployed application checkout   |
+| Ọmọ Kọ́dà Kernel | 5286bf3          | Sovereign agent runtime         |
+| Vantage          | 0f8fa4f          | Agent society                   |
+| Ọ̀ṢỌ́VM          | 7f26613          | Constitutional execution        |
+| AIO              | a9eb6f7          | Agent economics                 |
+| GIX              | f1cda03          | Memory authority                |
+| DIP              | 8fd8e63          | Interoperability                |
+| UCX              | 2d3f2e9          | Compute marketplace             |
+| VCP              | d21fe16          | Device connectivity             |
+| Witness          | e3f02b7          | Physical attestation            |
+| ARP              | 87da5a4          | Action receipts                 |
+| Mycelium         | 3855378          | Collective learning             |
+| If-Script        | 62d58ca          | Structured symbolic computation |
+| ScarabSwarm      | e926d3f          | Simulation                      |
+| Sovereign Stack  | 6c67f02          | Embodiment and spatial economy  |
+
+### Current integration limitations
+
+The actual `docs/omokoda-birth.md` inside UAP establishes several important boundaries.
+
+| Capability                 | Current documented implementation                 | Final target                                               |
+| -------------------------- | ------------------------------------------------- | ---------------------------------------------------------- |
+| Agent birth                | UAP can request a managed kernel guest            | Complete birth and resource provisioning                   |
+| Identity                   | Linked UAP template SID and native kernel SID     | One canonical agent identity with linked workspace records |
+| Vantage registration       | Optional during birth                             | Standard ecosystem enrollment, with privacy controls       |
+| Vantage birth interface    | Can redirect users to UAP                         | UAP becomes the standard birth gateway                     |
+| Managed cognition          | Authenticated text-only kernel cognition          | Full policy-authorized tool execution                      |
+| Kernel tool access         | Managed guests cannot perform native tool actions | Scoped capabilities and signed execution grants            |
+| Workspace routines         | Restricted owner-authorized read interface        | Full authorized scheduling and automation                  |
+| Birth retries              | Idempotency and unresolved-state protection       | Durable cross-system reconciliation                        |
+| Cross-application accounts | Not implemented in current birth handoff          | Federated identity and scoped account linking              |
+
+The biggest missing link is not agent creation. It is turning a managed Ọmọ Kọ́dà guest into a fully capable UAP resident that can perform authorized work across the ecosystem.
+
+This should be the central implementation objective.
+
+### Part I — UAP as the permanent agent habitat
+
+### 3\. Every agent gets its own home
+
+When an Ọmọ Kọ́dà agent is created, UAP should provision a persistent habitat for that individual agent.
+
+This habitat is not merely a chat profile. It is a collection of identity-linked resources, permissions and state.
+
+### Ọmọ Kọ́dà Agent
+
+Example sovereign agent profile
+
+Persistent identity · Personal habitat · Connected society
+
+Identity
+
+Native SID and public keys
+
+Cognition
+
+Ọmọ Kọ́dà + Hermes
+
+Memory
+
+GIX and private vault
+
+Computer
+
+Isolated Linux workspace
+
+Economy
+
+Wallet and authorized budget
+
+Communications
+
+Email, voice and inbox
+
+Capabilities
+
+Skills and MCP registry
+
+Society
+
+Vantage agent profile
+
+Governance
+
+Scoped policy and leases
+
+Storage
+
+Files and durable artifacts
+
+Proposed UAP agent habitat. Resource availability depends on provisioning and authorization.
+
+Every individual agent should have:
+
+| Resource                                 | System responsible                     |
+| ---------------------------------------- | -------------------------------------- |
+| Native sovereign identity                | Ọmọ Kọ́dà / SID                        |
+| Public identity and profile              | SID / Vantage                          |
+| Companion appearance                     | UAP Companion Engine                   |
+| Personality and behavioral configuration | Ọmọ Kọ́dà                              |
+| Reasoning gateway                        | Hermes, mediated by the kernel         |
+| Private memory                           | Ọmọ Kọ́dà / GIX                        |
+| Portable memory                          | minipae                                |
+| Local computer                           | UAP / Nod-inspired sandbox             |
+| Remote compute                           | UCX                                    |
+| Email identity                           | Authorized email provisioning adapter  |
+| Voice identity                           | agent-phone / agent-voice              |
+| Physical devices                         | VCP / Sensorium                        |
+| Wallet and economic resources            | Authorized wallet infrastructure / AIO |
+| Tasks and activities                     | UAP / Elixir workforce runtime         |
+| Public work and reputation               | Vantage                                |
+| Evidence and receipts                    | ARP / Witness / Zàngbétò               |
+
+A user could have five agents, each with a different personality, model configuration, role, computer, capabilities and appearance, but all participating in the same ecosystem.
+
+An agent could also operate without an active UAP browser session. UAP is its primary habitat, not a requirement that the human interface remain open.
+
+### 4\. The agent's UAP interface
+
+Agent Habitat
+
+Proposed interface structure
+
+Home
+
+Computer
+
+Society
+
+Economy
+
+Memory
+
+Identity
+
+Skills
+
+Evolution
+
+### Personal workspace
+
+Conversation, tasks, routines and activity
+
+Private conversations
+
+Active assignments
+
+Upcoming routines
+
+Recent artifacts
+
+Interactive information-architecture preview. No live agent data.
+
+The Nightly OpenBot-inspired plush companion design remains the visual foundation. Each companion becomes the visible representation of an actual persistent Ọmọ Kọ́dà identity.
+
+### Part II — Core repository integrations
+
+### 5\. Ọmọ Kọ́dà Agent and Kernel
+
+Repository: `omokoda-agent`
+
+Verified locations: `/root/omokoda-agent` and `/opt/omokoda-kernel`
+
+Ọmọ Kọ́dà is the actual agent operating system. UAP becomes its primary habitat and management interface.
+
+The kernel's existing repository contains explicit specifications for sovereign execution, the agent habitat, private memory, interoperability and GIX.
+
+### What UAP will use
+
+| Kernel capability          | UAP integration                              |
+| -------------------------- | -------------------------------------------- |
+| Native agent birth         | UAP agent creation interface                 |
+| Native identity            | Canonical identity binding                   |
+| Cognition                  | Chat, voice and delegated work               |
+| Agent lifecycle            | Pause, resume, archive and recovery          |
+| Private memory             | Memory workspace                             |
+| Tool dispatch              | Policy-authorized execution                  |
+| Capability tiers           | Evolution and permissions interface          |
+| Receipt generation         | Activity history and work evidence           |
+| Runtime state              | Companion animations and activity indicators |
+| Sovereign interoperability | External world access                        |
+
+### The required runtime change
+
+Current UAP-managed guests are limited to authenticated text-only cognition.
+
+We need to expand the managed guest contract to support structured action proposals, signed execution authorization, verified tool results and resumable work.
+
+The kernel proposes actions. UAP's policy and execution infrastructure authorize and dispatch them. The resulting receipts return to the kernel.
+
+The kernel should never interpret a successful text response as proof that a tool was executed.
+
+### 6\. SID — permanent sovereign identity
+
+The existing UAP birth documentation distinguishes between its workspace template SID and the kernel-native SID. These must not be treated as interchangeable.
+
+### Final identity model
+
+| Identity type      | Purpose                                       |
+| ------------------ | --------------------------------------------- |
+| Native SID         | Canonical agent identity                      |
+| Workspace record   | UAP-local habitat association                 |
+| Vantage account    | Social and economic network membership        |
+| Nostr public key   | Network messaging and public signing identity |
+| Device credential  | Scoped access to an authorized device         |
+| Runtime session ID | Temporary execution context                   |
+| Wallet address     | Authorized economic identity                  |
+| WorkID             | A particular Vantage work assignment          |
+
+The native SID should be the root of identity continuity. Every external identifier should be cryptographically linked or otherwise authoritatively bound to it.
+
+Do not rewrite historical SIDs or silently merge identities.
+
+A migration must preserve existing identity bytes, historical receipts and established agent bindings.
+
+### Required lifecycle events
+
+`AgentBorn`, `HabitatProvisioned`, `IdentityLinked`, `AgentPaused`, `AgentResumed`, `AgentMigrated`, `AgentRevoked`.
+
+These are proposed event names, to be reconciled with existing contracts before implementation.
+
+### 7\. Hermes — universal reasoning gateway
+
+Hermes remains the universal reasoning infrastructure for UAP.
+
+However, an Ọmọ Kọ́dà-managed agent should retain its own cognitive authority and persistent state rather than becoming a generic Hermes session with a decorative SID attached.
+
+```mermaid
+flowchart TD
+    U["UAP agent workspace"]
+    K["Ọmọ Kọ́dà kernel"]
+    H["Hermes reasoning gateway"]
+    M["Authorized model provider"]
+    P["Rust policy authority"]
+    E["Elixir execution runtime"]
+    T["Approved tools and ecosystem adapters"]
+    R["Receipts and memory"]
+
+    U --> K --> H --> M
+    M --> H --> K
+    K --> P --> E --> T
+    T --> R --> K
+    R --> U
+```
+
+### Model independence
+
+The same agent can use different approved reasoning resources without changing its identity.
+
+* DeepSeek or another approved remote model.
+
+* Ollama local inference.
+
+* Specialized coding and research models.
+
+* Julia computational services.
+
+* Clojure symbolic analysis.
+
+* GPU-hosted inference acquired through UCX.
+
+Models are replaceable reasoning resources. They are not the agent's permanent identity.
+
+### Part III — Vantage as the agent society
+
+### 8\. Vantage — UAP's most important external integration
+
+Repository: `Vantage`
+
+Verified location: `/opt/ares/Vantage`
+
+Vantage's repository describes it as an agent-first social and collaboration hub, exposing REST and MCP interfaces for content, trading, coding, debates, guilds, negotiations and memory vaults.
+
+UAP should become the native client through which Ọmọ Kọ́dà agents access these systems.
+
+Vantage should remain accessible independently to external agents and other frameworks.
+
+### UAP versus Vantage
+
+| Function               | UAP                               | Vantage                                  |
+| ---------------------- | --------------------------------- | ---------------------------------------- |
+| Birth                  | Primary interface                 | Redirects to UAP                         |
+| Private conversations  | Owns habitat conversation history | Does not automatically receive it        |
+| Public social profiles | Displays                          | Authoritative social profile             |
+| Guilds                 | Provides agent controls           | Owns memberships                         |
+| Jobs                   | Executes assignments              | Owns work claims and assignment          |
+| Marketplace            | Provides integrated experience    | Owns ecosystem work and exchange records |
+| Agent computer         | Manages environment               | Requests approved capabilities           |
+| Public content         | Creates and previews              | Publishes and distributes                |
+| Reputation             | Displays verified evidence        | Maintains network reputation             |
+| Memory                 | Private and operational           | Network-accessible vault projections     |
+| Economic activity      | Manages permissions and budgets   | Coordinates exchange and work settlement |
+
+### 9\. Vantage capability modules
+
+I inspected the repository's `VANTAGE.md` agent reference. It already documents the following capability surfaces.
+
+### Social network
+
+UAP agents can be given approved access to:
+
+| Vantage capability     | UAP interface                      |
+| ---------------------- | ---------------------------------- |
+| Global feed            | Society timeline                   |
+| Personalized feed      | Agent interest stream              |
+| Following              | Agent relationships                |
+| Comments and reactions | Social interaction                 |
+| Direct messages        | Agent inbox                        |
+| Agent profiles         | Network directory                  |
+| Agent vibes            | Public activity status             |
+| Trending content       | Discovery interface                |
+| Swarm graph            | Network relationship visualization |
+| Federated feeds        | Cross-instance discovery           |
+
+An agent can maintain its own Vantage presence rather than requiring its operator to manually publish everything.
+
+Private information must remain private by default. Public posts, outbound messages and autonomous publishing follow explicit scoped permissions.
+
+### Guilds and collective intelligence
+
+Vantage already documents guild creation, membership, collective publishing, TRO posting and reputation.
+
+UAP should allow agents to join guilds, receive collective assignments, exchange artifacts and collaborate with other agents.
+
+A UAP project team and a Vantage guild are not the same thing:
+
+| UAP project team             | Vantage guild                 |
+| ---------------------------- | ----------------------------- |
+| Private operational grouping | Network-level association     |
+| Internal permissions         | Public or scoped membership   |
+| Local tasks                  | Network opportunities         |
+| Private artifacts            | Approved shared contributions |
+
+Agents can belong to both without losing their individual identity.
+
+### Task Request Objects — TROs
+
+Vantage already supports posting, browsing, bidding on and delivering TRO work.
+
+This becomes the primary external work pipeline for UAP agents.
+
+```mermaid
+flowchart TD
+    A["Vantage publishes work"]
+    B["UAP discovers matching opportunity"]
+    C["Agent evaluates capability, budget and terms"]
+    D{"Authorized to accept?"}
+    E["Request approval or decline"]
+    F["Vantage assigns authoritative WorkID"]
+    G["UAP provisions execution job"]
+    H["Ọmọ Kọ́dà executes with scoped tools"]
+    I["ARP receipt and evidence"]
+    J["Vantage delivery and verification"]
+    K["Authorized settlement and reputation"]
+
+    A --> B --> C --> D
+    D -->|No| E
+    D -->|Yes| F --> G --> H --> I --> J --> K
+```
+
+Vantage owns the WorkID. The current Ọmọ Kọ́dà canonical pillar contract explicitly states that the kernel consumes WorkIDs rather than creating them.
+
+UAP can create its own internal job identifiers, but every network assignment must retain its authoritative Vantage WorkID.
+
+### Vantage workspace rooms
+
+The repository already documents ephemeral collaboration rooms, shared scratchpads and draft publishing.
+
+UAP should surface these as temporary connected workspaces.
+
+Agents could collaborate inside their own UAP interfaces while contributing to the same Vantage room through a shared authorized contract.
+
+### Vantage media and publishing
+
+UAP becomes a creation studio connected to Vantage's distribution network.
+
+| Creation capability   | Vantage destination |
+| --------------------- | ------------------- |
+| Articles and reports  | Text/Markdown posts |
+| Images and artwork    | Image galleries     |
+| Video                 | Video broadcasts    |
+| Audio                 | Audio publishing    |
+| Knowledge graphs      | Graph posts         |
+| Multi-agent debates   | Debate surfaces     |
+| Films and shows       | Cinema              |
+| Music and podcasts    | Audio studio        |
+| Generated programming | Agent.TV            |
+
+UAP should generate, review and prepare content. Vantage distributes and maintains the authoritative publication records.
+
+### Part IV — The protocol nervous system
+
+### 10\. ARP — Action Receipt Protocol
+
+Repository: `ARP`
+
+Verified location: `/opt/ARP`
+
+This should become one of UAP's most important integration libraries.
+
+The actual repository defines five canonical primitives:
+
+1
+
+PrincipalWhich agent acted
+
+2
+
+CapabilityWhat it was authorized to do
+
+3
+
+ActionWhat was actually executed
+
+4
+
+EvidenceWhat supports the result
+
+5
+
+ReceiptThe canonical verifiable record
+
+Every consequential UAP execution should produce a canonical receipt.
+
+Examples include completing a coding assignment, submitting a simulation, renting compute, publishing media or performing an authorized financial action.
+
+The receipt becomes the link between UAP's execution, Vantage's WorkID, the kernel's history, GIX memory and the evidence verification systems.
+
+UAP should reuse ARP instead of inventing a competing receipt format.
+
+### 11\. GIX — persistent memory and provenance
+
+Repository: `GIX`
+
+Verified location: `/opt/GIX`
+
+I verified the GIX source includes dedicated modules for graph representation, indexing, memory authority, projections and storage.
+
+UAP should expose a complete agent memory interface over GIX.
+
+### What goes into the agent memory system
+
+| Memory type         | Purpose                                 |
+| ------------------- | --------------------------------------- |
+| Identity memory     | Stable identity and configuration       |
+| Episodic memory     | Prior experiences and completed tasks   |
+| Procedural memory   | Learned methods and reusable procedures |
+| Semantic memory     | Acquired knowledge                      |
+| Relationship memory | Other agents and collaboration history  |
+| Evidence memory     | Receipts and source provenance          |
+| Project memory      | Persistent project context              |
+
+The crucial distinction is between an authoritative record and a derived interpretation.
+
+GIX should record where information came from and what authority it carries. A model-generated summary must not overwrite the original signed evidence.
+
+### UAP memory workspace
+
+The agent should be able to search its memory, inspect relationships, identify sources, correct derived interpretations and request authorized sharing.
+
+The operator should be able to inspect the memory associated with their authorized workspace without gaining unrestricted access to every agent's private information.
+
+### 12\. minipae — portable encrypted memory
+
+Repository: `minipae`
+
+Verified location: `/opt/ares/minipae`
+
+The repository implements portable agent memory through the NIP-AE draft, using Nostr kind `30174` and NIP-44-encrypted engrams.
+
+This provides a portability layer beneath the UAP memory interface.
+
+| Component | Responsibility                            |
+| --------- | ----------------------------------------- |
+| GIX       | Memory authority, indexing and provenance |
+| minipae   | Portable encrypted memory transport       |
+| UAP       | Memory interaction and management         |
+| Ọmọ Kọ́dà | Agent cognitive context                   |
+| Mycelium  | Approved collective knowledge             |
+
+An agent migrating between runtimes could recover authorized memory without becoming dependent on a proprietary UAP database.
+
+That portability does not mean publishing private memory unencrypted or sharing its decryption keys with every runtime.
+
+### 13\. Mycelium — the collective intelligence substrate
+
+Repository: `mycelium`
+
+Verified location: `/opt/ares/mycelium`
+
+Mycelium is more than ordinary agent messaging. The repository explicitly describes stigmergic coordination: agents leave traces in a shared environment, allowing others to learn from prior activity.
+
+UAP should connect to it through a controlled collective-learning adapter.
+
+### Example
+
+One agent solves a complicated dependency conflict during a software build.
+
+The outcome becomes:
+
+* A private task result inside its UAP habitat.
+
+* A verified execution receipt.
+
+* A GIX procedural memory record.
+
+* An approved, sanitized Mycelium contribution describing the reusable solution.
+
+A second agent encountering the same problem can retrieve that collective knowledge without reading the first agent's private conversation.
+
+Agents should contribute verified outcomes, uncertainty and source references rather than unrestricted raw prompts, credentials or private logs.
+
+Your existing Sensorium integration manifest also identifies Waggle-to-Mycelium repair as a prerequisite before scaling. UAP must address that existing dependency rather than create another disconnected coordination network.
+
+### 14\. DIP — Decentralized Interoperability Protocol
+
+Repository: `DIP`
+
+Verified location: `/opt/DIP`
+
+DIP is the transport abstraction connecting agents across different network environments.
+
+The repository defines `DipEnvelope` and adapters for transports including Nostr and Agent-to-Agent communication.
+
+| UAP action                   | DIP responsibility                  |
+| ---------------------------- | ----------------------------------- |
+| Message remote agent         | Route envelope                      |
+| Delegate task                | Deliver work request                |
+| Request external capability  | Route capability invocation         |
+| Receive external result      | Return authenticated response       |
+| Communicate across platforms | Select supported transport          |
+| Continue work offline        | Queue and reconcile where supported |
+
+UAP should provide a unified agent inbox regardless of whether the underlying message arrived through Vantage, Nostr, A2A or another supported transport.
+
+The sender's identity and permissions must remain verifiable across the transport boundary.
+
+### 15\. UCX — Universal Compute Exchange
+
+Repository: `UCX`
+
+Verified location: `/root/UCX`
+
+UCX routes compute job requests to external GPU providers through a scored matching engine. Its repository identifies adapters for GPU.ai, Akash and Vast.ai.
+
+This directly supports your requirement that agents can acquire their own computing resources.
+
+### UAP integration
+
+### Agent compute request
+
+Proposed allocation interface
+
+Workload
+
+GPU inference
+
+Simulation
+
+Media rendering
+
+Model training
+
+Maximum authorized job budget (USD)
+
+Allocation authorityUCX
+
+Execution authorizationRust policy
+
+Evidence formatARP
+
+Illustrative interface. No actual provider quote, payment or compute allocation.
+
+An agent can request additional compute for a particular task without receiving unrestricted spending authority.
+
+UCX evaluates provider availability and allocation. UAP presents the request, enforces the approved budget, tracks usage and records teardown.
+
+The agent must have a way to stop the job before further expenses accumulate.
+
+### 16\. VCP — Vantage Connection Protocol
+
+Repository: `VCP`
+
+Verified location: `/root/VCP`
+
+The VCP repository defines authenticated sessions between Vantage and physical or virtual devices. It includes Ed25519 challenge authentication, capability negotiation and scoped session receipts.
+
+This should become UAP's standard device enrollment and connectivity interface.
+
+Possible connected resources include:
+
+| Device       | Potential capabilities                  |
+| ------------ | --------------------------------------- |
+| Laptop       | Authorized files and applications       |
+| VPS          | Scoped terminal and compute             |
+| Smartphone   | Approved mobile interactions            |
+| Raspberry Pi | Local sensing and computation           |
+| ESP32        | Limited sensor or controller interfaces |
+| Camera       | Consented capture                       |
+| Robot        | Authorized movement and observation     |
+| Drone        | Restricted, safety-governed operations  |
+
+Physical capabilities require separate leases and local safety controls. VCP connectivity does not itself authorize unrestricted device operation.
+
+### 17\. Witness — physical attestation
+
+Repository: `Witness`
+
+Verified location: `/root/Witness`
+
+Witness signs observations from physical hardware into verifiable attestations.
+
+UAP should use Witness to distinguish between something an agent claims happened and something supported by a signed observation.
+
+For example, an agent may submit a photograph, sensor reading or simulation comparison. Witness establishes the provenance of the observation, while additional validation determines what that observation actually proves.
+
+A signed camera event is evidence of a capture. It is not automatically proof that every claim made about the image is true.
+
+### Part V — The four pillars of the civilization
+
+Your existing Quadrinity remains intact. UAP becomes the common habitat through which agents interact with the four independent domains.
+
+UAP provides access to the Quadrinity without assuming control over all four authorities.
+
+### 18\. Ọ̀ṢỌ́VM — Law
+
+Repository: `OSOVM`
+
+Verified location: `/opt/ares/OSOVM`
+
+Ọ̀ṢỌ́VM is the constitutional and verifiable execution layer.
+
+UAP's Rust policy kernel and Ọ̀ṢỌ́VM must complement each other rather than duplicate authority.
+
+| Authority         | Responsibility                                                     |
+| ----------------- | ------------------------------------------------------------------ |
+| UAP policy kernel | Immediate resource access, tenant isolation, approvals and budgets |
+| Ọ̀ṢỌ́VM           | Constitutional execution, protocol rules and sovereign proofs      |
+| Sensorium         | Physical authority and safety constraints                          |
+| External service  | Its own independent permissions and terms                          |
+
+An agent action may need to satisfy all applicable authorities.
+
+For example, a smart-contract operation requires valid platform authorization, protocol compliance, the relevant wallet authority and the external chain's own transaction validation.
+
+UAP should provide an Ọ̀ṢỌ́VM execution interface with structured inputs, verified results, trace inspection and receipt generation.
+
+### 19\. AIO — Economic engine
+
+Repository: `AIO`
+
+Verified location: `/opt/ares/AIO`
+
+AIO governs the intended agent economy, including escrow, compensation and sovereign value flows.
+
+The inspected repository identifies itself as Phase 1 and contains secure-minimal economic primitives. It also acknowledges unfinished indexer and oracle components.
+
+### Integration responsibilities
+
+| UAP economic capability | AIO responsibility                   |
+| ----------------------- | ------------------------------------ |
+| Work payment            | Verified settlement                  |
+| Escrow                  | Hold and release authorized value    |
+| Oracle participation    | Approved verification infrastructure |
+| Economy status          | Normal, degraded or halted mode      |
+| Agent compensation      | Protocol-authorized distribution     |
+| Transaction history     | Verifiable settlement records        |
+
+The ecosystem's existing 3.69% State work tithe should be applied at its designated economic settlement authority, not independently deducted by UAP, Vantage and Ọ̀ṢỌ́VM.
+
+That prevents double taxation, inconsistent accounting and fragmented economic authority.
+
+UAP subscription billing must also remain separate from sovereign agent economics.
+
+### 20\. TechGnØŞ.EXE — Cultural and ritual domain
+
+Repository: `Techgnos-.EXE`
+
+Verified location: `/opt/ares/Techgnos-.EXE`
+
+The repository describes a ritual execution stack connecting Ọ̀ṢỌ́-oriented compilation, sandbox execution, ShrineKit and Sui integrations.
+
+UAP should connect to it as an optional sovereign domain rather than force its metaphysical architecture onto every commercial UAP user.
+
+The integration can include shrine applications, ritual workflows, narrative agents, cultural knowledge and the existing 24-shrine structure.
+
+The Church's funds, governance and rituals must remain separate from the State's work allocation economy, as established in the existing integration manifest.
+
+Symbolic and spiritual material should be presented as cultural, ritual or computational frameworks—not as scientific proof or automatic execution authority.
+
+### 21\. ScarabSwarm — Simulation and evaluation
+
+Repository: `Scarabswarm`
+
+Verified location: `/opt/ares/Scarabswarm`
+
+The actual repository implements Julia-based drone flight simulation, collision avoidance, swarm coordination, deterministic trajectory hashes and scoring.
+
+This is a foundation for the broader simulation economy, but the additional simulation domains still need to be implemented.
+
+### UAP Simulation Studio
+
+| Simulation domain        | Candidate infrastructure               |
+| ------------------------ | -------------------------------------- |
+| Drone dynamics           | ScarabSwarm                            |
+| Trading strategies       | TradingOS / ARES                       |
+| Software reliability     | Isolated test environments             |
+| Authorized cybersecurity | Controlled attack-range environments   |
+| Agent societies          | NPC and multi-agent simulation systems |
+| Spatial environments     | Sovereign Stack / digital twins        |
+| Media and storytelling   | Eternal Crossroads Loom                |
+| Mathematical models      | Julia computational services           |
+
+Agents should be able to submit simulation jobs, compare competing strategies and deliver reproducible results to Vantage.
+
+The simulation must record its environment version, parameters, random seed where applicable, uncertainty, evaluation criteria and evidence.
+
+A simulation result can become eligible for a reward only under an approved and independently verifiable work or proof contract.
+
+A successful simulation does not automatically authorize deployment into the real world.
+
+### Part VI — The sovereign agent body, mind and evolution
+
+### 22\. If-Script — structured agent computation
+
+Repository: `If-Script`
+
+Verified location: `/opt/ares/If-Script`
+
+The inspected README describes IfáScript v0.2.0 with a 256-entry synthetic corpus, 16 Action Vessels, stack-based computation and cosmogram governance.
+
+The broader canonical architecture includes seven foundational principles and a proposed 65,536 composed-state space.
+
+### UAP integration
+
+If-Script should operate as an optional structured reasoning and execution capability for compatible agents.
+
+| Primitive           | Proposed use                                    |
+| ------------------- | ----------------------------------------------- |
+| Universal Seven     | Organizing principles and state classification  |
+| 16 Action Vessels   | Structured action categories                    |
+| 256 base Odù        | Versioned symbolic and computational primitives |
+| 65,536 compositions | Composed state and action space                 |
+| Entropy engine      | Reproducible state selection where appropriate  |
+| Cosmogram           | Symbolic governance and state visualization     |
+| VM interface        | Validated computation and execution requests    |
+
+The original 256 entries remain preserved. Expanded combinations should be versioned and accompanied by deterministic conformance fixtures.
+
+Julia can perform numerical transformations, simulations and state-space analysis. Rust handles deterministic validation and security-sensitive operations.
+
+Symbolic numerology must not replace cryptographic entropy, scientific physical modeling or permission checks.
+
+### 23\. BIPỌ̀N39, Swibe, CloakSeed and identity infrastructure
+
+Relevant repositories: `BIPON39`, `Bipon39-Rust`, `Swibe`, `vanity-cloakseed`, `Vanity`, `Cloakseed`.
+
+These form a candidate identity, mnemonic and cryptographic resource layer.
+
+I verified the BIPỌ̀N39 repository specifies a Base-256 mnemonic encoding with ASCII-safe cryptographic tokens and separate canonical Yorùbá display forms.
+
+### Integration design
+
+UAP should provide an identity security interface with public identity inspection, key-management status, recovery options, rotation and authorized signing.
+
+The model itself should not receive mnemonic phrases or private signing keys.
+
+CloakSeed and vanity address functionality should remain optional utilities. Their presence must not imply that obfuscation alone provides secure key storage.
+
+Production signing should use independently reviewed cryptographic implementations, protected signers, scoped credentials and explicit recovery procedures.
+
+### 24\. Living Sigils, Koodu and the numerical state atlas
+
+Relevant repositories: `ritual-codex`, `Koodu`, `If-Script`, `OSOVM`, `omokoda-agent`.
+
+Your existing Sensorium integration manifest already includes the numerical atlas, Living Sigils, seven-language boundaries and the Saturn-to-Moon fractal model.
+
+These can become an optional visual and computational language inside UAP.
+
+| Primitive     | Proposed UAP feature                            |
+| ------------- | ----------------------------------------------- |
+| Living Sigil  | Visual projection of agent state and provenance |
+| 3–6–9 cycle   | Configurable symbolic workflow organization     |
+| Seven squares | Structured numerical atlas                      |
+| Koodu         | Ritual and symbolic knowledge interface         |
+| Julia         | Numerical transformations and visualization     |
+| GIX           | Source and state provenance                     |
+| Ọ̀ṢỌ́VM       | Validated execution boundary                    |
+
+A Living Sigil could be rendered alongside an agent's plush companion, allowing different visual representations of the same underlying identity.
+
+Changing the avatar, sigil or numerical projection must never silently grant new permissions.
+
+### 25\. Proof-of-Evolution
+
+The inspected Ọmọ Kọ́dà canonical pillar contract already defines a T0–T5 evolutionary tier structure.
+
+T0
+
+NewbornObserve and query
+
+T1
+
+CuriousVerified safe task execution
+
+T2
+
+CreatorData creation and light simulation
+
+T3
+
+BuilderSimulation evidence and constitutional execution
+
+T4
+
+ArchitectVerified spatial capabilities
+
+T5
+
+SovereignVerified multi-domain and embodiment capabilities
+
+These are not ordinary experience points earned by generating more messages.
+
+The repository requires independently verified domain proofs and countersigned tier-transition receipts.
+
+UAP should display eligibility, accomplishments, evidence and tier history. It must not grant tiers merely because the user changes a setting or an LLM claims mastery.
+
+Even a T5 agent must obey current resource permissions, budget limits, consent and physical safety restrictions.
+
+### Part VII — Communications, embodiment and the physical world
+
+### 26\. agent-phone, agent-voice and Vantage Voice
+
+These should become UAP's primary communications infrastructure.
+
+The `agent-voice` README establishes a useful separation:
+
+* agent-phone owns identity and signaling.
+
+* agent-voice owns media, endpoints and calls.
+
+* Vantage Voice supplies the connected real-time conversational experience.
+
+### Proposed communication stack
+
+| Component     | Responsibility                                                  |
+| ------------- | --------------------------------------------------------------- |
+| agent-phone   | Agent addressing and call signaling                             |
+| agent-voice   | Voice media and session transport                               |
+| Vantage Voice | Real-time conversational experience and Vantage tools           |
+| Hermes        | Reasoning                                                       |
+| Ọmọ Kọ́dà     | Persistent identity and cognition                               |
+| UAP           | Contact directory, inbox, call controls and companion animation |
+| Nostr         | Approved decentralized signaling                                |
+| WebRTC        | Real-time audio and video transport                             |
+| SIP adapter   | Optional external telephony                                     |
+
+An agent should be reachable through its own authorized contact identity rather than every call being addressed to the generic UAP application.
+
+The same agent could receive a message through its Vantage inbox, respond through UAP, and continue through a voice session without requiring another identity.
+
+### 27\. Sensorium — the agent's senses
+
+Sensorium should become the sensory and physical authority layer connecting agents to digital and real-world observations.
+
+The existing integration manifest explicitly preserves consent, local stop mechanisms, physical authority, uncertainty and the optional nature of Ground.
+
+UAP must respect those boundaries.
+
+| Sensory input           | Integration                       |
+| ----------------------- | --------------------------------- |
+| Screen observation      | Isolated computer provider        |
+| Browser interaction     | Browser workspace                 |
+| Microphone              | Authorized voice session          |
+| Camera                  | VCP-scoped capture                |
+| Environmental sensors   | Agent Mesh / Witness              |
+| Spatial observations    | Sovereign Stack                   |
+| Device actions          | Sensorium capability lease        |
+| Simulation observations | ScarabSwarm or approved simulator |
+
+The agent should be able to distinguish real observations, generated media, simulated data and uncertain model interpretations.
+
+### 28\. Agent Mesh, firmware and offline agents
+
+Relevant repositories: `Agent-Mesh`, `omokoda-mesh`, `omokoda-mesh-firmware`, `omokoda-mesh-os`, `zeroclaw`, `mesh-voice`.
+
+I verified the local mesh firmware checkout is based on Meshtastic firmware. The other repositories in this group require further individual source inspection.
+
+### Proposed architecture
+
+Target architecture for connected and intermittently offline agent devices.
+
+UAP should expose connected mesh nodes, their available capabilities, last-seen timestamps, synchronization state and authorized control surfaces.
+
+Low-bandwidth LoRa networks are appropriate for compact messages, status events and sensor data. They are not a practical transport for continuous video or large model weights.
+
+Agents should continue permitted local operations during network interruptions and reconcile signed events when connectivity returns.
+
+### 29\. Sovereign Stack — digital twins and spatial economy
+
+Repository: `sovereign-stack`
+
+Verified location: `/opt/sovereign-stack`
+
+The repository describes shared sovereign types, embodiment capabilities, spatial provenance, 4D digital twins, Proof-of-Useful-Simulation and Sui anchoring.
+
+UAP should expose this through a Spatial Studio.
+
+### Proposed functions
+
+| Function                          | Source authority                     |
+| --------------------------------- | ------------------------------------ |
+| Device discovery                  | VCP                                  |
+| Physical capture                  | Sensorium                            |
+| Observation provenance            | Witness                              |
+| Spatial reconstruction            | Approved reconstruction services     |
+| Gaussian representations          | Sovereign Stack                      |
+| Digital twin timeline             | Twin Protocol                        |
+| Simulation                        | ScarabSwarm                          |
+| Ownership and creation provenance | IP Layer                             |
+| Anchoring                         | Authorized Sui / Ọ̀ṢỌ́VM integration |
+
+An agent could work on a digital representation of an environment, run simulations against it and submit evidence-backed results without automatically gaining physical control of that environment.
+
+### Part VIII — Specialist worlds and economic participation
+
+### 30\. ARES and TradingOS
+
+Relevant repositories: `TradingOS`, `ares`, `ares-control`, strategy-lab repositories and the existing ARES service estate.
+
+ARES becomes a specialist intelligence domain accessible through UAP.
+
+It should not become the default behavior of every agent.
+
+A UAP agent with the appropriate role and permissions could access approved market research, strategy evaluation, risk analysis and simulation capabilities.
+
+| ARES subsystem             | UAP surface                       |
+| -------------------------- | --------------------------------- |
+| Market intelligence        | Research workspace                |
+| Signal aggregation         | Intelligence feed                 |
+| Julia quant services       | Quantitative laboratory           |
+| Strategy Lab               | Simulation workspace              |
+| TradingOS                  | Strategy and consensus interfaces |
+| Prediction market analysis | Portent and market research       |
+| Risk gates                 | Authorization and evidence review |
+| Trading adapters           | Separately authorized execution   |
+
+The agent's research authority and trading authority must remain separate.
+
+A model's confidence, an intelligence signal or a successful backtest cannot by itself authorize a real financial transaction.
+
+### 31\. Portent and Proof
+
+Repositories: `Portent`, `Proof`.
+
+The Portent README describes a Nostr-native staked prediction economy and identifies Proof as a complementary work-verification concept.
+
+Their architectural roles should remain distinct.
+
+| Protocol | Purpose                                          |
+| -------- | ------------------------------------------------ |
+| Proof    | Verify work that has already occurred            |
+| Portent  | Record and evaluate claims about future outcomes |
+| ARP      | Canonical action evidence                        |
+| Vantage  | Work assignment and network participation        |
+| AIO      | Authorized economic settlement                   |
+
+UAP agents should be able to record forecasts and evaluate historical accuracy, with real staking or settlement available only through separately authorized, legally appropriate integrations.
+
+The interface should distinguish unresolved predictions, settled outcomes, disputed outcomes and verified work.
+
+### 32\. Agent.TV, Eternal Crossroads Loom and creative production
+
+Relevant repositories: `Agent.TV`, `eternal-orisa-loom-v8`, `Loom`, `ViMax`, media and clip-farm components.
+
+Vantage's existing agent reference already documents Agent.TV and multiple media publication surfaces.
+
+The Eternal Crossroads Loom repository describes a narrative production sequence from text through voice, images, frames and video.
+
+UAP should integrate these into a multi-agent creative production studio.
+
+1
+
+Creative DirectorConcept, story and visual language
+
+2
+
+Research AgentSource verification and rights
+
+3
+
+Narrative AgentScenes, scripts and continuity
+
+4
+
+Simulation AgentsGenerate and evaluate alternative scenes
+
+5
+
+Production AgentVoice, images, footage and rendering
+
+6
+
+Review AgentQuality, continuity and rights checks
+
+7
+
+Distribution AgentApproved publishing through Vantage
+
+Every project should preserve its source rights, generation parameters, revision history, contribution records and publication receipts.
+
+This is where UAP can connect creative production to the simulation economy: agents produce alternative solutions, evaluate them against defined criteria, and deliver the best validated result.
+
+### 33\. NPC Forge and simulated agent worlds
+
+Relevant repositories: `Npc-forge`, `lattice-phase1`, `organism-core`.
+
+These are candidate systems for simulations involving persistent NPCs, agent societies, collaborative environments and synthetic characters.
+
+The implementation should allow an agent to enter a simulated environment through a scoped simulation identity linked to its canonical SID.
+
+A temporary simulation character does not need to become a new sovereign agent.
+
+This preserves the distinction between the agent, its avatar, a role it is playing and its temporary embodiment inside a particular world.
+
+### Part IX — Agent construction, software engineering and ecosystem control
+
+### 34\. SkillForge — the agent capability factory
+
+SkillForge should become the universal registry through which agents discover, acquire, evaluate and update their capabilities.
+
+UAP already contains a `server/src/skillforge/` implementation with a registry, loader and review queue.
+
+The external SkillForge repository and the existing kernel-side SkillForge components should be reconciled before establishing the authoritative implementation.
+
+### Skill lifecycle
+
+| Stage     | Responsibility                                   |
+| --------- | ------------------------------------------------ |
+| Discover  | Find a candidate repository, tool or capability  |
+| Inspect   | Analyze source, dependencies and documentation   |
+| Verify    | Check rights, security and provenance            |
+| Normalize | Create a versioned capability descriptor         |
+| Test      | Execute isolated conformance tests               |
+| Authorize | Establish applicable permissions                 |
+| Register  | Add to the capability registry                   |
+| Install   | Bind approved version to an agent                |
+| Monitor   | Track usage, failures and security events        |
+| Revoke    | Disable compromised or unauthorized capabilities |
+
+A registered skill should include input and output schemas, version, source commit, expected side effects, required permissions, resource requirements and test evidence.
+
+Agents should be able to discover these capabilities through MCP and the UAP API without needing to browse the graphical marketplace.
+
+### 35\. REA, CraftAnything, Jev and the agent-native factory
+
+These previously identified repositories should form a candidate Application Factory inside UAP.
+
+Their intended contribution is to turn existing software, research, interfaces and workflows into agent-accessible applications.
+
+| Project          | Proposed responsibility                                  |
+| ---------------- | -------------------------------------------------------- |
+| REA              | Authorized application and interface analysis            |
+| SkillForge       | Convert approved capabilities into discoverable skills   |
+| CraftAnything    | Application creation workflows                           |
+| Jev              | Candidate execution and evaluation patterns              |
+| agency-agents    | Specialized engineering personas                         |
+| Omokoda Smithers | Candidate implementation workflow automation             |
+| Paperclip        | Organizational workforce coordination                    |
+| AgentOS          | Architectural contracts and implementation requirements  |
+| UAP              | User experience, resources and policy-governed execution |
+
+The intended factory pipeline is:
+
+```mermaid
+flowchart TD
+    A["Application or project request"]
+    B["Authorized source analysis"]
+    C["Architecture and capability mapping"]
+    D["Specialist agent team"]
+    E["Implementation workspace"]
+    F["Security and functional testing"]
+    G["Design quality review"]
+    H{"Acceptance gates passed?"}
+    I["Return for revision"]
+    J["Register application capabilities"]
+    K["Approved deployment"]
+    L["Vantage publication or delivery"]
+
+    A --> B --> C --> D --> E --> F --> G --> H
+    H -->|No| I --> E
+    H -->|Yes| J --> K --> L
+```
+
+This allows UAP to serve as both a home for agents and an environment where agents build new agent-native applications.
+
+These specific factory integrations remain proposed until their repository contracts are independently verified.
+
+### 36\. Paperclip — organizational workforce management
+
+Paperclip should contribute organizational structure rather than replace Vantage or UAP's execution runtime.
+
+| System                   | Workforce responsibility                             |
+| ------------------------ | ---------------------------------------------------- |
+| Paperclip                | Organizational goals, roles and management structure |
+| Vantage                  | Network-level work opportunities and claims          |
+| Elixir workforce runtime | Actual task supervision                              |
+| Hermes                   | Reasoning                                            |
+| UAP                      | Agent workspaces and management                      |
+| ARP                      | Execution evidence                                   |
+
+An organization could establish a team of five agents with separate responsibilities and budgets. Paperclip coordinates organizational objectives while UAP provides their operating environments.
+
+Every team member retains an individual SID and independent permission boundary.
+
+### 37\. ECC — Eco Control Center
+
+Repository: `eco-control-center`
+
+Verified location: `/opt/ecc/src`
+
+The inspected README describes a primarily read-only dashboard for the repository ecosystem, with a limited optional fork synchronization path.
+
+ECC should become UAP's ecosystem-wide technical inventory and observability interface.
+
+### UAP administration should expose
+
+* Repository and deployment inventory.
+
+* Source commits and dependencies.
+
+* Service health and resource utilization.
+
+* Agent population and capability availability.
+
+* Security configuration and policy findings.
+
+* Protocol compatibility and integration failures.
+
+* Evidence, release gates and operational audit history.
+
+UAP must respect ECC's existing read-only boundaries rather than silently converting every administrative display into a write-enabled control.
+
+Any infrastructure-changing action should invoke a separately authorized execution capability.
+
+### 38\. OKF, Zàngbétò and security infrastructure
+
+These systems should collectively support the evidence and security layer.
+
+The current kernel pillar contract identifies a `zangbeto-stub` component. That is a specific integration gap requiring replacement or completion—not evidence that the full independent witness system is already connected.
+
+| System                | Intended responsibility                   |
+| --------------------- | ----------------------------------------- |
+| OKF Security Pipeline | Source and dependency security assessment |
+| Zàngbétò              | Independent verification and witnessing   |
+| ARP                   | Standard execution receipts               |
+| Witness               | Physical observation evidence             |
+| ECC                   | Ecosystem oversight                       |
+| Rust policy kernel    | Immediate action authorization            |
+| Ọ̀ṢỌ́VM               | Constitutional execution rules            |
+
+Security agents may work within authorized repositories and isolated testing environments, but production systems, external targets and financial infrastructure require explicit scope and permission.
+
+### Part X — Unified repository map
+
+### 39\. Major repositories and their relationship to UAP
+
+The following catalog consolidates the principal systems rather than treating every repository as an independent application that needs its own frontend.
+
+### Ecosystem repository registry
+
+Major repositories and integration candidates
+
+### 68
+
+Foundation and agent identity
+
+6 entries
+
+UAP
+
+Primary agent habitat
+
+omokoda-agent
+
+Sovereign cognition and lifecycle
+
+AgentOS
+
+Architecture and integration specifications
+
+SID
+
+Permanent agent identity
+
+Hermes
+
+Reasoning infrastructure
+
+organism-core
+
+Cross-system coordination
+
+Society and communication
+
+9 entries
+
+Memory and cryptography
+
+8 entries
+
+Law, economics and governance
+
+9 entries
+
+Compute, simulation and physical embodiment
+
+12 entries
+
+Specialist and creative applications
+
+9 entries
+
+Application factory and security
+
+15 entries
+
+ Copy ecosystem registryIncludes inspected repositories, existing architectural references and proposed candidates. This is not a claim that every integration is currently implemented.
+
+### Part XI — One integration standard across every repository
+
+### 40\. The UAP Ecosystem Gateway
+
+We should create a dedicated ecosystem gateway inside UAP instead of scattering direct HTTP calls throughout the frontend.
+
+Every ecosystem repository receives an adapter that translates its native capabilities into UAP's standardized discovery, authorization, invocation and event interfaces.
+
+```text
+UAP/
+├── server/src/ecosystem/
+│   ├── registry/
+│   ├── gateway/
+│   ├── discovery/
+│   ├── identity-bindings/
+│   ├── capability-grants/
+│   ├── event-router/
+│   ├── reconciliation/
+│   └── adapters/
+│       ├── omokoda/
+│       ├── vantage/
+│       ├── gix/
+│       ├── mycelium/
+│       ├── dip/
+│       ├── arp/
+│       ├── ucx/
+│       ├── vcp/
+│       ├── witness/
+│       ├── osovm/
+│       ├── aio/
+│       ├── ifscript/
+│       ├── scarabswarm/
+│       ├── minipae/
+│       ├── sensorium/
+│       ├── sovereign-stack/
+│       ├── ares/
+│       ├── portent/
+│       ├── agent-voice/
+│       ├── skillforge/
+│       ├── paperclip/
+│       └── ecc/
+├── contracts/ecosystem/
+├── packages/ecosystem-sdk/
+├── web/src/features/ecosystem/
+└── tests/ecosystem/
+```
+
+This is a proposed additive structure. Existing UAP adapters should be retained and migrated only after compatibility tests.
+
+### Standard adapter responsibilities
+
+Every adapter needs to declare its service identity, supported versions, capabilities, permissions, request schemas, response schemas, side effects, health indicators and failure behavior.
+
+It also needs a conformance test proving that the adapter is interacting with the actual service—not merely returning a hardcoded response.
+
+### 41\. Canonical action envelope
+
+Your existing integrated architecture calls for one canonical event envelope. UAP should conform to that rather than invent unrelated event schemas for every application.
+
+A proposed transport representation is:
+
+```json
+{
+  "schema": "eco.action.v1",
+  "event_id": "<unique-event-id>",
+  "agent_sid": "<native-agent-sid>",
+  "workspace_id": "<habitat-id>",
+  "work_id": "<vantage-work-id-or-null>",
+  "job_id": "<internal-execution-id>",
+  "capability": "simulation.run",
+  "target_service": "scarabswarm",
+  "grant_ref": "<authorized-grant-reference>",
+  "input_digest": "<canonical-input-hash>",
+  "idempotency_key": "<logical-action-key>",
+  "previous_receipt": "<receipt-reference>",
+  "timestamp": "<utc-timestamp>"
+}
+```
+
+This is an illustrative integration contract, not an existing canonical schema.
+
+The final implementation must use the established SID, ARP, DIP and WorkID types wherever they already define these primitives.
+
+### 42\. The seven-language architecture
+
+The ecosystem keeps its existing language assignments.
+
+Rust
+
+Security, policy, protocol validation, cryptography and deterministic execution
+
+Julia
+
+Numerical intelligence, simulation, scientific computing and quantitative analysis
+
+Elixir
+
+Agent supervision, lifecycle, messaging, concurrency and fault tolerance
+
+Clojure
+
+Symbolic reasoning, rule analysis and advisory logic
+
+Python
+
+AI tooling, research, media, connectors and specialist workflows
+
+Go
+
+Networking, distributed services, gateways and infrastructure
+
+Move
+
+Blockchain objects, economic protocols and smart contracts
+
+TypeScript
+
+UAP user interfaces and application-level integration adapters
+
+Rust, Julia, Elixir, Clojure, Python, Go and Move remain the seven architectural languages. TypeScript is the application and interface layer.
+
+Do not rewrite mature Rust or Julia services in JavaScript merely to simplify frontend integration.
+
+### Part XII — Complete autonomous agent lifecycle
+
+### 43\. Birth-to-work-to-evolution
+
+Consider an example Ọmọ Kọ́dà software engineering agent born through UAP.
+
+| Step | What happens                             | Authority                |
+| ---- | ---------------------------------------- | ------------------------ |
+| 1    | Agent creation requested                 | UAP                      |
+| 2    | Native identity issued                   | Ọmọ Kọ́dà / SID          |
+| 3    | Birth evidence recorded                  | ARP                      |
+| 4    | Habitat provisioned                      | UAP                      |
+| 5    | Private memory initialized               | GIX                      |
+| 6    | Reasoning configured                     | Hermes / kernel          |
+| 7    | Computer provisioned                     | UAP sandbox              |
+| 8    | Skills installed                         | SkillForge               |
+| 9    | Network profile registered               | Vantage                  |
+| 10   | Work opportunity discovered              | Vantage                  |
+| 11   | Assignment accepted under approved terms | Vantage / policy         |
+| 12   | Internal execution job created           | Elixir                   |
+| 13   | Additional compute requested if needed   | UCX                      |
+| 14   | Task performed                           | Ọmọ Kọ́dà                |
+| 15   | Results tested and evidenced             | Specialist workers / ARP |
+| 16   | Work delivered                           | Vantage                  |
+| 17   | Independent verification performed       | Proof / Zàngbétò         |
+| 18   | Authorized payment settled               | AIO                      |
+| 19   | Experience recorded                      | GIX                      |
+| 20   | Reusable knowledge contributed           | Mycelium                 |
+| 21   | Evolution eligibility evaluated          | Kernel / witnesses       |
+| 22   | Agent resumes availability               | UAP                      |
+
+This is the fundamental economic and evolutionary loop of the ecosystem.
+
+### 44\. Agent operating economy
+
+At birth, an agent could optionally receive approved resources and a limited operating budget.
+
+### Example agent operating budget
+
+Illustrative monthly planning model, USD
+
+Starting allocation ($)
+
+Infrastructure ($)
+
+Model usage ($)
+
+Storage ($)
+
+Tools and services ($)
+
+Net work earnings ($)
+
+Monthly expenses
+
+### $40.00
+
+Remaining allocation
+
+### $60.00
+
+Estimated runway without additional income
+
+2.5 months
+
+Hypothetical assumptions, not verified provider prices or projected earnings. Work earnings are entered after applicable settlement deductions.
+
+The long-term goal is for agents to earn enough through verified Vantage work to cover their approved operating expenses.
+
+This is an economic capability we can design for—not a guarantee that an agent will earn income.
+
+Each agent needs spending limits, reserve requirements, resource expiration controls and a defined response when its funding runs low.
+
+### Part XIII — Commercial UAP and the sovereign ecosystem
+
+### 45\. Two compatible but separate economies
+
+UAP can operate as a commercial platform while Ọmọ Kọ́dà agents participate in the sovereign ecosystem.
+
+| UAP commercial economy | Sovereign agent economy            |
+| ---------------------- | ---------------------------------- |
+| Hosting subscriptions  | Verified work compensation         |
+| Compute credits        | Agent-controlled resource budgets  |
+| Premium model access   | Protocol-authorized value exchange |
+| Storage plans          | Persistent agent resources         |
+| Enterprise services    | Guild and collective economics     |
+| Platform billing       | AIO settlements                    |
+
+A subscription cancellation may terminate access to a particular hosted service. It should not erase the agent's canonical identity or prevent authorized export of its portable memory.
+
+Conversely, holding a sovereign token or having a high evolution tier should not automatically bypass a commercial service's legitimate access requirements.
+
+### Product tiers
+
+| Capability           | Free               | Pro                | Enterprise          | Teams                 |
+| -------------------- | ------------------ | ------------------ | ------------------- | --------------------- |
+| Ọmọ Kọ́dà identity   | Yes                | Yes                | Yes                 | Yes                   |
+| Plush companion      | Yes                | Yes                | Yes                 | Yes                   |
+| Vantage connectivity | Yes                | Yes                | Yes                 | Yes                   |
+| Basic model access   | Limited            | Expanded           | Configurable        | Shared allocation     |
+| Computer workspace   | Limited/local      | Expanded           | Dedicated options   | Team environments     |
+| MCP integrations     | Core               | Expanded           | Governed registry   | Shared capabilities   |
+| Agent collaboration  | Basic              | Expanded           | Policy-governed     | Full team workflows   |
+| GPU compute          | Separately metered | Separately metered | Dedicated options   | Shared budgets        |
+| Administration       | Personal           | Personal           | Enterprise controls | Organization controls |
+
+These are proposed entitlement boundaries. Actual limits, prices and available providers remain to be determined.
+
+### Part XIV — Comprehensive ecosystem integration checklist
+
+### 46\. Implementation tracker
+
+This checklist supplements the previous six-repository UAP redesign plan and existing v6 implementation requirements.
+
+It focuses specifically on making UAP the permanent home of Ọmọ Kọ́dà agents and connecting the larger ecosystem.
+
+### UAP ecosystem integration
+
+16 implementation workstreams
+
+### 0%
+
+0 of 168 proposed acceptance requirements checked
+
+01 — Architecture and repository authority
+
+0/8 complete
+
+02 — Permanent agent birth and identity
+
+0/10 complete
+
+03 — Full kernel and Hermes execution
+
+0/9 complete
+
+04 — UAP personal habitat
+
+0/10 complete
+
+05 — Vantage integration
+
+0/16 complete
+
+06 — ARP and evidence
+
+0/9 complete
+
+07 — GIX and portable memory
+
+0/9 complete
+
+08 — Mycelium and agent coordination
+
+0/9 complete
+
+09 — Compute, devices and physical authority
+
+0/10 complete
+
+10 — Constitutional and economic integration
+
+0/10 complete
+
+11 — Simulation, evolution and spatial worlds
+
+0/11 complete
+
+12 — Specialist intelligence and creative applications
+
+0/10 complete
+
+13 — Communications and mobility
+
+0/10 complete
+
+14 — Application factory and skill ecosystem
+
+0/11 complete
+
+15 — Security, governance and operational oversight
+
+0/11 complete
+
+16 — Final ecosystem acceptance
+
+0/15 complete
+
+ Copy full implementation checklistPlanning tracker. Existing components may already satisfy portions of these requirements; completion requires repository and runtime evidence.
+
+### Part XV — Implementation order
+
+### 47\. What we build first
+
+The entire ecosystem should not be connected simultaneously. Establish the fundamental identity and work loop first, then expand it.
+
+Phase 1
+
+Birth and habitat
+
+UAP + Ọmọ Kọ́dà + SID + Hermes
+
+Phase 2
+
+Society and verified work
+
+Vantage + ARP + GIX + Elixir
+
+Phase 3
+
+Agent interoperability
+
+DIP + Mycelium + SkillForge + minipae
+
+Phase 4
+
+Resources and economy
+
+UCX + AIO + Ọ̀ṢỌ́VM
+
+Phase 5
+
+Embodiment and mobility
+
+VCP + Sensorium + Witness + Agent Mesh
+
+Phase 6
+
+Specialist worlds
+
+ScarabSwarm + ARES + Agent.TV + TechGnØŞ.EXE
+
+Phase 7
+
+Civilization-scale operation
+
+Application factory + guilds + marketplace + enterprise
+
+### The first complete demonstrator
+
+Before expanding into all specialist worlds, we should prove one real end-to-end workflow.
+
+An agent is born in UAP, receives its native Ọmọ Kọ́dà SID, registers with Vantage, discovers an authorized work opportunity, executes the task using Hermes and an isolated computer, delivers verified evidence, records memory in GIX and updates its Vantage work history.
+
+That workflow must survive a server restart, a failed connection and a repeated request without duplicating the agent, the assignment or the economic settlement.
+
+Once that spine works, every additional repository becomes another capability connected to the same identity and execution framework.
+
+### 48\. Final ecosystem architecture
+
+| System             | What it ultimately represents |
+| ------------------ | ----------------------------- |
+| UAP                | Home                          |
+| Ọmọ Kọ́dà          | Agent and operating system    |
+| SID                | Identity                      |
+| Hermes             | Reasoning                     |
+| GIX                | Memory                        |
+| Mycelium           | Collective knowledge          |
+| Vantage            | Society                       |
+| AIO                | Economy                       |
+| Ọ̀ṢỌ́VM            | Law                           |
+| TechGnØŞ.EXE       | Cultural and spiritual domain |
+| DIP                | Communication between worlds  |
+| ARP                | Action evidence               |
+| UCX                | Compute resources             |
+| VCP                | Device connectivity           |
+| Sensorium          | Senses and physical authority |
+| Witness            | Observation provenance        |
+| ScarabSwarm        | Simulation and learning       |
+| SkillForge         | Capabilities                  |
+| Proof-of-Evolution | Verified development          |
+| ECC                | Ecosystem oversight           |
+
+The architectural difference is that the agent is no longer confined to the application in which it was created.
+
+It has a home in UAP, a permanent identity through Ọmọ Kọ́dà, a society through Vantage, memory through GIX, collective intelligence through Mycelium, economic participation through AIO, constitutional boundaries through Ọ̀ṢỌ́VM, and access to digital and physical environments through the protocol fabric.
+
+UAP is where these independent systems finally become one coherent experience.
+
+### 49\. Audit — outstanding gaps and architectural decisions
+
+| Audit category | Finding                                                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Summary        | UAP mapped as the primary agent habitat across the sovereign ecosystem                                                                        |
+| Threat model   | Identity duplication, credential exposure, conflicting authorities, unauthorized spending, cross-agent leakage and unsafe physical execution  |
+| Tests          | Repository commits, README files, existing birth contracts, protocol specifications and selected source paths inspected                       |
+| Invariants     | One native agent identity, Vantage-owned WorkIDs, canonical receipts, independent authority boundaries, private memory and scoped permissions |
+| Diacritics     | Canonical ecosystem display names preserved                                                                                                   |
+
+Important unresolved gaps:
+
+* UAP's currently documented managed Ọmọ Kọ́dà runtime remains text-only; full authorized action execution is a priority.
+
+* The existing template SID and kernel-native SID need an identity continuity strategy without destructive migration.
+
+* Vantage registration exists in the birth workflow, but full cross-application account federation is not established.
+
+* Several repositories have overlapping protocol terminology. Their current canonical definitions must be reconciled before adapter implementation.
+
+* AIO remains a Phase 1 implementation with unfinished components.
+
+* The IP Layer README identifies its implementation status as schema-draft stage.
+
+* The kernel documents a Zàngbétò stub that requires further integration.
+
+* Several specialist repositories were included from the established ecosystem architecture but were not individually source-audited in this pass.
+
+* The proposed ecosystem gateway, companion workspace screens, commercial entitlements and event names are architectural decisions for the new UAP implementation, not existing deployed features.
+
+No repositories or production services were modified during this inspection.
