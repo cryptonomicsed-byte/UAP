@@ -509,11 +509,12 @@ v6Api.post('/sid/omokoda/birth', requireUser, async (c) => {
     return c.json({ error: 'invalid bio or register option' }, 400);
   }
   try {
-    const born = await birthAndRegister(db, { userId: user.id, name: body.name, bio: body.bio, register: body.register });
+    const born = await birthAndRegister(db, { userId: user.id, name: body.name, bio: body.bio, register: body.register, requestKey: c.req.header('Idempotency-Key') });
     return c.json(born);
   } catch (error) {
     if (error instanceof OmokodaBirthError) {
-      const status = error.code === 'name' ? 400 : error.code === 'kernel-unreachable' ? 503 : 502;
+      if (error.code === 'birth-conflict' || error.code === 'birth-unresolved') return c.json({ error: error.message, code: error.code }, 409);
+      const status = error.code === 'name' || error.code === 'request-key' ? 400 : error.code === 'kernel-unreachable' ? 503 : 502;
       return c.json({ error: error.message, code: error.code, kernelAgentId: error.kernelAgentId }, status);
     }
     return c.json({ error: 'birth failed', code: 'failed' }, 500);

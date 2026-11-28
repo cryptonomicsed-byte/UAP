@@ -38,13 +38,13 @@ function ensureParentSid(db: Database.Database, rt: SidTemplateRuntime, parentBo
   return minted.sid;
 }
 
-export function materializeSidBot(db: Database.Database, input: { userId: string; template: string; parentBotId?: string | null }): MaterializedSid {
+export function materializeSidBot(db: Database.Database, input: { userId: string; template: string; parentBotId?: string | null; omokodaBirthHash?: string }): MaterializedSid {
   const template = templateOf(input.template);
   const rt = new SidTemplateRuntime(db);
   const parentBotId = input.parentBotId || null;
   const minted = parentBotId
     ? rt.spawnSubAgent({ tenantId: input.userId, parentSid: ensureParentSid(db, rt, parentBotId, input.userId), template: template.slug })
-    : rt.install({ tenantId: input.userId, template: template.slug });
+    : rt.install({ tenantId: input.userId, template: template.slug, omokodaBirthHash: input.omokodaBirthHash });
   const botId = newId(parentBotId ? 'sub' : 'bot');
   const now = Date.now();
   const instructions = [

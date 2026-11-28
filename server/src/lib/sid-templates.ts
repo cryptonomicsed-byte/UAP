@@ -73,7 +73,7 @@ function sidId(slug: string): string {
   return `sid_${slug}-${randomBytes(3).toString('hex')}`;
 }
 
-function certificate(input: { sid: string; title: string; parent: string | null; template: SidTemplate }): Record<string, unknown> {
+function certificate(input: { sid: string; title: string; parent: string | null; template: SidTemplate; omokodaBirthHash?: string }): Record<string, unknown> {
   const primary = 7;
   const secondary = 11;
   const doc: Record<string, unknown> = {
@@ -100,6 +100,7 @@ function certificate(input: { sid: string; title: string; parent: string | null;
       template: input.template.slug,
       source_repo: input.template.source.repo,
       source_sha: input.template.source.sha,
+      ...(input.omokodaBirthHash ? { omokoda_birth_hash: input.omokodaBirthHash } : {}),
       feature_sources: FEATURE_SOURCES.map((s) => `${s.repo}@${s.sha.slice(0, 12)}`),
     },
   };
@@ -139,11 +140,14 @@ export class SidTemplateRuntime {
     return SID_TEMPLATES;
   }
 
-  install(input: { tenantId: string; template: string }): MintedAgent {
+  install(input: { tenantId: string; template: string; omokodaBirthHash?: string }): MintedAgent {
     const template = SID_TEMPLATES.find((row) => row.slug === input.template);
     if (!template) throw new SidTemplateError('template', 'unknown template');
     if (template.grants.length !== 0) throw new SidTemplateError('grants', 'a template cannot carry grants');
-    return this.mint({ tenantId: input.tenantId, template, kind: 'full', parentSid: null });
+    if (input.omokodaBirthHash !== undefined && (template.slug !== 'omokoda-guest' || !/^[0-9a-f]{64}$/.test(input.omokodaBirthHash))) {
+      throw new SidTemplateError('certificate', 'invalid Omokoda birth commitment');
+    }
+    return this.mint({ tenantId: input.tenantId, template, kind: 'full', parentSid: null, omokodaBirthHash: input.omokodaBirthHash });
   }
 
   spawnSubAgent(input: { tenantId: string; parentSid: string; template: string }): MintedAgent {
@@ -158,9 +162,9 @@ export class SidTemplateRuntime {
     return child;
   }
 
-  private mint(input: { tenantId: string; template: SidTemplate; kind: 'full' | 'sub'; parentSid: string | null }): MintedAgent {
+  private mint(input: { tenantId: string; template: SidTemplate; kind: 'full' | 'sub'; parentSid: string | null; omokodaBirthHash?: string }): MintedAgent {
     const sid = sidId(input.template.slug);
-    const document = certificate({ sid, title: input.template.title, parent: input.parentSid, template: input.template });
+    const document = certificate({ sid, title: input.template.title, parent: input.parentSid, template: input.template, omokodaBirthHash: input.omokodaBirthHash });
     const checked = verifySidLegacy(document);
     if (!checked.ok) throw new SidTemplateError('certificate', checked.errors.join('; '));
     this.db.prepare('INSERT INTO sid_agents(sid,tenant_id,template_slug,kind,parent_sid,status,document_json,created_at) VALUES (?,?,?,?,?,?,?,?)')

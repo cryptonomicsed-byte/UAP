@@ -83,7 +83,11 @@ test('birth mints a verified SID and stores the kernel key only as a 0600 file',
 
   const row = database.prepare('SELECT sid, document_json FROM sid_agents WHERE sid=?').get(born.sid);
   assert.ok(row, 'SID row written');
-  assert.equal(verifySidLegacy(JSON.parse(row.document_json)).ok, true, 'SID certificate verifies');
+  const document = JSON.parse(row.document_json);
+  assert.equal(verifySidLegacy(document).ok, true, 'SID certificate verifies');
+  assert.equal(document.provenance.omokoda_birth_hash, born.genesisHash);
+  document.provenance.omokoda_birth_hash = 'f'.repeat(64);
+  assert.equal(verifySidLegacy(document).ok, false, 'certificate hash covers the birth commitment');
 
   const keyFile = path.join(dir, `${born.botId}.omokoda.key`);
   assert.equal(fs.readFileSync(keyFile, 'utf8').trim(), KERNEL_KEY);
@@ -103,10 +107,13 @@ test('the kernel key never appears in the database, the SID document, or the API
     JSON.stringify(database.prepare('SELECT * FROM bots').all()),
     JSON.stringify(database.prepare('SELECT * FROM sid_agents').all()),
     JSON.stringify(database.prepare('SELECT * FROM omokoda_births').all()),
-    JSON.stringify(getOmokodaBirth(database, result.botId)),
+    JSON.stringify(getOmokodaBirth(database, result.botId, 'tenant-a')),
   ].join('\n');
   assert.equal(everything.includes(KERNEL_KEY), false, 'kernel key leaked');
-  assert.deepEqual(getOmokodaBirth(database, result.botId).secrets, { omokoda: true, vantage: false });
+  assert.deepEqual(getOmokodaBirth(database, result.botId, 'tenant-a').secrets, { omokoda: true, vantage: false });
+  assert.equal(getOmokodaBirth(database, result.botId, 'tenant-b'), null, 'another tenant cannot read this birth');
+  database.prepare('DELETE FROM bots WHERE id=?').run(result.botId);
+  assert.equal(getOmokodaBirth(database, result.botId, 'tenant-a'), null, 'orphaned birth is not addressable');
 });
 
 test('an unreachable kernel fails closed: no bot and no SID are created', async (t) => {
@@ -192,6 +199,44 @@ test('a Vantage failure is reported and the birth still stands', async (t) => {
   const result = await birthAndRegister(database, { userId: 'tenant-a', name: 'Ada' });
   assert.equal(result.vantage.status, 'failed');
   assert.equal(database.prepare('SELECT COUNT(*) n FROM sid_agents').get().n, 1);
+});
+
+test('a request key is tenant scoped, rejects conflicting input, and replays a completed birth', async (t) => {
+  fresh(t);
+  let kernelCalls = 0;
+  const kernel = await serve((req, res) => {
+    kernelCalls++;
+    kernelHandler()(req, res);
+  });
+  t.after(() => kernel.server.close());
+  process.env.OMOKODA_URL = kernel.url;
+  const database = db();
+  const input = { userId: 'tenant-a', name: 'Ada', register: false, requestKey: 'create-ada-1' };
+  const pending = birthAndRegister(database, input);
+  await assert.rejects(birthAndRegister(database, input), (e) => e.code === 'birth-unresolved');
+  const first = await pending;
+  const replay = await birthAndRegister(database, input);
+  assert.deepEqual(replay, first);
+  await assert.rejects(birthAndRegister(database, { ...input, name: 'Other' }), (e) => e.code === 'birth-conflict');
+  assert.equal(kernelCalls, 1);
+  assert.notEqual((await birthAndRegister(database, { ...input, userId: 'tenant-b' })).botId, first.botId);
+  assert.equal(kernelCalls, 2);
+});
+
+test('an ambiguous kernel response does not allow a second birth with the same key', async (t) => {
+  fresh(t);
+  let kernelCalls = 0;
+  const kernel = await serve((_req, res) => {
+    kernelCalls++;
+    res.end('{}');
+  });
+  t.after(() => kernel.server.close());
+  process.env.OMOKODA_URL = kernel.url;
+  const database = db();
+  const input = { userId: 'tenant-a', name: 'Ada', requestKey: 'ambiguous-ada-1' };
+  await assert.rejects(birthAndRegister(database, input), (e) => e.code === 'kernel-malformed');
+  await assert.rejects(birthAndRegister(database, input), (e) => e.code === 'birth-unresolved');
+  assert.equal(kernelCalls, 1);
 });
 
 test('registration is skipped when VANTAGE_URL is unset', async (t) => {
