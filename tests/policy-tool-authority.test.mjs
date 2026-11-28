@@ -79,6 +79,57 @@ const SEED = `
   db.prepare('INSERT INTO bots (id,user_id,name,created_at,updated_at) VALUES (?,?,?,?,?)').run('bot_policy', 'usr_policy', 'Ops', now, now);
 `;
 
+test('managed workspace reads need an explicit user command and a real policy permit', async () => {
+  const { dir, result } = await fixture(`
+    ${SEED}
+    const { ensureOmokodaSchema } = await import('./server/src/lib/omokoda-birth.ts');
+    const { managedWorkspaceCommand } = await import('./server/src/agent/managed-workspace.ts');
+    ensureOmokodaSchema(db);
+    db.prepare('INSERT INTO omokoda_births(bot_id,sid,kernel_agent_id,kernel_url,genesis_hash,vantage_status,created_at) VALUES (?,?,?,?,?,?,?)')
+      .run('bot_policy', 'sid_fixture', 'agent_fixture', 'http://127.0.0.1:1', 'fixture', 'skipped', now);
+    db.prepare('INSERT INTO omokoda_managed_runtime(bot_id,kernel_sid,kernel_sid_hash) VALUES (?,?,?)').run('bot_policy','sid_kernel','fixture');
+    const input = { botId: 'bot_policy', userId: 'usr_policy', text: '/workspace routines', fromUser: true };
+    const bot = await managedWorkspaceCommand(db, { ...input, fromUser:false });
+    const wrong = await managedWorkspaceCommand(db, { ...input, userId:'usr_other' });
+    const unknown = await managedWorkspaceCommand(db, { ...input, text:'/workspace routines extra' });
+    const ok = await managedWorkspaceCommand(db, input);
+    const { api } = await import('./server/src/routes.ts');
+    const msg = (cookie) => api.request('/bots/bot_policy/messages', {
+      method: 'POST', headers: { 'content-type': 'application/json', cookie },
+      body: JSON.stringify({ text: input.text }),
+    });
+    const unauthenticated = (await msg('')).status;
+    db.prepare('INSERT INTO auth_sessions(token,user_id,created_at,expires_at) VALUES (?,?,?,?)')
+      .run('policy-fixture-session','usr_policy',now,now + 60000);
+    db.prepare('INSERT INTO routines(id,bot_id,name,prompt,schedule,created_at) VALUES (?,?,?,?,?,?)')
+      .run('routine_fixture','bot_policy','Morning review','Private routine prompt','0 8 * * *',now);
+    const cookie = 'grokbot_session=policy-fixture-session';
+    const accepted = (await msg(cookie)).status;
+    let assistant = '';
+    for (let i=0; i<100 && !assistant; i++) {
+      const reply = await api.request('/bots/bot_policy/rows', { headers: { cookie } });
+      if (!reply.ok) throw new Error('could not read conversation: ' + reply.status);
+      assistant = (await reply.json()).rows.find((row) => row.body.role === 'assistant')?.body.text ?? '';
+      if (!assistant) await new Promise((resolve) => setTimeout(resolve, 30));
+    }
+    db.prepare("INSERT INTO policies(user_id,tool,mode) VALUES (?,?,'blocked')").run('usr_policy','list_routines');
+    const blocked = await managedWorkspaceCommand(db, input);
+    out({bot,wrong,unknown,ok,unauthenticated,accepted,assistant,blocked,rows:db.prepare('SELECT tool,decision,permit_id FROM policy_decisions WHERE bot_id=? ORDER BY rowid').all('bot_policy')});
+  `);
+  try {
+    assert.equal(result.bot, null);
+    assert.equal(result.wrong, null);
+    assert.equal(result.unknown.status, 'unsupported');
+    assert.equal(result.ok.status, 'ok');
+    assert.equal(result.ok.text, 'No routines are scheduled for this agent.');
+    assert.equal(result.unauthenticated, 401);
+    assert.equal(result.accepted, 200);
+    assert.equal(result.assistant, '• Morning review — enabled');
+    assert.equal(result.blocked.status, 'denied');
+    assert.deepEqual(result.rows.map((row) => [row.tool, row.decision, !!row.permit_id]), [['list_routines','allow',true],['list_routines','allow',true],['list_routines','deny',false]]);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
 test('classification is a property of the tool, not of the arguments', async () => {
   const { classifyTool } = await import('../server/src/policy/tool-intents.ts');
   assert.deepEqual(classifyTool('list_routines'), { effect: 'read', risk: 'low' });

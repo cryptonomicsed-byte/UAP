@@ -17,6 +17,13 @@ import { BoardView } from './components/config/BoardView';
 import { DeployBadge } from './components/DeployBadge';
 import { useConfigUI } from './configStore';
 
+const BIRTH_HANDOFF = 'uap.birth-handoff';
+
+function hasBirthHandoff() {
+  if (new URLSearchParams(location.search).get('birth') === 'omokoda') return true;
+  try { return sessionStorage.getItem(BIRTH_HANDOFF) === 'omokoda'; } catch { return false; }
+}
+
 function Shell() {
   const detailsOpen = useStore((s) => s.detailsOpen);
   const modal = useStore((s) => s.modal);
@@ -26,11 +33,12 @@ function Shell() {
   const view = useConfigUI((s) => s.view);
   const set = useStore((s) => s.set);
   const [navOpen, setNavOpen] = useState(false);
-  const [omokodaBirth, setOmokodaBirth] = useState(() => new URLSearchParams(location.search).get('birth') === 'omokoda');
+  const [omokodaBirth, setOmokodaBirth] = useState(hasBirthHandoff);
   function closeOmokodaBirth() {
     const url = new URL(location.href);
     url.searchParams.delete('birth');
     history.replaceState(history.state, '', url);
+    try { sessionStorage.removeItem(BIRTH_HANDOFF); } catch { /* optional continuity */ }
     setOmokodaBirth(false);
   }
 
@@ -114,7 +122,12 @@ function Shell() {
 export function App() {
   const authChecked = useStore((s) => s.authChecked);
   const user = useStore((s) => s.user);
-  useEffect(() => { useStore.getState().checkAuth(); }, []);
+  useEffect(() => {
+    if (new URLSearchParams(location.search).get('birth') === 'omokoda') {
+      try { sessionStorage.setItem(BIRTH_HANDOFF, 'omokoda'); } catch { /* the explicit URL still works */ }
+    }
+    void useStore.getState().checkAuth();
+  }, []);
   if (!authChecked) {
     return (
       <>

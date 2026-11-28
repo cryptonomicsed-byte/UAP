@@ -30,12 +30,13 @@ try {
     return route.fulfill({ json: {} });
   });
   await page.goto(`${base}/?birth=omokoda`);
-  await page.waitForFunction(() => !!document.querySelector('input,button'));
+  await page.getByRole('heading', { name: 'Sign in to the console' }).waitFor();
   const dialog = page.getByRole('dialog', { name: 'Create an Omokoda agent' });
   assert.equal(await dialog.count(), 0);
   assert.equal(requests.length, 0);
   signedIn = true;
-  await page.reload();
+  // The OAuth/link callback redirects to the root without the original query.
+  await page.goto(base);
   await dialog.getByLabel('Agent name').fill('QA Agent');
   assert.equal(requests.length, 0);
   await dialog.getByRole('button', { name: 'Create agent' }).click();
@@ -50,7 +51,10 @@ try {
   assert.deepEqual(requests[1][1], { name: 'QA Agent', register: true });
   await dialog.getByRole('button', { name: 'Done' }).click();
   assert.equal(new URL(page.url()).searchParams.has('birth'), false);
-  console.log('Chromium: sign-in gate, explicit creation, retry after reload, and partial success passed');
+  await page.reload();
+  await page.getByRole('button', { name: 'Create a Bot', exact: false }).waitFor();
+  assert.equal(await dialog.count(), 0);
+  console.log('Chromium: sign-in redirect, explicit creation, retry after reload, and dismissed handoff passed');
 } finally {
   await browser?.close();
   await vite.close();
