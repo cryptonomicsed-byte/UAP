@@ -10,6 +10,15 @@ export type AvatarColor =
 
 export interface User { id: string; email: string; name: string; avatarUrl: string | null }
 
+export interface McpCatalogEntry {
+  id: string;
+  displayName: string;
+  category: string;
+  auth: 'none' | 'optional_token' | 'oauth';
+  url: string;
+  description: string;
+}
+
 export interface Bot {
   id: string;
   name: string;

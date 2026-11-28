@@ -427,8 +427,11 @@ api.delete('/bots/:id', async (c) => {
     await releaseScreen(b.id);
     await forgetBotFiles(b.id);
   }
-  db.prepare('DELETE FROM screens WHERE bot_id=?').run(b.id);
-  db.prepare('DELETE FROM bots WHERE id=?').run(b.id);
+  db.transaction(() => {
+    db.prepare('DELETE FROM screens WHERE bot_id=?').run(b.id);
+    db.prepare('DELETE FROM bot_mcp_servers WHERE bot_id=?').run(b.id);
+    db.prepare('DELETE FROM bots WHERE id=?').run(b.id);
+  }).immediate();
   hub.emit(c.get('user').id, { type: 'roster' });
   return c.json({ ok: true });
 });

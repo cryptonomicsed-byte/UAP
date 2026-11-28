@@ -131,6 +131,7 @@ configApi.get('/bots/:id/engine', async (c) => {
 configApi.patch('/bots/:id/engine', async (c) => {
   const b = ownBot(c.get('user').id, c.req.param('id'));
   if (!b) return c.json({ error: 'not found' }, 404);
+  if (engineKind(b.id) !== 'managed') return c.json({ error: 'Configure this agent in Hermes.', code: 'configuration_in_hermes', configurationMode: 'in_hermes' }, 409);
   const p = await c.req.json<{ provider?: string | null; model?: string | null }>().catch(() => ({} as { provider?: string | null; model?: string | null }));
   const clean = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, 120) : null);
   if (p.provider !== undefined) db.prepare('UPDATE bots SET provider=?, updated_at=? WHERE id=?').run(clean(p.provider), now(), b.id);

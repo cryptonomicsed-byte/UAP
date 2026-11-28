@@ -27,6 +27,13 @@
 .desk__list small { display: block; color: var(--color-text-tertiary); }
 .desk__row { display: flex; gap: 6px; align-items: center; }
 .desk__row .text-input { flex: 1; min-width: 0; }
+.desk__mcp h4 { margin: 0; font-size: 13px; }
+.desk__mcp-heading { justify-content: space-between; flex-wrap: wrap; margin: 12px 0 6px; }
+.desk__mcp-heading input { max-width: 190px; }
+.desk__mcp-catalog li, .desk__mcp-custom { flex-wrap: wrap; }
+.desk__mcp-preset .text-input { max-width: 135px; }
+.desk__mcp-custom .text-input { flex-basis: 110px; }
+.desk__mcp summary { cursor: pointer; margin-bottom: 6px; }
 .ws-stage {
   flex: 1;
   min-width: 0;

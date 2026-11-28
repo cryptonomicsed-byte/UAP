@@ -26,6 +26,7 @@ import { SidTemplateError, SidTemplateRuntime, superviseSpawn } from './lib/sid-
 import { materializeSidBot } from './lib/sid-bots.js';
 import { birthAndRegister, getOmokodaBirth, OmokodaBirthError } from './lib/omokoda-birth.js';
 import { listMcpServers, addMcpServer, removeMcpServer, setMcpServerEnabled, McpConnectorError } from './lib/mcp-connectors.js';
+import { installMcpPreset, MCP_CATALOG } from './lib/mcp-catalog.js';
 import { ensureNostrIdentity } from './lib/nostr-identity.js';
 import { startNostrListener, stopNostrListener, isListening, pendingCalls } from './lib/nostr-signaling.js';
 import { polyglotMap } from './lib/polyglot-map.js';
@@ -503,7 +504,10 @@ v6Api.post('/sid/materialize', requireUser, async (c) => {
 v6Api.post('/sid/omokoda/birth', requireUser, async (c) => {
   const user = c.get('user');
   const body = await c.req.json<{ name?: string; bio?: string; register?: boolean }>().catch(() => ({} as { name?: string; bio?: string; register?: boolean }));
-  if (!body.name) return c.json({ error: 'name required', code: 'name' }, 400);
+  if (typeof body?.name !== 'string') return c.json({ error: 'name required', code: 'name' }, 400);
+  if ((body.bio !== undefined && typeof body.bio !== 'string') || (body.register !== undefined && typeof body.register !== 'boolean')) {
+    return c.json({ error: 'invalid bio or register option' }, 400);
+  }
   try {
     const born = await birthAndRegister(db, { userId: user.id, name: body.name, bio: body.bio, register: body.register });
     return c.json(born);
@@ -517,16 +521,53 @@ v6Api.post('/sid/omokoda/birth', requireUser, async (c) => {
 });
 
 v6Api.get('/sid/omokoda/birth/:botId', requireUser, (c) => {
-  const row = getOmokodaBirth(db, c.req.param('botId'));
+  const row = getOmokodaBirth(db, c.req.param('botId'), c.get('user').id);
   return row ? c.json(row) : c.json({ error: 'not an Omokoda birth' }, 404);
 });
 
-v6Api.get('/bots/:id/mcp-servers', requireUser, (c) => c.json({ servers: listMcpServers(db, c.req.param('id')) }));
+const mcpBot = (id: string, userId: string) => db.prepare('SELECT engine FROM bots WHERE id=? AND user_id=?').get(id, userId) as { engine: string | null } | undefined;
+const managedMcpOnly = 'Connectors for this agent are configured in Hermes. UAP only applies changes to managed agents.';
+
+v6Api.get('/bots/:id/mcp-servers', requireUser, (c) => {
+  const id = c.req.param('id');
+  const bot = mcpBot(id, c.get('user').id);
+  if (!bot) return c.json({ error: 'not found' }, 404);
+  return c.json({ servers: listMcpServers(db, id), managed: bot.engine === 'managed' });
+});
+
+v6Api.get('/bots/:id/mcp-servers/catalog', requireUser, (c) => {
+  const bot = mcpBot(c.req.param('id'), c.get('user').id);
+  if (!bot) return c.json({ error: 'not found' }, 404);
+  return c.json({ entries: MCP_CATALOG });
+});
+
+v6Api.post('/bots/:id/mcp-servers/catalog', requireUser, async (c) => {
+  const id = c.req.param('id');
+  const bot = mcpBot(id, c.get('user').id);
+  if (!bot) return c.json({ error: 'not found' }, 404);
+  if (bot.engine !== 'managed') return c.json({ error: managedMcpOnly }, 409);
+  const body = await c.req.json<{ presetId?: unknown; token?: unknown }>().catch(() => null);
+  if (!body || typeof body.presetId !== 'string' || Object.keys(body).some((key) => key !== 'presetId' && key !== 'token')) {
+    return c.json({ error: 'Choose a catalog preset without URL or header overrides.' }, 400);
+  }
+  const preset = MCP_CATALOG.find((entry) => entry.id === body.presetId);
+  if (!preset) return c.json({ error: 'Unknown MCP preset.' }, 404);
+  if (preset.auth === 'oauth') return c.json({ error: 'This preset needs an OAuth connection that UAP does not yet support.' }, 409);
+  try {
+    return c.json({ server: installMcpPreset(db, id, preset, body.token) }, 201);
+  } catch (error) {
+    if (error instanceof McpConnectorError) return c.json({ error: error.message }, 400);
+    return c.json({ error: 'Could not add that MCP server.' }, 500);
+  }
+});
 
 v6Api.post('/bots/:id/mcp-servers', requireUser, async (c) => {
   const botId = c.req.param('id');
-  const body = await c.req.json<{ name?: string; url?: string; headers?: Record<string, string> }>().catch(() => ({ name: undefined, url: undefined, headers: undefined }));
-  if (!body.name || !body.url) return c.json({ error: 'name and url are required' }, 400);
+  const bot = mcpBot(botId, c.get('user').id);
+  if (!bot) return c.json({ error: 'not found' }, 404);
+  if (bot.engine !== 'managed') return c.json({ error: managedMcpOnly }, 409);
+  const body = await c.req.json<{ name?: string; url?: string; headers?: Record<string, string> }>().catch(() => null);
+  if (typeof body?.name !== 'string' || typeof body.url !== 'string') return c.json({ error: 'name and url are required' }, 400);
   try {
     const server = addMcpServer(db, botId, { name: body.name, url: body.url, headers: body.headers });
     return c.json({ server });
@@ -537,17 +578,25 @@ v6Api.post('/bots/:id/mcp-servers', requireUser, async (c) => {
 });
 
 v6Api.patch('/bots/:id/mcp-servers/:serverId', requireUser, async (c) => {
-  const body = await c.req.json<{ enabled?: boolean }>().catch(() => ({ enabled: undefined }));
-  if (typeof body.enabled !== 'boolean') return c.json({ error: 'enabled must be a boolean' }, 400);
-  const ok = setMcpServerEnabled(db, c.req.param('id'), c.req.param('serverId'), body.enabled);
+  const id = c.req.param('id');
+  const bot = mcpBot(id, c.get('user').id);
+  if (!bot) return c.json({ error: 'not found' }, 404);
+  if (bot.engine !== 'managed') return c.json({ error: managedMcpOnly }, 409);
+  const body = await c.req.json<{ enabled?: boolean }>().catch(() => null);
+  if (typeof body?.enabled !== 'boolean') return c.json({ error: 'enabled must be a boolean' }, 400);
+  const ok = setMcpServerEnabled(db, id, c.req.param('serverId'), body.enabled);
   if (!ok) return c.json({ error: 'not found' }, 404);
-  return c.json({ ok: true, servers: listMcpServers(db, c.req.param('id')) });
+  return c.json({ ok: true, servers: listMcpServers(db, id) });
 });
 
 v6Api.delete('/bots/:id/mcp-servers/:serverId', requireUser, (c) => {
-  const ok = removeMcpServer(db, c.req.param('id'), c.req.param('serverId'));
+  const id = c.req.param('id');
+  const bot = mcpBot(id, c.get('user').id);
+  if (!bot) return c.json({ error: 'not found' }, 404);
+  if (bot.engine !== 'managed') return c.json({ error: managedMcpOnly }, 409);
+  const ok = removeMcpServer(db, id, c.req.param('serverId'));
   if (!ok) return c.json({ error: 'not found' }, 404);
-  return c.json({ ok: true, servers: listMcpServers(db, c.req.param('id')) });
+  return c.json({ ok: true, servers: listMcpServers(db, id) });
 });
 
 v6Api.get('/bots/:id/nostr-identity', requireUser, (c) => {

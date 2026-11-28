@@ -2,30 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import Database from 'better-sqlite3';
 import { materializeSidBot } from '../server/src/lib/sid-bots.ts';
+import { applySqliteMigrations } from '../server/src/storage/sqlite-migrations.ts';
 
 function db() {
   const database = new Database(':memory:');
-  database.exec(`
-    CREATE TABLE bots (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
-      name TEXT NOT NULL,
-      label TEXT,
-      description TEXT,
-      instructions TEXT,
-      avatar_shape TEXT,
-      avatar_color TEXT,
-      mode TEXT,
-      is_primary INTEGER,
-      effort TEXT,
-      parent_bot_id TEXT,
-      hidden INTEGER,
-      sid TEXT,
-      kind TEXT,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
-  `);
+  applySqliteMigrations(database);
+  database.prepare('INSERT INTO users(id,email,name,created_at) VALUES (?,?,?,1)').run('tenant-a','fixture@example.invalid','Fixture');
   database.prepare('INSERT INTO bots(id,user_id,name,created_at,updated_at) VALUES (?,?,?,?,?)')
     .run('bot_parent', 'tenant-a', 'Doug', 1, 1);
   return database;

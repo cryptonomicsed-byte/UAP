@@ -397,8 +397,9 @@ async function runTurn(botId: string, trigger: Trigger) {
       body: JSON.stringify({
         // Restored per-bot model/provider switching (bot-hq's mechanism: ride along in the
         // request, not a config.yaml rewrite). Empty values fall back to the engine's own default.
-        model: bot.model || 'hermes-agent',
-        ...(bot.provider ? { provider: bot.provider } : {}),
+        model: 'hermes-agent',
+        ...(engine.kind === 'managed' && bot.model ? { model: bot.model } : {}),
+        ...(engine.kind === 'managed' && bot.provider ? { provider: bot.provider } : {}),
         input,
         instructions: await instructionsFor(userId, botId),
         // One engine-side thread per conversation, owned by the SID when the agent has one;

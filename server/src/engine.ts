@@ -6,7 +6,7 @@ import YAML from 'yaml';
 import { displayFor } from './box.js';
 import { cdpUrlFor, screenFor } from './computer.js';
 import { db } from './db.js';
-import { mcpServersFor } from './lib/mcp-connectors.js';
+import { reconcileMcpServers } from './lib/mcp-connectors.js';
 import { providerKeyFor } from './lib/provider-keys.js';
 import { deployment } from './deployment.js';
 import { env } from './env.js';
@@ -265,9 +265,7 @@ async function writeHome(botId: string): Promise<{ home: string; key: string; di
   cfg.terminal = { ...(cfg.terminal ?? {}), cwd };
   if (cdp) cfg.browser = { ...(cfg.browser ?? {}), cdp_url: cdp };
   cfg.mcp_servers = {
-    ...(cfg.mcp_servers ?? {}),
-    ...extraMcpServers(),
-    ...mcpServersFor(db, botId),
+    ...reconcileMcpServers(db, botId, cfg.mcp_servers, extraMcpServers()),
     hq: { url: `${env.mcpBaseUrl}/mcp/${botId}`, headers: { Authorization: `Bearer ${mcpToken(botId)}` }, timeout: 1800, connect_timeout: 30 },
   };
   // BYOK model selection (settings UI): a provider+model the user picked for this bot,

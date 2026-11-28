@@ -58,3 +58,35 @@ test('removing a server deletes it for good', () => {
   assert.equal(listMcpServers(d, 'bot_1').length, 0);
   assert.equal(removeMcpServer(d, 'bot_1', s.id), false);
 });
+
+test('config reconciliation removes disabled and deleted entries without touching unrelated servers', async () => {
+  const { reconcileMcpServers } = await import('../server/src/lib/mcp-connectors.ts');
+  const d = db();
+  const s = addMcpServer(d, 'bot_1', { name: 'books', url: 'https://books.example.invalid/mcp', headers: { Authorization: 'fixture-only' } });
+  const manual = { another: { command: 'operator-managed' } };
+  const legacy = { ...manual, books: { url: s.url, timeout: 120, connect_timeout: 30, headers: { Authorization: 'fixture-only' } } };
+  setMcpServerEnabled(d, 'bot_1', s.id, false);
+  assert.deepEqual(reconcileMcpServers(d, 'bot_1', legacy), manual);
+  setMcpServerEnabled(d, 'bot_1', s.id, true);
+  const configured = reconcileMcpServers(d, 'bot_1', legacy);
+  assert.equal(configured.books.sampling.enabled, false);
+  assert.throws(() => reconcileMcpServers(d, 'bot_1', { books: { command: 'operator-managed' } }), McpConnectorError);
+  removeMcpServer(d, 'bot_1', s.id);
+  assert.deepEqual(reconcileMcpServers(d, 'bot_1', configured), manual);
+  assert.deepEqual(reconcileMcpServers(d, 'bot_1', { books: { command: 'operator-managed' } }), { books: { command: 'operator-managed' } });
+  assert.deepEqual(reconcileMcpServers(d, 'bot_2', legacy), legacy);
+  assert.equal(d.prepare('SELECT headers_json FROM bot_mcp_servers WHERE id=?').get(s.id)?.headers_json, '{}');
+  assert.equal(setMcpServerEnabled(d, 'bot_1', s.id, true), false);
+  assert.notEqual(addMcpServer(d, 'bot_1', { name: 'books', url: s.url }).id, s.id);
+});
+
+test('connector inputs must remain literal in the engine configuration', () => {
+  const d = db();
+  const url = 'https://books.example.invalid/mcp';
+  const template = '$' + '{TEST_ONLY_PLACEHOLDER}';
+  assert.throws(() => addMcpServer(d, 'bot_1', { name: 'books', url, headers: { 'X-Fixture': template } }), McpConnectorError);
+  assert.throws(() => addMcpServer(d, 'bot_1', { name: 'books', url: `${url}/${template}` }), McpConnectorError);
+  const s = addMcpServer(d, 'bot_1', { name: 'books', url });
+  d.prepare('UPDATE bot_mcp_servers SET headers_json=? WHERE id=?').run(JSON.stringify({ 'X-Fixture': template }), s.id);
+  assert.equal(Object.hasOwn(mcpServersFor(d, 'bot_1'), 'books'), false);
+});

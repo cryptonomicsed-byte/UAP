@@ -383,6 +383,8 @@ CREATE TABLE IF NOT EXISTS user_provider_keys (
       { table: 'bots', name: 'model_provider', definition: 'TEXT' },
       { table: 'bots', name: 'model_id', definition: 'TEXT' },
     ] },
+  { id: 21, name: 'remove-orphaned-mcp-connectors', sql: `
+DELETE FROM bot_mcp_servers WHERE NOT EXISTS (SELECT 1 FROM bots WHERE bots.id = bot_mcp_servers.bot_id);` },
 ];
 
 export class SqliteMigrationError extends Error {

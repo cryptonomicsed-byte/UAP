@@ -172,12 +172,12 @@ export class SidTemplateRuntime {
 /** Elixir owns the spawn/teardown announcement. A missing runtime is reported, not faked. */
 export function superviseSpawn(childSid: string, parentSid: string | null): { backend: 'elixir' | 'unavailable'; lines: string[] } {
   const script = `
-parent = ${JSON.stringify(parentSid)}
-child = ${JSON.stringify(childSid)}
+[child | rest] = System.argv()
+parent = List.first(rest)
 IO.puts("SPAWN #{child} parent=#{parent || "nil"}")
 IO.puts("TERMINATED #{child}")
 `;
-  const proc = spawnSync('elixir', ['-e', script], { encoding: 'utf8', timeout: 8000 });
+  const proc = spawnSync('elixir', ['-e', script, '--', childSid, ...(parentSid === null ? [] : [parentSid])], { encoding: 'utf8', timeout: 8000 });
   if (proc.status !== 0) return { backend: 'unavailable', lines: [] };
   return { backend: 'elixir', lines: proc.stdout.trim().split('\n') };
 }

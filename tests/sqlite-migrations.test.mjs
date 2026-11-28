@@ -39,6 +39,20 @@ async function fixture(script) {
   } finally { await rm(dir, { recursive: true, force: true }); }
 }
 
+test('connector cleanup removes only entries whose agent no longer exists', async () => {
+  await fixture(`
+    applySqliteMigrations(db, SQLITE_MIGRATIONS.slice(0, 20));
+    db.prepare('INSERT INTO users(id,email,name,created_at) VALUES (?,?,?,?)').run('owner','owner@example.test','Owner',1);
+    db.prepare('INSERT INTO bots(id,user_id,name,created_at,updated_at) VALUES (?,?,?,?,?)').run('kept','owner','Kept',1,1);
+    const add = db.prepare("INSERT INTO bot_mcp_servers(id,bot_id,name,url,headers_json,created_at,updated_at) VALUES (?,?,'example','https://example.invalid/mcp','{}',1,1)");
+    add.run('retained','kept');
+    add.run('orphaned','gone');
+    applySqliteMigrations(db);
+    assert.deepEqual(db.prepare('SELECT id FROM bot_mcp_servers').all(), [{ id: 'retained' }]);
+    db.close();
+  `);
+});
+
 test('fresh SQLite migrations create the full application schema and remain unchanged on restart', { timeout: 15000 }, async () => {
   await fixture(`
     applySqliteMigrations(db);
@@ -202,7 +216,8 @@ test('a legacy schema missing required email uniqueness is rejected without chan
 test('a changed legacy agent visibility default is rejected rather than recorded as a compatible upgrade', { timeout: 15000 }, async () => {
   await fixture(`
     let changed = false;
-    const legacy = SQLITE_MIGRATIONS.map(migration => ({
+    // This legacy snapshot predates migration 19, whose raw ADD COLUMN cannot be replayed.
+    const legacy = SQLITE_MIGRATIONS.slice(0, 18).map(migration => ({
       ...migration,
       columns: migration.columns?.map(column => {
         if (column.table !== 'bots' || column.name !== 'hidden') return column;

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 process.env.SESSION_SECRET ??= 'tool-docs-test-secret';
+process.env.DB_PATH = ':memory:';
 const { generateToolDocs, renderToolDocsMarkdown } = await import('../server/src/lib/tool-docs.ts');
 
 test('every registered tool gets a doc entry with a real effect/risk from the kernel classifier', () => {
